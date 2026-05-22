@@ -1,0 +1,2577 @@
+{
+  "schema": 1,
+  "commit": "6b554e6139ce0f74ee172cd6b79bac6b18ffadb8",
+  "branch": "main",
+  "message": "add main application logic with command structure and initial commands for daemon, installation, and reporting",
+  "coding_time_nanos": 1280182257000,
+  "totals": {
+    "ai_lines": 68,
+    "human_lines": 310,
+    "deleted_lines": 2,
+    "files": 3,
+    "tokens": {
+      "input": 9,
+      "output": 3815,
+      "cache_read": 255393,
+      "cache_write": 6723
+    },
+    "models": {
+      "claude-opus-4-7": 68
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 68,
+      "suggested_lines": 68,
+      "accepted_lines": 68,
+      "model": "claude-opus-4-7",
+      "tokens": {
+        "input": 9,
+        "output": 3815,
+        "cache_read": 255393,
+        "cache_write": 6723
+      }
+    },
+    "human": {
+      "lines": 310
+    }
+  },
+  "by_gen_type": {
+    "chat": 68,
+    "cli": 0,
+    "completion": 0
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "type": "MODIFIED",
+      "added": 4,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 2,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "tokens": {
+            "input": 1,
+            "output": 171,
+            "cache_read": 82341,
+            "cache_write": 792
+          },
+          "edit_id": 1080
+        },
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 4,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1080
+        },
+        {
+          "line": 5,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1080
+        }
+      ]
+    },
+    {
+      "path": "cmd/blamely/main.go",
+      "type": "ADDED",
+      "added": 302,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 1,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 4,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 5,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 7,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 9,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 11,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 12,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 13,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 14,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 15,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 16,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 17,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 19,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 20,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 21,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 22,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 24,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 25,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 26,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 27,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 28,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 29,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 30,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 31,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 32,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 33,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 34,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 36,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 37,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 38,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 39,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 40,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 41,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 42,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 43,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 44,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 45,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 46,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 47,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 49,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 50,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 51,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 52,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 53,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 55,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 56,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 57,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 58,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 59,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 60,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 61,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 62,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 63,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 64,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 65,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 66,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 67,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 68,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 69,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 70,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 71,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 72,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 73,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 74,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 75,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 76,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 77,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 79,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 80,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 81,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 82,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 83,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 84,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 85,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 86,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 87,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 88,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 89,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 90,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 91,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 92,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 93,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 94,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 95,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 96,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 97,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 98,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 99,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 100,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 101,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 102,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 103,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 104,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 105,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 106,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 107,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 108,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 109,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 110,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 111,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 112,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 113,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 114,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 115,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 116,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 117,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 118,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 119,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 121,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 122,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 123,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 124,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 125,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 126,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 127,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 128,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 129,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 130,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 131,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 132,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 133,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 134,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 135,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 136,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 137,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 138,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 139,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 140,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 141,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 142,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 143,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 144,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 145,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 146,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 147,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 148,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 149,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 150,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 151,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 152,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 154,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 155,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 156,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 157,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 158,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 159,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 160,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 161,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 162,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 164,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 165,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 166,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 167,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 168,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 169,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 170,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 171,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 172,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 174,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 175,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 176,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 177,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 178,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 179,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 180,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 181,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 182,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 183,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 184,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 185,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 186,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 187,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 188,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 189,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 190,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 191,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 192,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 193,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 194,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 195,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 196,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 197,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 198,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 199,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 200,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 201,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 203,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 204,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 205,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 206,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 207,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 208,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 209,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 210,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 211,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 212,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 213,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 214,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 215,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 216,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 217,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 218,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 219,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 220,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 221,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 222,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 223,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 224,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 225,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 226,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 228,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 229,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 230,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 231,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 232,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 233,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 234,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 235,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 236,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 237,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 238,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 239,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 240,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 241,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 242,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 244,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 245,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 246,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 247,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 248,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 249,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 250,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 251,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 252,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 253,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 254,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 255,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 256,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 257,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 259,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 260,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 261,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 262,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 263,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 264,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 265,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 266,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 267,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 268,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 269,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 270,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 271,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 272,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 273,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 274,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 275,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 276,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 277,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 278,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 279,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 280,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 281,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 283,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 284,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 285,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 286,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 287,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 288,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 289,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 290,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 291,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 292,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 293,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 294,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 295,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 296,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 297,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 298,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 299,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 300,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 302,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 303,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 304,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 305,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 306,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 307,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 308,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 309,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 310,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 312,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 313,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 314,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 315,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 316,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 317,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 318,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 319,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 320,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 321,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 322,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 323,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/cursor.go",
+      "type": "MODIFIED",
+      "added": 72,
+      "deleted": 2,
+      "lines": [
+        {
+          "line": 15,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "tokens": {
+            "input": 1,
+            "output": 1137,
+            "cache_read": 54659,
+            "cache_write": 3866
+          },
+          "edit_id": 1063
+        },
+        {
+          "line": 58,
+          "type": "delete",
+          "tool": ""
+        },
+        {
+          "line": 60,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "tokens": {
+            "input": 1,
+            "output": 434,
+            "cache_read": 58525,
+            "cache_write": 1343
+          },
+          "edit_id": 1065
+        },
+        {
+          "line": 69,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 70,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 71,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 72,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 73,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 75,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 76,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 77,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 78,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 79,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 80,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 81,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 82,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 83,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 84,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 92,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 93,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 94,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 95,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 96,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 97,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 98,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 99,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 100,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 101,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 102,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 103,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 104,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 105,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 106,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 107,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 108,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 109,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 111,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 112,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 113,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 114,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 118,
+          "type": "delete",
+          "tool": ""
+        },
+        {
+          "line": 119,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 120,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 121,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 122,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 123,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 124,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 125,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 126,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 127,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 128,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 129,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 130,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 131,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 132,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 133,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 134,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 135,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 136,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1065
+        },
+        {
+          "line": 137,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 138,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 173,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "tokens": {
+            "input": 6,
+            "output": 2073,
+            "cache_read": 59868,
+            "cache_write": 722
+          },
+          "edit_id": 1067
+        },
+        {
+          "line": 177,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 178,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 179,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 180,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 181,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 182,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 183,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 184,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 185,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 186,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        },
+        {
+          "line": 187,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 188,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1067
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
