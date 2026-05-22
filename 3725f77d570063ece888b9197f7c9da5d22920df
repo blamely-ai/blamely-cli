@@ -1,0 +1,509 @@
+{
+  "schema": 1,
+  "commit": "3725f77d570063ece888b9197f7c9da5d22920df",
+  "branch": "main",
+  "message": "update .gitignore to include .idea directory; add go.sum for dependency management",
+  "totals": {
+    "ai_lines": 66,
+    "human_lines": 0,
+    "deleted_lines": 1,
+    "files": 2
+  },
+  "by_tool": {
+    "copilot": {
+      "lines": 66,
+      "accepted_lines": 66
+    }
+  },
+  "by_gen_type": {
+    "chat": 0,
+    "cli": 0,
+    "completion": 66
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "type": "MODIFIED",
+      "added": 1,
+      "deleted": 1,
+      "lines": [
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 4,
+          "type": "delete",
+          "tool": ""
+        }
+      ]
+    },
+    {
+      "path": "go.sum",
+      "type": "ADDED",
+      "added": 65,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 1,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 2,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 4,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 5,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 6,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 7,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 8,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 9,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 10,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 11,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 12,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 13,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 14,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 15,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 16,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 17,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 18,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 21,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 22,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 23,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 24,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 25,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 26,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 27,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 28,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 29,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 30,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 31,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 32,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 33,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 34,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 35,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 36,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 37,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 38,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 39,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 40,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 41,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 42,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 43,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 44,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 45,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 46,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 47,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 48,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 49,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 50,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 51,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 52,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 53,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 54,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 55,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 56,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 57,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 58,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 59,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 60,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 61,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 62,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 63,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 64,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        },
+        {
+          "line": 65,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
