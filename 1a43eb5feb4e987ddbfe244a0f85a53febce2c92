@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "commit": "1a43eb5feb4e987ddbfe244a0f85a53febce2c92",
+  "branch": "main",
+  "message": "update release.yml to use 7z for zipping on Windows for better compatibility",
+  "coding_time_nanos": 2093182257000,
+  "totals": {
+    "ai_lines": 4,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1,
+    "tokens": {
+      "input": 6,
+      "output": 640,
+      "cache_read": 84157,
+      "cache_write": 818
+    },
+    "models": {
+      "claude-opus-4-7": 4
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 4,
+      "suggested_lines": 4,
+      "accepted_lines": 4,
+      "model": "claude-opus-4-7",
+      "tokens": {
+        "input": 6,
+        "output": 640,
+        "cache_read": 84157,
+        "cache_write": 818
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 4,
+    "cli": 0,
+    "completion": 0
+  },
+  "files": [
+    {
+      "path": ".github/workflows/release.yml",
+      "type": "MODIFIED",
+      "added": 4,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 154,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "tokens": {
+            "input": 6,
+            "output": 640,
+            "cache_read": 84157,
+            "cache_write": 818
+          },
+          "edit_id": 1083
+        },
+        {
+          "line": 155,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1083
+        },
+        {
+          "line": 156,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1083
+        },
+        {
+          "line": 158,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-7",
+          "gen_type": "chat",
+          "edit_id": 1083
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
