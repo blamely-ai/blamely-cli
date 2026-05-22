@@ -1,0 +1,1651 @@
+{
+  "schema": 1,
+  "commit": "d115febcd0156e762f63c6318aa977fb1370d949",
+  "branch": "main",
+  "message": "add main application logic with command structure and initial commands for daemon, installation, and reporting",
+  "coding_time_nanos": 1284182257000,
+  "totals": {
+    "ai_lines": 179,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1,
+    "models": {
+      "composer-2.5": 179
+    }
+  },
+  "by_tool": {
+    "cursor": {
+      "lines": 179,
+      "suggested_lines": 246,
+      "accepted_lines": 179,
+      "model": "composer-2.5"
+    }
+  },
+  "by_gen_type": {
+    "chat": 179,
+    "cli": 0,
+    "completion": 0
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "type": "ADDED",
+      "added": 179,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 1,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 5,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 7,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 8,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 9,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 11,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 13,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 15,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 16,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 17,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 18,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 21,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 23,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 25,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 27,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 29,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 31,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 32,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 33,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 34,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 35,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 36,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 38,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 40,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 41,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 42,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 44,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 46,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 48,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 50,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 51,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 52,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 53,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 54,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 55,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 57,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 59,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 61,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 62,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 63,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 64,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 66,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 68,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 69,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 70,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 71,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 73,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 75,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 76,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 77,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 78,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 79,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 80,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 81,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 82,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 83,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 84,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 85,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 86,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 87,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 88,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 89,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 90,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 91,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 92,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 93,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 95,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 96,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 97,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 98,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 100,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 102,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 103,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 105,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 107,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 108,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 109,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 110,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 111,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 112,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 113,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 114,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 115,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 116,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 117,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 118,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 119,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 120,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 122,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 124,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 126,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 128,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 129,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 130,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 131,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 132,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 133,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 134,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 135,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 136,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 137,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 138,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 140,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 142,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 144,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 146,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 147,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 148,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 149,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 150,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 152,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 154,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 155,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 156,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 157,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 159,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 160,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 161,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 162,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 164,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 165,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 166,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 168,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 169,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 171,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 173,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 174,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 176,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 177,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 178,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 179,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 180,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 182,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 183,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 184,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 185,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 186,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 187,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 189,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 191,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 193,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 194,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 195,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 196,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 198,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 200,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 202,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 203,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 204,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 206,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 208,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 209,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 210,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 211,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 213,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 215,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 217,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 219,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 220,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 221,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 223,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 225,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 226,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 227,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 229,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 231,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 232,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 233,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 235,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 237,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 239,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 241,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 243,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 244,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 245,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        },
+        {
+          "line": 246,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat",
+          "edit_id": 1077
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
