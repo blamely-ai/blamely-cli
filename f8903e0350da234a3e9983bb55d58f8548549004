@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "commit": "f8903e0350da234a3e9983bb55d58f8548549004",
+  "branch": "main",
+  "message": "add initial implementation of daemon installation and management for multiple platforms",
+  "totals": {
+    "ai_lines": 0,
+    "human_lines": 4,
+    "deleted_lines": 0,
+    "files": 1
+  },
+  "by_tool": {
+    "human": {
+      "lines": 4
+    }
+  },
+  "by_gen_type": {
+    "chat": 0,
+    "cli": 0,
+    "completion": 0
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "type": "ADDED",
+      "added": 4,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 1,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 2,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 3,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        },
+        {
+          "line": 4,
+          "type": "add",
+          "author_type": "Human",
+          "tool": "human"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
