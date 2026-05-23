@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "commit": "de4bee0abe1b2b72cb12e3103a77e30f9d5feada",
+  "branch": "main",
+  "message": "add DocSupportedTools component to main pages and update dependencies for improved functionality",
+  "coding_time_nanos": 4394050178000,
+  "totals": {
+    "ai_lines": 1,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1
+  },
+  "by_tool": {
+    "copilot": {
+      "lines": 1,
+      "accepted_lines": 1
+    }
+  },
+  "by_gen_type": {
+    "chat": 0,
+    "cli": 0,
+    "completion": 1
+  },
+  "files": [
+    {
+      "path": "web-site-ui",
+      "type": "ADDED",
+      "added": 1,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 1,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "copilot",
+          "gen_type": "completion"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
