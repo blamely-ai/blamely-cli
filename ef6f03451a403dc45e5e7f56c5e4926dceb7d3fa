@@ -1,0 +1,228 @@
+{
+  "schema": 1,
+  "commit": "ef6f03451a403dc45e5e7f56c5e4926dceb7d3fa",
+  "branch": "main",
+  "base_sha": "a5202a7628e479bde225ba947ceaab63711ad8b0",
+  "message": "fixed test",
+  "coding_time_nanos": 164338991000,
+  "totals": {
+    "ai_lines": 18,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1,
+    "models": {
+      "default": 18
+    }
+  },
+  "by_tool": {
+    "cursor": {
+      "lines": 18,
+      "suggested_lines": 259,
+      "accepted_lines": 18,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 18,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": "internal/tools/copilot_chat_test.go",
+      "type": "MODIFIED",
+      "added": 18,
+      "deleted": 0,
+      "lines": [
+        {
+          "line": 5,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 17,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 18,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 21,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 22,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 23,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 24,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 25,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 104,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 105,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 142,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 143,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 170,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 171,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 197,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "line": 198,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\n?   \tgithub.com/blamely/blamely/cmd/blamely\t[no test files]\nok  \tgithub.com/blamely/blamely/internal/config\t0.048s\nok  \tgithub.com/blamely/blamely/internal/daemon\t9.904s\nok  \tgithub.com/blamely/blamely/internal/gitnotes\t3.584s\nok  \tgithub.com/blamely/blamely/internal/gitutil\t0.914s\nok  …"
+    },
+    {
+      "role": "assistant",
+      "text": "Investigating failing Copilot chat tests, likely Windows-specific.\n\n[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "Windows paths embed backslashes into JSON strings, breaking unmarshaling. Fixing tests to use properly quoted, slash-normalized paths (VS Code style).\n\n[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "[REDACTED]"
+    },
+    {
+      "role": "assistant",
+      "text": "The Windows CI failures came from **embedding raw Windows paths in JSON strings**.\n\n### Cause\n\nTests built JSON like:\n\n```go\n`{\"uri\":{\"path\":\"` + file + `\"}}`  // file = C:\\Users\\...\\app.go\n```\n\nIn JSON, `\\` starts an escape. `C:\\Users` triggers `\\U`, which produces:\n\n`invalid character 'U' in strin…"
+    }
+  ]
+}
