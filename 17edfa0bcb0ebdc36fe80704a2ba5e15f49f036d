@@ -1,0 +1,342 @@
+{
+  "schema": 2,
+  "commit": "17edfa0bcb0ebdc36fe80704a2ba5e15f49f036d",
+  "branch": "main",
+  "base_sha": "f4667d86e3f1e01edbf5bb1ac15f173334a0ae3b",
+  "message": "refactor installation scripts for improved error handling and cross-platform compatibility",
+  "coding_time_nanos": 8512662275000,
+  "totals": {
+    "ai_lines": 207,
+    "human_lines": 0,
+    "deleted_lines": 7,
+    "files": 4,
+    "tokens": {
+      "input": 8,
+      "output": 7166,
+      "cache_read": 89746,
+      "cache_write": 13115
+    },
+    "models": {
+      "claude-opus-4-8": 34,
+      "composer-2.5": 110,
+      "default": 63
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 34,
+      "suggested_lines": 34,
+      "accepted_lines": 34,
+      "model": "claude-opus-4-8",
+      "tokens": {
+        "input": 8,
+        "output": 7166,
+        "cache_read": 89746,
+        "cache_write": 13115
+      }
+    },
+    "cursor": {
+      "lines": 173,
+      "suggested_lines": 764,
+      "accepted_lines": 173,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 207,
+    "cli": 0,
+    "completion": 0,
+    "human": 7
+  },
+  "files": [
+    {
+      "path": ".github/workflows/release.yml",
+      "type": "MODIFIED",
+      "added": 34,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 257,
+          "end": 282,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 290,
+          "end": 290,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 308,
+          "end": 308,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 310,
+          "end": 310,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 324,
+          "end": 328,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "README.md",
+      "type": "MODIFIED",
+      "added": 63,
+      "deleted": 2,
+      "lines": [
+        {
+          "start": 120,
+          "end": 120,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 122,
+          "end": 123,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 141,
+          "end": 202,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "blamely-linux-install.sh",
+      "type": "MODIFIED",
+      "added": 32,
+      "deleted": 3,
+      "lines": [
+        {
+          "start": 16,
+          "end": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 157,
+          "end": 157,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 163,
+          "end": 166,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 168,
+          "end": 178,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 178,
+          "end": 179,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 180,
+          "end": 180,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 180,
+          "end": 180,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 181,
+          "end": 184,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 192,
+          "end": 192,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 194,
+          "end": 198,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "blamely-mac-install.sh",
+      "type": "MODIFIED",
+      "added": 78,
+      "deleted": 2,
+      "lines": [
+        {
+          "start": 16,
+          "end": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 120,
+          "end": 139,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 139,
+          "end": 139,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 140,
+          "end": 140,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 140,
+          "end": 140,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 141,
+          "end": 154,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 156,
+          "end": 156,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 162,
+          "end": 180,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 183,
+          "end": 183,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 188,
+          "end": 191,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        },
+        {
+          "start": 193,
+          "end": 205,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "composer-2.5",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\nread me about cli configuration for release note\n\u003c/user_query\u003e"
+    },
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\nadd ReadMe\n\u003c/user_query\u003e"
+    }
+  ]
+}
