@@ -1,0 +1,78 @@
+{
+  "schema": 2,
+  "commit": "8a065059b81cb263fc1a1c2db15ab37b1c870b61",
+  "branch": "main",
+  "base_sha": "bbfe8e912eb994551b0632a235cc44a671d71f76",
+  "message": "refactor config test setup to use fakeHome for cross-platform compatibility",
+  "coding_time_nanos": 421238548000,
+  "totals": {
+    "ai_lines": 6,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1,
+    "tokens": {
+      "input": 6,
+      "output": 7837,
+      "cache_read": 1307251,
+      "cache_write": 7509
+    },
+    "models": {
+      "claude-opus-4-8": 6
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 6,
+      "suggested_lines": 18,
+      "accepted_lines": 6,
+      "model": "claude-opus-4-8",
+      "tokens": {
+        "input": 6,
+        "output": 7837,
+        "cache_read": 1307251,
+        "cache_write": 7509
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 6,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": "internal/config/config_test.go",
+      "type": "MODIFIED",
+      "added": 6,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 11,
+          "end": 15,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 25,
+          "end": 25,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "Run go test ./...\n?   \tgithub.com/blamely/blamely/cmd/blamely\t[no test files]\n--- FAIL: TestLoadConfig_PartialOverlayKeepsOtherDefaults (0.00s)\n    config_test.go:40: conversation should be disabled\n--- FAIL: TestLoadConfig_PerRoleConversation (0.00s)\n    config_test.go:56: want conversation on, use…"
+    }
+  ]
+}
