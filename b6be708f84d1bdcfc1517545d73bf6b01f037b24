@@ -1,0 +1,206 @@
+{
+  "schema": 2,
+  "commit": "b6be708f84d1bdcfc1517545d73bf6b01f037b24",
+  "branch": "main",
+  "base_sha": "659b6d885805357b2862efed0b2fe825b9c58895",
+  "message": "add configuration management for commit notes, including toggles for message, conversation, and tokens",
+  "coding_time_nanos": 21006208340000,
+  "totals": {
+    "ai_lines": 162,
+    "human_lines": 31,
+    "deleted_lines": 0,
+    "files": 3,
+    "tokens": {
+      "input": 138,
+      "output": 6057,
+      "cache_read": 3166179,
+      "cache_write": 8656
+    },
+    "models": {
+      "claude-opus-4-8": 162
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 162,
+      "suggested_lines": 165,
+      "accepted_lines": 162,
+      "model": "claude-opus-4-8",
+      "tokens": {
+        "input": 138,
+        "output": 6057,
+        "cache_read": 3166179,
+        "cache_write": 8656
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 162,
+    "cli": 0,
+    "completion": 0,
+    "human": 31
+  },
+  "files": [
+    {
+      "path": "cmd/blamely/main.go",
+      "type": "MODIFIED",
+      "added": 122,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 6,
+          "end": 6,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 12,
+          "end": 12,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 50,
+          "end": 50,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 402,
+          "end": 520,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/gitnotes/attribute.go",
+      "type": "MODIFIED",
+      "added": 60,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 13,
+          "end": 13,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 29,
+          "end": 60,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 149,
+          "end": 149,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 358,
+          "end": 365,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 366,
+          "end": 366,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 367,
+          "end": 368,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 369,
+          "end": 370,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 371,
+          "end": 373,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 374,
+          "end": 375,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 376,
+          "end": 380,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 381,
+          "end": 383,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/install.go",
+      "type": "MODIFIED",
+      "added": 11,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 194,
+          "end": 204,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cide_opened_file\u003eThe user opened the file /Users/abdulkerimatik/.claude/settings.json in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
+    }
+  ]
+}
