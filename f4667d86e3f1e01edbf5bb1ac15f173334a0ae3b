@@ -1,0 +1,120 @@
+{
+  "schema": 2,
+  "commit": "f4667d86e3f1e01edbf5bb1ac15f173334a0ae3b",
+  "branch": "main",
+  "base_sha": "8a065059b81cb263fc1a1c2db15ab37b1c870b61",
+  "message": "bump Go version to 1.26.4 in CI and release configurations",
+  "coding_time_nanos": 1039879151000,
+  "totals": {
+    "ai_lines": 4,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 3,
+    "tokens": {
+      "input": 6,
+      "output": 2070,
+      "cache_read": 1370346,
+      "cache_write": 9297
+    },
+    "models": {
+      "claude-opus-4-8": 4
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 4,
+      "suggested_lines": 344,
+      "accepted_lines": 4,
+      "model": "claude-opus-4-8",
+      "tokens": {
+        "input": 6,
+        "output": 2070,
+        "cache_read": 1370346,
+        "cache_write": 9297
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 4,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "type": "MODIFIED",
+      "added": 1,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 18,
+          "end": 18,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "type": "MODIFIED",
+      "added": 1,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 50,
+          "end": 50,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "go.mod",
+      "type": "MODIFIED",
+      "added": 2,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 3,
+          "end": 3,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        },
+        {
+          "start": 20,
+          "end": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "could you plelase san vulnurability for cli"
+    },
+    {
+      "role": "user",
+      "text": "[Request interrupted by user]"
+    },
+    {
+      "role": "user",
+      "text": "could you plelase scan vulnurability for cli"
+    }
+  ]
+}
