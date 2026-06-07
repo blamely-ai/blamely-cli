@@ -1,0 +1,1246 @@
+{
+  "schema": 2,
+  "commit": "8ab0b55f8fb4372da19462eaa6d5e601f1d3b46e",
+  "branch": "main",
+  "base_sha": "0595bd90c26ac686df73418d1d1e5bc0a664e726",
+  "message": "enhance Codex CLI support with wrapped session line format and improved file handling",
+  "coding_time_nanos": 3916414740000,
+  "totals": {
+    "ai_lines": 501,
+    "human_lines": 87,
+    "deleted_lines": 104,
+    "files": 11,
+    "tokens": {
+      "input": 44,
+      "output": 15396,
+      "cache_read": 2596445,
+      "cache_write": 28228
+    },
+    "models": {
+      "claude-sonnet-4-6": 501
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 501,
+      "suggested_lines": 1529,
+      "accepted_lines": 501,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 44,
+        "output": 15396,
+        "cache_read": 2596445,
+        "cache_write": 28228
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 501,
+    "cli": 0,
+    "completion": 0,
+    "human": 191
+  },
+  "files": [
+    {
+      "path": "cmd/blamely/main.go",
+      "type": "MODIFIED",
+      "added": 4,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 82,
+          "end": 85,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/server_test.go",
+      "type": "MODIFIED",
+      "added": 21,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 420,
+          "end": 440,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/watcher.go",
+      "type": "MODIFIED",
+      "added": 8,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 72,
+          "end": 78,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 92,
+          "end": 92,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/bar.go",
+      "type": "MODIFIED",
+      "added": 29,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 13,
+          "end": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 23,
+          "end": 41,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 207,
+          "end": 208,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/report.go",
+      "type": "MODIFIED",
+      "added": 89,
+      "deleted": 73,
+      "lines": [
+        {
+          "start": 6,
+          "end": 6,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 8,
+          "end": 8,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 43,
+          "end": 45,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 45,
+          "end": 45,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 46,
+          "end": 46,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 46,
+          "end": 46,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 47,
+          "end": 47,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 47,
+          "end": 47,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 48,
+          "end": 48,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 48,
+          "end": 49,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 50,
+          "end": 50,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 50,
+          "end": 50,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 51,
+          "end": 51,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 51,
+          "end": 51,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 52,
+          "end": 52,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 52,
+          "end": 52,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 54,
+          "end": 54,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 55,
+          "end": 56,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 57,
+          "end": 57,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 57,
+          "end": 64,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 65,
+          "end": 65,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 65,
+          "end": 65,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 66,
+          "end": 66,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 66,
+          "end": 66,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 67,
+          "end": 67,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 67,
+          "end": 67,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 68,
+          "end": 68,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 69,
+          "end": 69,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 70,
+          "end": 71,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 72,
+          "end": 76,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 77,
+          "end": 77,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 77,
+          "end": 79,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 80,
+          "end": 80,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 80,
+          "end": 80,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 81,
+          "end": 81,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 81,
+          "end": 81,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 82,
+          "end": 82,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 82,
+          "end": 82,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 83,
+          "end": 83,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 83,
+          "end": 83,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 84,
+          "end": 84,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 84,
+          "end": 84,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 85,
+          "end": 85,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 85,
+          "end": 85,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 86,
+          "end": 86,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 86,
+          "end": 86,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 87,
+          "end": 87,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 87,
+          "end": 87,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 88,
+          "end": 88,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 88,
+          "end": 88,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 89,
+          "end": 89,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 89,
+          "end": 89,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 90,
+          "end": 90,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 90,
+          "end": 90,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 91,
+          "end": 91,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 91,
+          "end": 91,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 92,
+          "end": 92,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 92,
+          "end": 92,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 93,
+          "end": 93,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 93,
+          "end": 93,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 94,
+          "end": 94,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 94,
+          "end": 94,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 95,
+          "end": 95,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 95,
+          "end": 95,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 96,
+          "end": 106,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 106,
+          "end": 106,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 107,
+          "end": 107,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 107,
+          "end": 107,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 108,
+          "end": 108,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 108,
+          "end": 108,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 109,
+          "end": 109,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 109,
+          "end": 109,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 110,
+          "end": 110,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 110,
+          "end": 110,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 111,
+          "end": 111,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 111,
+          "end": 111,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 112,
+          "end": 112,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 112,
+          "end": 112,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 113,
+          "end": 113,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 113,
+          "end": 113,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 114,
+          "end": 114,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 114,
+          "end": 114,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 115,
+          "end": 116,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 116,
+          "end": 116,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 117,
+          "end": 117,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 117,
+          "end": 117,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 118,
+          "end": 118,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 118,
+          "end": 118,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 119,
+          "end": 119,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 119,
+          "end": 119,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 120,
+          "end": 120,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 120,
+          "end": 120,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 121,
+          "end": 121,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 121,
+          "end": 121,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 122,
+          "end": 122,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 122,
+          "end": 122,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 123,
+          "end": 123,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 123,
+          "end": 123,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 124,
+          "end": 124,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 124,
+          "end": 124,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 125,
+          "end": 125,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 125,
+          "end": 125,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 126,
+          "end": 126,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 126,
+          "end": 126,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 127,
+          "end": 127,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 127,
+          "end": 127,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 128,
+          "end": 128,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 128,
+          "end": 128,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 129,
+          "end": 129,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 129,
+          "end": 129,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 130,
+          "end": 130,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 130,
+          "end": 130,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 131,
+          "end": 131,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 131,
+          "end": 131,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 132,
+          "end": 137,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 137,
+          "end": 137,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 138,
+          "end": 139,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 139,
+          "end": 139,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 140,
+          "end": 148,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/stats.go",
+      "type": "MODIFIED",
+      "added": 2,
+      "deleted": 26,
+      "lines": [
+        {
+          "start": 57,
+          "end": 57,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 58,
+          "end": 58,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 85,
+          "end": 85,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 87,
+          "end": 111,
+          "type": "delete",
+          "author_type": "Human"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/stats_test.go",
+      "type": "MODIFIED",
+      "added": 9,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 266,
+          "end": 266,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 280,
+          "end": 280,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 297,
+          "end": 297,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 314,
+          "end": 314,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 328,
+          "end": 328,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 342,
+          "end": 342,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 357,
+          "end": 357,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 372,
+          "end": 372,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 383,
+          "end": 383,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/codex.go",
+      "type": "MODIFIED",
+      "added": 193,
+      "deleted": 5,
+      "lines": [
+        {
+          "start": 23,
+          "end": 23,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 27,
+          "end": 30,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 64,
+          "end": 64,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 67,
+          "end": 68,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 69,
+          "end": 69,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 69,
+          "end": 70,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 97,
+          "end": 117,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 219,
+          "end": 229,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 233,
+          "end": 238,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 240,
+          "end": 248,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 305,
+          "end": 444,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/codex_test.go",
+      "type": "MODIFIED",
+      "added": 183,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 6,
+          "end": 6,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 283,
+          "end": 432,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 474,
+          "end": 505,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/debuglog.go",
+      "type": "MODIFIED",
+      "added": 4,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 299,
+          "end": 300,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 309,
+          "end": 310,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/lineranges.go",
+      "type": "MODIFIED",
+      "added": 46,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 10,
+          "end": 11,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 81,
+          "end": 124,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cide_opened_file\u003eThe user opened the file /temp/readonly/command (u7n4gz) in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
+    }
+  ]
+}
