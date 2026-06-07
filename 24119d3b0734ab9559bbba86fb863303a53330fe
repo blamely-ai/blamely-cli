@@ -1,0 +1,79 @@
+{
+  "schema": 2,
+  "commit": "24119d3b0734ab9559bbba86fb863303a53330fe",
+  "branch": "main",
+  "base_sha": "8ab0b55f8fb4372da19462eaa6d5e601f1d3b46e",
+  "message": "add AntigravityGeminiWatcher for processing transcript logs and emitting chat edits",
+  "totals": {
+    "ai_lines": 778,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 2,
+    "tokens": {
+      "input": 16,
+      "output": 1342,
+      "cache_read": 1079815,
+      "cache_write": 46003
+    },
+    "models": {
+      "claude-sonnet-4-6": 778
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 778,
+      "suggested_lines": 765,
+      "accepted_lines": 778,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 16,
+        "output": 1342,
+        "cache_read": 1079815,
+        "cache_write": 46003
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 778,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": "internal/tools/antigravity_chat.go",
+      "type": "ADDED",
+      "added": 495,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 495,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/antigravity_chat_test.go",
+      "type": "ADDED",
+      "added": 283,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 283,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
