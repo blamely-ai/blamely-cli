@@ -1,1246 +1,4516 @@
-{
-  "schema": 2,
-  "commit": "8ab0b55f8fb4372da19462eaa6d5e601f1d3b46e",
-  "branch": "main",
-  "base_sha": "0595bd90c26ac686df73418d1d1e5bc0a664e726",
-  "message": "enhance Codex CLI support with wrapped session line format and improved file handling",
-  "coding_time_nanos": 3916414740000,
-  "totals": {
-    "ai_lines": 501,
-    "human_lines": 87,
-    "deleted_lines": 104,
-    "files": 11,
-    "tokens": {
-      "input": 44,
-      "output": 15396,
-      "cache_read": 2596445,
-      "cache_write": 28228
-    },
-    "models": {
-      "claude-sonnet-4-6": 501
-    }
-  },
-  "by_tool": {
-    "claude": {
-      "lines": 501,
-      "suggested_lines": 1529,
-      "accepted_lines": 501,
-      "model": "claude-sonnet-4-6",
-      "tokens": {
-        "input": 44,
-        "output": 15396,
-        "cache_read": 2596445,
-        "cache_write": 28228
-      }
-    }
-  },
-  "by_gen_type": {
-    "chat": 501,
-    "cli": 0,
-    "completion": 0,
-    "human": 191
-  },
-  "files": [
-    {
-      "path": "cmd/blamely/main.go",
-      "type": "MODIFIED",
-      "added": 4,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 82,
-          "end": 85,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/daemon/server_test.go",
-      "type": "MODIFIED",
-      "added": 21,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 420,
-          "end": 440,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/daemon/watcher.go",
-      "type": "MODIFIED",
-      "added": 8,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 72,
-          "end": 78,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 92,
-          "end": 92,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/report/bar.go",
-      "type": "MODIFIED",
-      "added": 29,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 13,
-          "end": 20,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 23,
-          "end": 41,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 207,
-          "end": 208,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/report/report.go",
-      "type": "MODIFIED",
-      "added": 89,
-      "deleted": 73,
-      "lines": [
-        {
-          "start": 6,
-          "end": 6,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 8,
-          "end": 8,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 43,
-          "end": 45,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 45,
-          "end": 45,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 46,
-          "end": 46,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 46,
-          "end": 46,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 47,
-          "end": 47,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 47,
-          "end": 47,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 48,
-          "end": 48,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 48,
-          "end": 49,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 50,
-          "end": 50,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 50,
-          "end": 50,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 51,
-          "end": 51,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 51,
-          "end": 51,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 52,
-          "end": 52,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 52,
-          "end": 52,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 54,
-          "end": 54,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 55,
-          "end": 56,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 57,
-          "end": 57,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 57,
-          "end": 64,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 65,
-          "end": 65,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 65,
-          "end": 65,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 66,
-          "end": 66,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 66,
-          "end": 66,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 67,
-          "end": 67,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 67,
-          "end": 67,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 68,
-          "end": 68,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 69,
-          "end": 69,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 70,
-          "end": 71,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 72,
-          "end": 76,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 77,
-          "end": 77,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 77,
-          "end": 79,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 80,
-          "end": 80,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 80,
-          "end": 80,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 81,
-          "end": 81,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 81,
-          "end": 81,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 82,
-          "end": 82,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 82,
-          "end": 82,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 83,
-          "end": 83,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 83,
-          "end": 83,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 84,
-          "end": 84,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 84,
-          "end": 84,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 85,
-          "end": 85,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 85,
-          "end": 85,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 86,
-          "end": 86,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 86,
-          "end": 86,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 87,
-          "end": 87,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 87,
-          "end": 87,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 88,
-          "end": 88,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 88,
-          "end": 88,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 89,
-          "end": 89,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 89,
-          "end": 89,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 90,
-          "end": 90,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 90,
-          "end": 90,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 91,
-          "end": 91,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 91,
-          "end": 91,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 92,
-          "end": 92,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 92,
-          "end": 92,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 93,
-          "end": 93,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 93,
-          "end": 93,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 94,
-          "end": 94,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 94,
-          "end": 94,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 95,
-          "end": 95,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 95,
-          "end": 95,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 96,
-          "end": 106,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 106,
-          "end": 106,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 107,
-          "end": 107,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 107,
-          "end": 107,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 108,
-          "end": 108,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 108,
-          "end": 108,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 109,
-          "end": 109,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 109,
-          "end": 109,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 110,
-          "end": 110,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 110,
-          "end": 110,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 111,
-          "end": 111,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 111,
-          "end": 111,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 112,
-          "end": 112,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 112,
-          "end": 112,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 113,
-          "end": 113,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 113,
-          "end": 113,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 114,
-          "end": 114,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 114,
-          "end": 114,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 115,
-          "end": 116,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 116,
-          "end": 116,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 117,
-          "end": 117,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 117,
-          "end": 117,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 118,
-          "end": 118,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 118,
-          "end": 118,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 119,
-          "end": 119,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 119,
-          "end": 119,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 120,
-          "end": 120,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 120,
-          "end": 120,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 121,
-          "end": 121,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 121,
-          "end": 121,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 122,
-          "end": 122,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 122,
-          "end": 122,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 123,
-          "end": 123,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 123,
-          "end": 123,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 124,
-          "end": 124,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 124,
-          "end": 124,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 125,
-          "end": 125,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 125,
-          "end": 125,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 126,
-          "end": 126,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 126,
-          "end": 126,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 127,
-          "end": 127,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 127,
-          "end": 127,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 128,
-          "end": 128,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 128,
-          "end": 128,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 129,
-          "end": 129,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 129,
-          "end": 129,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 130,
-          "end": 130,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 130,
-          "end": 130,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 131,
-          "end": 131,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 131,
-          "end": 131,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 132,
-          "end": 137,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 137,
-          "end": 137,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 138,
-          "end": 139,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        },
-        {
-          "start": 139,
-          "end": 139,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 140,
-          "end": 148,
-          "type": "add",
-          "author_type": "Human",
-          "gen_type": "human"
-        }
-      ]
-    },
-    {
-      "path": "internal/report/stats.go",
-      "type": "MODIFIED",
-      "added": 2,
-      "deleted": 26,
-      "lines": [
-        {
-          "start": 57,
-          "end": 57,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 58,
-          "end": 58,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 85,
-          "end": 85,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 87,
-          "end": 111,
-          "type": "delete",
-          "author_type": "Human"
-        }
-      ]
-    },
-    {
-      "path": "internal/report/stats_test.go",
-      "type": "MODIFIED",
-      "added": 9,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 266,
-          "end": 266,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 280,
-          "end": 280,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 297,
-          "end": 297,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 314,
-          "end": 314,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 328,
-          "end": 328,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 342,
-          "end": 342,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 357,
-          "end": 357,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 372,
-          "end": 372,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 383,
-          "end": 383,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/tools/codex.go",
-      "type": "MODIFIED",
-      "added": 193,
-      "deleted": 5,
-      "lines": [
-        {
-          "start": 23,
-          "end": 23,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 27,
-          "end": 30,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 64,
-          "end": 64,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 67,
-          "end": 68,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 69,
-          "end": 69,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 69,
-          "end": 70,
-          "type": "delete",
-          "author_type": "Human"
-        },
-        {
-          "start": 97,
-          "end": 117,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 219,
-          "end": 229,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 233,
-          "end": 238,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 240,
-          "end": 248,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 305,
-          "end": 444,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/tools/codex_test.go",
-      "type": "MODIFIED",
-      "added": 183,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 6,
-          "end": 6,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 283,
-          "end": 432,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 474,
-          "end": 505,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/tools/debuglog.go",
-      "type": "MODIFIED",
-      "added": 4,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 299,
-          "end": 300,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 309,
-          "end": 310,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    },
-    {
-      "path": "internal/tools/lineranges.go",
-      "type": "MODIFIED",
-      "added": 46,
-      "deleted": 0,
-      "lines": [
-        {
-          "start": 10,
-          "end": 11,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        },
-        {
-          "start": 81,
-          "end": 124,
-          "type": "add",
-          "author_type": "AI",
-          "tool": "claude",
-          "model": "claude-sonnet-4-6",
-          "gen_type": "chat"
-        }
-      ]
-    }
-  ],
-  "generated_by": "blamely 0.1.0",
-  "conversation": [
-    {
-      "role": "user",
-      "text": "\u003cide_opened_file\u003eThe user opened the file /temp/readonly/command (u7n4gz) in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
-    }
-  ]
-}
+scope: "this_commit"
+commitDate: "2026-06-07T22:41:15.232Z"
+detector_version: "1.1.0"
+branch: "main"
+commit_hash: "8ab0b55f8fb4372da19462eaa6d5e601f1d3b46e"
+commit_message: "enhance Codex CLI support with wrapped session line format and improved file handling"
+
+summary:
+  total_files_changed: 11
+  total_lines_added: 588
+  total_lines_deleted: 135
+  total_changes: 723
+  ai_lines_added: 334
+  ai_lines_deleted: 119
+  human_lines_added: 254
+  human_lines_deleted: 16
+  ai_percentage: "62.7%"
+  model_count: 2
+
+metrics:
+  first_start_coding_time: "2026-06-07T20:17:26.811Z"
+  time_waiting_for_ai_ms: 135280
+
+agent_info:
+  ide: "Visual Studio Code"
+  models:
+    - "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    - "multiple"
+  interaction_types:
+    - unknown
+
+files:
+  - path: "cmd/blamely/main.go"
+    source: "github-copilot"
+    model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    ai_lines_added: 4
+    ai_lines_deleted: 0
+    human_lines_added: 0
+    human_lines_deleted: 0
+    lines_deleted: 0
+    total_changes: 4
+    ai_percentage: "100.0%"
+    prompts:
+      []
+  - path: "internal/daemon/server_test.go"
+    source: "github-copilot"
+    model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    ai_lines_added: 21
+    ai_lines_deleted: 0
+    human_lines_added: 0
+    human_lines_deleted: 0
+    lines_deleted: 0
+    total_changes: 21
+    ai_percentage: "100.0%"
+    prompts:
+      []
+  - path: "internal/daemon/watcher.go"
+    source: "github-copilot"
+    model: "multiple"
+    ai_lines_added: 8
+    ai_lines_deleted: 1
+    human_lines_added: 0
+    human_lines_deleted: 0
+    lines_deleted: 1
+    total_changes: 9
+    ai_percentage: "100.0%"
+    prompts:
+      []
+  - path: "internal/report/bar.go"
+    source: "github-copilot"
+    model: "multiple"
+    ai_lines_added: 29
+    ai_lines_deleted: 5
+    human_lines_added: 0
+    human_lines_deleted: 2
+    lines_deleted: 7
+    total_changes: 36
+    ai_percentage: "94.4%"
+    prompts:
+      []
+  - path: "internal/report/report.go"
+    source: "multiple"
+    model: "unknown"
+    ai_lines_added: 0
+    ai_lines_deleted: 80
+    human_lines_added: 89
+    human_lines_deleted: 1
+    lines_deleted: 81
+    total_changes: 170
+    ai_percentage: "47.1%"
+    prompts:
+      []
+  - path: "internal/report/stats.go"
+    source: "multiple"
+    model: "unknown"
+    ai_lines_added: 0
+    ai_lines_deleted: 28
+    human_lines_added: 2
+    human_lines_deleted: 0
+    lines_deleted: 28
+    total_changes: 30
+    ai_percentage: "93.3%"
+    prompts:
+      []
+  - path: "internal/report/stats_test.go"
+    source: "multiple"
+    model: "unknown"
+    ai_lines_added: 0
+    ai_lines_deleted: 0
+    human_lines_added: 9
+    human_lines_deleted: 9
+    lines_deleted: 9
+    total_changes: 18
+    ai_percentage: "0.0%"
+    prompts:
+      []
+  - path: "internal/tools/codex.go"
+    source: "github-copilot"
+    model: "multiple"
+    ai_lines_added: 193
+    ai_lines_deleted: 4
+    human_lines_added: 0
+    human_lines_deleted: 3
+    lines_deleted: 7
+    total_changes: 200
+    ai_percentage: "98.5%"
+    prompts:
+      []
+  - path: "internal/tools/codex_test.go"
+    source: "github-copilot"
+    model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    ai_lines_added: 31
+    ai_lines_deleted: 0
+    human_lines_added: 152
+    human_lines_deleted: 0
+    lines_deleted: 0
+    total_changes: 183
+    ai_percentage: "16.9%"
+    prompts:
+      []
+  - path: "internal/tools/debuglog.go"
+    source: "github-copilot"
+    model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    ai_lines_added: 4
+    ai_lines_deleted: 1
+    human_lines_added: 0
+    human_lines_deleted: 1
+    lines_deleted: 2
+    total_changes: 6
+    ai_percentage: "83.3%"
+    prompts:
+      []
+  - path: "internal/tools/lineranges.go"
+    source: "github-copilot"
+    model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+    ai_lines_added: 44
+    ai_lines_deleted: 0
+    human_lines_added: 2
+    human_lines_deleted: 0
+    lines_deleted: 0
+    total_changes: 46
+    ai_percentage: "95.7%"
+    prompts:
+      []
+
+---
+blames:
+  "cmd/blamely/main.go":
+    - lineNumber: 82
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 83
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 84
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/daemon/server_test.go":
+    - lineNumber: 420
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 421
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 422
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 423
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 424
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 425
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 426
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 427
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 428
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 429
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 430
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 431
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 432
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 433
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 434
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 435
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 436
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 437
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 438
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 439
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 440
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/daemon/watcher.go":
+    - lineNumber: 72
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 73
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 74
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 75
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 76
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 77
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 78
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 92
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/report/bar.go":
+    - lineNumber: 13
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 13
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 14
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 14
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 15
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 15
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 16
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 16
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 17
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 17
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 18
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 19
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 20
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 23
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 24
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 25
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 26
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 27
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 28
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 29
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 30
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 31
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 32
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 33
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 34
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 35
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 36
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 37
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 38
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 39
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 40
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 41
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 185
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 186
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 207
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 208
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/report/report.go":
+    - lineNumber: 6
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 8
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 42
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 43
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 43
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 44
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 44
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 45
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 45
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 46
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 46
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 47
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 47
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 48
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 48
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 49
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 50
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 50
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 51
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 51
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 52
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 52
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 54
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 54
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 55
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 56
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 57
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 57
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 58
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 59
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 60
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 61
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 62
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 63
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 64
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 65
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 65
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 66
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 66
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 67
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 67
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 68
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 69
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 70
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 71
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 71
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 72
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 73
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 74
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 75
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 76
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 77
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 77
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 78
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 79
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 80
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 80
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 81
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 81
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 82
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 82
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 83
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 83
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 84
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 84
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 86
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 86
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 87
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 87
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 88
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 88
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 89
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 89
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 90
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 90
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 91
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 91
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 92
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 92
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 93
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 93
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 94
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 94
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 95
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 95
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 96
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 97
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 98
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 99
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 100
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 101
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 102
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 103
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 104
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 104
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 105
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 105
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 106
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 106
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 107
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 107
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 108
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 108
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 109
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 109
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 110
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 110
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 111
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 111
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 112
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 112
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 113
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 113
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 114
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 114
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 115
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 116
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 116
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 117
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 117
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 118
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 118
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 119
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 119
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 120
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 120
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 121
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 121
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 122
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 122
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 123
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 123
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 124
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 124
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 125
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 125
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 126
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 126
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 127
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 127
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 128
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 128
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 129
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 129
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 130
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 130
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 131
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 131
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 132
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 133
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 134
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 135
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 136
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 136
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 137
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 137
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 138
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 139
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 139
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 140
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 141
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 142
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 143
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 144
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 145
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 146
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 147
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 148
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/report/stats.go":
+    - lineNumber: 57
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 58
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 59
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 86
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 87
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 88
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 89
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 90
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 91
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 92
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 93
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 94
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 95
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 96
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 97
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 98
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 99
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 100
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 101
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 102
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 103
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 104
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 105
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 106
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 107
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 108
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 109
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 110
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 111
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+  "internal/report/stats_test.go":
+    - lineNumber: 266
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 266
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 280
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 280
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 297
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 297
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 314
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 314
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 328
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 328
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 342
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 342
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 357
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 357
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 372
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 372
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 383
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 383
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+  "internal/tools/codex.go":
+    - lineNumber: 23
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 23
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 27
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 28
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 29
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 30
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 64
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 66
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 67
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 68
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 69
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 69
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 70
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 97
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 98
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 99
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 100
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 101
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 102
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 103
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 104
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 105
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 106
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 107
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 108
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 109
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 110
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 111
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 112
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 113
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 114
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 115
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 116
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 117
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 219
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 220
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 221
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 222
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 223
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 224
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 225
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 226
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 227
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 228
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 229
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 233
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 234
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 235
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 236
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 237
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 238
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 240
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 241
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 242
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 243
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 244
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 245
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 246
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 247
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 248
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 305
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 306
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 307
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 308
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 309
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 310
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 311
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 312
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 313
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 314
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 315
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 316
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 317
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 318
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 319
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 320
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 321
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 322
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 323
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 324
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 325
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 326
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 327
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 328
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 329
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 330
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 331
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 332
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 333
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 334
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 335
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 336
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 337
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 338
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 339
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 340
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 341
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 342
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 343
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 344
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 345
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 346
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 347
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 348
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 349
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 350
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 351
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 352
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 353
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 354
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 355
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 356
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 357
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 358
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 359
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 360
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 361
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 362
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 363
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 364
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 365
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 366
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 367
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 368
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 369
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 370
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 371
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 372
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 373
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 374
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 375
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 376
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 377
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 378
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 379
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 380
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 381
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 382
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 383
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 384
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 385
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 386
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 387
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 388
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 389
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 390
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 391
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 392
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 393
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 394
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 395
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 396
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 397
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 398
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 399
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 400
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 401
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 402
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 403
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 404
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 405
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 406
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 407
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 408
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 409
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 410
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 411
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 412
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 413
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 414
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 415
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 416
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 417
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 418
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 419
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 420
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 421
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 422
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 423
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 424
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 425
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 426
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 427
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 428
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 429
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 430
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 431
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 432
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 433
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 434
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 435
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 436
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 437
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 438
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 439
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 440
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 441
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 442
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 443
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 444
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilotcli/claude-haiku-4.5"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/tools/codex_test.go":
+    - lineNumber: 6
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 283
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 284
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 285
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 286
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 287
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 288
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 289
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 290
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 291
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 292
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 293
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 294
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 295
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 296
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 297
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 298
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 299
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 300
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 301
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 302
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 303
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 304
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 305
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 306
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 307
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 308
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 309
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 310
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 311
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 312
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 313
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 314
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 315
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 316
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 317
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 318
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 319
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 320
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 321
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 322
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 323
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 324
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 325
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 326
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 327
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 328
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 329
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 330
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 331
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 332
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 333
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 334
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 335
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 336
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 337
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 338
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 339
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 340
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 341
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 342
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 343
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 344
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 345
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 346
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 347
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 348
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 349
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 350
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 351
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 352
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 353
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 354
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 355
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 356
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 357
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 358
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 359
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 360
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 361
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 362
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 363
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 364
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 365
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 366
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 367
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 368
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 369
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 370
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 371
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 372
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 373
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 374
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 375
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 376
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 377
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 378
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 379
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 380
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 381
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 382
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 383
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 384
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 385
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 386
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 387
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 388
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 389
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 390
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 391
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 392
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 393
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 394
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 395
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 396
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 397
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 398
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 399
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 400
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 401
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 402
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 403
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 404
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 405
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 406
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 407
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 408
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 409
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 410
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 411
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 412
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 413
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 414
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 415
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 416
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 417
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 418
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 419
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 420
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 421
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 422
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 423
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 424
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 425
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 426
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 427
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 428
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 429
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 430
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 431
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 432
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 474
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 475
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 476
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 477
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 478
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 479
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 480
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 481
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 482
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 483
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 484
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 485
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 486
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 487
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 488
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 489
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 490
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 491
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 492
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 493
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 494
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 495
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 496
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 497
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 498
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 499
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 500
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 501
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 502
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 503
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 504
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 505
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/tools/debuglog.go":
+    - lineNumber: 299
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 299
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "unknown"
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 300
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 308
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "DELETE"
+      codingType: "TYPING"
+    - lineNumber: 309
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 310
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+  "internal/tools/lineranges.go":
+    - lineNumber: 10
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 11
+      authorType: "HUMAN"
+      provider: null
+      model: null
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 81
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 82
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 83
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 84
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 85
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 86
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 87
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 88
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 89
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 90
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 91
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 92
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 93
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 94
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 95
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 96
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 97
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 98
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 99
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 100
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 101
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 102
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 103
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 104
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 105
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 106
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 107
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 108
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 109
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 110
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 111
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 112
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 113
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 114
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 115
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 116
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 117
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 118
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 119
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 120
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 121
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 122
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 123
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
+    - lineNumber: 124
+      authorType: "AI"
+      provider: "github-copilot"
+      model: "copilot/gemini-3.1-pro-preview/gemini-3.1-pro-preview"
+      changeType: "ADD"
+      codingType: "TYPING"
