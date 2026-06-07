@@ -1,0 +1,156 @@
+{
+  "schema": 2,
+  "commit": "ea1ff57017ca9fb9f9237fb6c52f8db7f65542ec",
+  "branch": "main",
+  "base_sha": "6df0a6dbb37ad0c5acac396ed6d91ce2aab5ff3b",
+  "message": "refactor NoteConfig to adjust default values for conversation toggles and improve documentation",
+  "coding_time_nanos": 165668920000,
+  "totals": {
+    "ai_lines": 22,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 4,
+    "tokens": {
+      "input": 12,
+      "output": 3162,
+      "cache_read": 289681,
+      "cache_write": 103187
+    },
+    "models": {
+      "claude-opus-4-8": 7,
+      "claude-sonnet-4-6": 15
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 22,
+      "suggested_lines": 22,
+      "accepted_lines": 22,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 12,
+        "output": 3162,
+        "cache_read": 289681,
+        "cache_write": 103187
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 22,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": "internal/config/config.go",
+      "type": "MODIFIED",
+      "added": 9,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 15,
+          "end": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 34,
+          "end": 36,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 58,
+          "end": 58,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/config/config_test.go",
+      "type": "MODIFIED",
+      "added": 6,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 46,
+          "end": 48,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 53,
+          "end": 55,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/server.go",
+      "type": "MODIFIED",
+      "added": 1,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 104,
+          "end": 104,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/store/db.go",
+      "type": "MODIFIED",
+      "added": 6,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 128,
+          "end": 133,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "contiue"
+    },
+    {
+      "role": "user",
+      "text": "config.json assitance message should be default value false"
+    },
+    {
+      "role": "user",
+      "text": "This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.\n\nSummary:\n1. Primary Request and Intent:\n   This session covered three sequential threads, all building on a prior investigation into gutter attribu…"
+    }
+  ]
+}
