@@ -1,0 +1,231 @@
+{
+  "schema": 2,
+  "commit": "0595bd90c26ac686df73418d1d1e5bc0a664e726",
+  "branch": "main",
+  "base_sha": "315305f1ba623f7a57a9e0360d82b9925d6bcbb8",
+  "message": "add Gemini CLI support for tracing attribution and enhance error handling in daemon installation",
+  "totals": {
+    "ai_lines": 2204,
+    "human_lines": 324,
+    "deleted_lines": 0,
+    "files": 11,
+    "tokens": {
+      "input": 21,
+      "output": 19999,
+      "cache_read": 1359899,
+      "cache_write": 16717
+    },
+    "models": {
+      "claude-opus-4-8": 457,
+      "claude-sonnet-4-6": 1747
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 2204,
+      "suggested_lines": 2213,
+      "accepted_lines": 2204,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 21,
+        "output": 19999,
+        "cache_read": 1359899,
+        "cache_write": 16717
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 2204,
+    "cli": 0,
+    "completion": 0,
+    "human": 324
+  },
+  "files": [
+    {
+      "path": "internal/config/config_extended_test.go",
+      "type": "ADDED",
+      "added": 317,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 317,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/fsevents.go",
+      "type": "ADDED",
+      "added": 94,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 94,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/fsevents_test.go",
+      "type": "ADDED",
+      "added": 87,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 87,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/detect_test.go",
+      "type": "ADDED",
+      "added": 204,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 204,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/editorext.go",
+      "type": "ADDED",
+      "added": 166,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 166,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/jetbrainsplugin.go",
+      "type": "ADDED",
+      "added": 324,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 324,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/ui.go",
+      "type": "ADDED",
+      "added": 58,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 58,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/stats_test.go",
+      "type": "ADDED",
+      "added": 388,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 388,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/store/fsevents.go",
+      "type": "ADDED",
+      "added": 97,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 97,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/store/fsevents_test.go",
+      "type": "ADDED",
+      "added": 179,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 179,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-opus-4-8",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/store/queries_extended_test.go",
+      "type": "ADDED",
+      "added": 614,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 614,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0"
+}
