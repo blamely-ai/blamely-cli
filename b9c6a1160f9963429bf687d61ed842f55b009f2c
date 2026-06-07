@@ -1,0 +1,57 @@
+{
+  "schema": 2,
+  "commit": "b9c6a1160f9963429bf687d61ed842f55b009f2c",
+  "branch": "main",
+  "base_sha": "24119d3b0734ab9559bbba86fb863303a53330fe",
+  "message": "add AntigravityGeminiWatcher for processing transcript logs and emitting chat edits",
+  "coding_time_nanos": 52327379000,
+  "totals": {
+    "ai_lines": 3,
+    "human_lines": 0,
+    "deleted_lines": 0,
+    "files": 1,
+    "models": {
+      "default": 3
+    }
+  },
+  "by_tool": {
+    "cursor": {
+      "lines": 3,
+      "suggested_lines": 284,
+      "accepted_lines": 3,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 3,
+    "cli": 0,
+    "completion": 0,
+    "human": 0
+  },
+  "files": [
+    {
+      "path": "internal/tools/antigravity_chat_test.go",
+      "type": "MODIFIED",
+      "added": 3,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 177,
+          "end": 179,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\nRun go test ./...\n?   \tgithub.com/blamely/blamely/cmd/blamely\t[no test files]\nok  \tgithub.com/blamely/blamely/internal/config\t0.092s\nok  \tgithub.com/blamely/blamely/internal/daemon\t11.257s\nok  \tgithub.com/blamely/blamely/internal/gitnotes\t5.224s\nok  \tgithub.com/blamely/blamely/internal/…"
+    }
+  ]
+}
