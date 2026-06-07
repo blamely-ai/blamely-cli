@@ -1,0 +1,804 @@
+{
+  "schema": 2,
+  "commit": "315305f1ba623f7a57a9e0360d82b9925d6bcbb8",
+  "branch": "main",
+  "base_sha": "ea1ff57017ca9fb9f9237fb6c52f8db7f65542ec",
+  "message": "add Gemini CLI support for tracing attribution and enhance error handling in daemon installation",
+  "coding_time_nanos": 14304452742000,
+  "totals": {
+    "ai_lines": 291,
+    "human_lines": 30,
+    "deleted_lines": 12,
+    "files": 7,
+    "tokens": {
+      "input": 40,
+      "output": 15383,
+      "cache_read": 2049271,
+      "cache_write": 27772
+    },
+    "models": {
+      "claude-sonnet-4-6": 291
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 291,
+      "suggested_lines": 711,
+      "accepted_lines": 291,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 40,
+        "output": 15383,
+        "cache_read": 2049271,
+        "cache_write": 27772
+      }
+    }
+  },
+  "by_gen_type": {
+    "chat": 291,
+    "cli": 0,
+    "completion": 0,
+    "human": 42
+  },
+  "files": [
+    {
+      "path": "cmd/blamely/main.go",
+      "type": "MODIFIED",
+      "added": 11,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 336,
+          "end": 336,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 374,
+          "end": 383,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/daemon/server.go",
+      "type": "MODIFIED",
+      "added": 1,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 181,
+          "end": 181,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/agent_windows.go",
+      "type": "MODIFIED",
+      "added": 7,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 14,
+          "end": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 29,
+          "end": 29,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/install.go",
+      "type": "MODIFIED",
+      "added": 144,
+      "deleted": 11,
+      "lines": [
+        {
+          "start": 7,
+          "end": 7,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 44,
+          "end": 44,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 56,
+          "end": 62,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 69,
+          "end": 69,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 71,
+          "end": 71,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 75,
+          "end": 75,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 84,
+          "end": 84,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 86,
+          "end": 86,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 90,
+          "end": 90,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 99,
+          "end": 99,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 101,
+          "end": 101,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 105,
+          "end": 105,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 114,
+          "end": 114,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 116,
+          "end": 116,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 120,
+          "end": 120,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 129,
+          "end": 129,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 131,
+          "end": 131,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 131,
+          "end": 131,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 135,
+          "end": 135,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 146,
+          "end": 146,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 148,
+          "end": 148,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 151,
+          "end": 170,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 170,
+          "end": 170,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 171,
+          "end": 173,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 174,
+          "end": 180,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 181,
+          "end": 181,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 182,
+          "end": 193,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 194,
+          "end": 194,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 194,
+          "end": 194,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 195,
+          "end": 195,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 195,
+          "end": 195,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 196,
+          "end": 196,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 196,
+          "end": 196,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 197,
+          "end": 198,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 199,
+          "end": 209,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 218,
+          "end": 218,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 225,
+          "end": 225,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 228,
+          "end": 230,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 232,
+          "end": 232,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 237,
+          "end": 237,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 239,
+          "end": 239,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 243,
+          "end": 246,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 248,
+          "end": 248,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 250,
+          "end": 250,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 252,
+          "end": 252,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 256,
+          "end": 256,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 258,
+          "end": 258,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 260,
+          "end": 260,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 294,
+          "end": 297,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 304,
+          "end": 304,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 308,
+          "end": 308,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 313,
+          "end": 316,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 317,
+          "end": 319,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 320,
+          "end": 320,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 348,
+          "end": 362,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 364,
+          "end": 368,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 381,
+          "end": 381,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 383,
+          "end": 383,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 386,
+          "end": 390,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 395,
+          "end": 395,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 397,
+          "end": 397,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 399,
+          "end": 399,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 402,
+          "end": 402,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 404,
+          "end": 405,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/state.go",
+      "type": "MODIFIED",
+      "added": 23,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 15,
+          "end": 28,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 29,
+          "end": 33,
+          "type": "add",
+          "author_type": "Human",
+          "gen_type": "human"
+        },
+        {
+          "start": 34,
+          "end": 37,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/store/queries.go",
+      "type": "MODIFIED",
+      "added": 36,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 19,
+          "end": 19,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 689,
+          "end": 723,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/tools/debuglog.go",
+      "type": "MODIFIED",
+      "added": 99,
+      "deleted": 1,
+      "lines": [
+        {
+          "start": 195,
+          "end": 221,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 221,
+          "end": 221,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 222,
+          "end": 261,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 263,
+          "end": 263,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 280,
+          "end": 310,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "given error"
+    },
+    {
+      "role": "user",
+      "text": "\u003cide_opened_file\u003eThe user opened the file /Users/abdulkerimatik/development/workspace/blamely/blamely-cli/internal/install/agent_windows.go in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
+    },
+    {
+      "role": "user",
+      "text": "[Request interrupted by user for tool use]"
+    },
+    {
+      "role": "user",
+      "text": "when use gemini in anti gravity it is not detected ai chat"
+    },
+    {
+      "role": "user",
+      "text": "[Request interrupted by user for tool use]"
+    },
+    {
+      "role": "user",
+      "text": "\u003cide_opened_file\u003eThe user opened the file /Users/abdulkerimatik/.antigravity/argv.json in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
+    },
+    {
+      "role": "user",
+      "text": "[Request interrupted by user for tool use]"
+    }
+  ]
+}
