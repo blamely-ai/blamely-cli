@@ -1,0 +1,109 @@
+{
+  "schema": 2,
+  "commit": "06e1e507d5ae38150d857ce9111b756317643edc",
+  "branch": "main",
+  "base_sha": "128b0732c5286d135df35b8413d978b9d4eb9385",
+  "message": "enhance Windows daemon installation with admin check and fallback to Startup folder",
+  "coding_time_nanos": 203286940000,
+  "totals": {
+    "ai_lines": 18,
+    "human_lines": 0,
+    "deleted_lines": 3,
+    "files": 1,
+    "models": {
+      "default": 18
+    }
+  },
+  "by_tool": {
+    "cursor": {
+      "lines": 18,
+      "suggested_lines": 131,
+      "accepted_lines": 18,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 18,
+    "cli": 0,
+    "completion": 0,
+    "human": 3
+  },
+  "files": [
+    {
+      "path": "internal/install/agent_windows.go",
+      "type": "MODIFIED",
+      "added": 18,
+      "deleted": 3,
+      "lines": [
+        {
+          "start": 21,
+          "end": 25,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 27,
+          "end": 31,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 32,
+          "end": 33,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 34,
+          "end": 34,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 34,
+          "end": 34,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 35,
+          "end": 36,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 39,
+          "end": 43,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\ngive relese note\n\u003c/user_query\u003e"
+    },
+    {
+      "role": "user",
+      "text": "[Image]\n\u003cimage_files\u003e\nThe following images were provided by the user and saved to the workspace for future use:\n1. /Users/abdulkerimatik/.cursor/projects/Users-abdulkerimatik-development-workspace-blamely-blamely-cli/assets/WhatsApp_Image_2026-06-08_at_11.04.07-605bbcd9-34e2-421b-9fee-799d0485ed79.p…"
+    }
+  ]
+}
