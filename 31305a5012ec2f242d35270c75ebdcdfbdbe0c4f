@@ -1,0 +1,264 @@
+{
+  "schema": 2,
+  "commit": "31305a5012ec2f242d35270c75ebdcdfbdbe0c4f",
+  "branch": "main",
+  "base_sha": "b9c6a1160f9963429bf687d61ed842f55b009f2c",
+  "message": "add blame command for per-line attribution of file revisions",
+  "coding_time_nanos": 5160755369000,
+  "totals": {
+    "ai_lines": 360,
+    "human_lines": 0,
+    "deleted_lines": 76,
+    "files": 6,
+    "tokens": {
+      "input": 14,
+      "output": 6615,
+      "cache_read": 535049,
+      "cache_write": 8833
+    },
+    "models": {
+      "claude-sonnet-4-6": 285,
+      "default": 75
+    }
+  },
+  "by_tool": {
+    "claude": {
+      "lines": 285,
+      "suggested_lines": 291,
+      "accepted_lines": 285,
+      "model": "claude-sonnet-4-6",
+      "tokens": {
+        "input": 14,
+        "output": 6615,
+        "cache_read": 535049,
+        "cache_write": 8833
+      }
+    },
+    "cursor": {
+      "lines": 75,
+      "suggested_lines": 122,
+      "accepted_lines": 75,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 360,
+    "cli": 0,
+    "completion": 0,
+    "human": 76
+  },
+  "files": [
+    {
+      "path": "cmd/blamely/main.go",
+      "type": "MODIFIED",
+      "added": 15,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 45,
+          "end": 45,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 279,
+          "end": 292,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/agent_windows.go",
+      "type": "MODIFIED",
+      "added": 75,
+      "deleted": 1,
+      "lines": [
+        {
+          "start": 8,
+          "end": 8,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 10,
+          "end": 14,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 19,
+          "end": 20,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 22,
+          "end": 37,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 43,
+          "end": 43,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 53,
+          "end": 53,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 62,
+          "end": 108,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 110,
+          "end": 112,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/editorext.go",
+      "type": "MODIFIED",
+      "added": 10,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 60,
+          "end": 61,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 85,
+          "end": 89,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 91,
+          "end": 91,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        },
+        {
+          "start": 93,
+          "end": 94,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/install.go",
+      "type": "MODIFIED",
+      "added": 2,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 168,
+          "end": 169,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/blame.go",
+      "type": "ADDED",
+      "added": 258,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 258,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "claude",
+          "model": "claude-sonnet-4-6",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/report/report.go",
+      "type": "MODIFIED",
+      "added": 0,
+      "deleted": 75,
+      "lines": [
+        {
+          "start": 61,
+          "end": 64,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 151,
+          "end": 221,
+          "type": "delete",
+          "author_type": "Human"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cide_opened_file\u003eThe user opened the file /Users/abdulkerimatik/development/workspace/blamely/blamely-cli/.gitignore in the IDE. This may or may not be related to the current task.\u003c/ide_opened_file\u003e"
+    },
+    {
+      "role": "user",
+      "text": "VS Code                  extension already installed · Blamely.blamely\nshow like this why not updated?"
+    }
+  ]
+}
