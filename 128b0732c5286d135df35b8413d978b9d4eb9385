@@ -1,0 +1,203 @@
+{
+  "schema": 2,
+  "commit": "128b0732c5286d135df35b8413d978b9d4eb9385",
+  "branch": "main",
+  "base_sha": "31305a5012ec2f242d35270c75ebdcdfbdbe0c4f",
+  "message": "enhance PATH installation and verification for cross-platform compatibility",
+  "coding_time_nanos": 331879407000,
+  "totals": {
+    "ai_lines": 224,
+    "human_lines": 0,
+    "deleted_lines": 65,
+    "files": 5,
+    "models": {
+      "default": 224
+    }
+  },
+  "by_tool": {
+    "cursor": {
+      "lines": 224,
+      "suggested_lines": 1006,
+      "accepted_lines": 224,
+      "model": "default"
+    }
+  },
+  "by_gen_type": {
+    "chat": 224,
+    "cli": 0,
+    "completion": 0,
+    "human": 65
+  },
+  "files": [
+    {
+      "path": "internal/install/doctor.go",
+      "type": "MODIFIED",
+      "added": 11,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 7,
+          "end": 7,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 131,
+          "end": 133,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 138,
+          "end": 144,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/install.go",
+      "type": "MODIFIED",
+      "added": 11,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 7,
+          "end": 7,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 240,
+          "end": 244,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 246,
+          "end": 250,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/path.go",
+      "type": "MODIFIED",
+      "added": 4,
+      "deleted": 65,
+      "lines": [
+        {
+          "start": 37,
+          "end": 38,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 39,
+          "end": 48,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 49,
+          "end": 49,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 49,
+          "end": 51,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 52,
+          "end": 52,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        },
+        {
+          "start": 52,
+          "end": 102,
+          "type": "delete",
+          "author_type": "Human"
+        },
+        {
+          "start": 114,
+          "end": 114,
+          "type": "delete",
+          "author_type": "Human"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/path_unix.go",
+      "type": "ADDED",
+      "added": 70,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 70,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    },
+    {
+      "path": "internal/install/path_windows.go",
+      "type": "ADDED",
+      "added": 128,
+      "deleted": 0,
+      "lines": [
+        {
+          "start": 1,
+          "end": 128,
+          "type": "add",
+          "author_type": "AI",
+          "tool": "cursor",
+          "model": "default",
+          "gen_type": "chat"
+        }
+      ]
+    }
+  ],
+  "generated_by": "blamely 0.1.0",
+  "conversation": [
+    {
+      "role": "user",
+      "text": "\u003cuser_query\u003e\nplease fix @web-site-ui/public/blamely-windows-instal.ps1  checks PATH with ; on Windows (not :)\n\u003c/user_query\u003e"
+    }
+  ]
+}
