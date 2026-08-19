@@ -29,7 +29,7 @@ const (
 // is required and the rest are best-effort metadata.
 type Author struct {
 	Type    AuthorType `json:"author"`
-	Tool    string     `json:"tool,omitempty"`     // "claude" | "cursor" | "codex" | "copilot" | "gemini" | ...
+	Tool    string     `json:"tool,omitempty"`     // "claude" | "cursor" | "codex" | "copilot" | "gemini" | "devin" | ...
 	Model   string     `json:"model,omitempty"`    // e.g. "claude-opus-4-8"
 	GenType string     `json:"gen_type,omitempty"` // "chat" | "cli" | "completion" | "human"
 	Session string     `json:"session,omitempty"`  // session/conversation id, if known

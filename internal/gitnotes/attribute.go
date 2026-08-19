@@ -599,6 +599,13 @@ func attributeAndWriteEx(repoPath, sha string, replayOverride *replayCtx) (*Note
 	// while we still have the working tree handy.
 	note.Branch = BranchName(repoPath)
 	note.Message = CommitMessage(repoPath, sha)
+	// Last resort, and only when nothing was observed locally: credit the agent
+	// named in a Co-Authored-By trailer. This is what rescues work done off this
+	// machine — a Devin Cloud session edits a remote sandbox and arrives as a
+	// finished branch, so no hook ever fired and every line would read as Human.
+	// Runs after note.Message is populated, and after every observed-edit
+	// backfill above, so it can never outrank real line-level evidence.
+	backfillFromCommitTrailer(note, note.Message)
 	// Coding time: earliest observed edit (within an 8h lookback) → commit
 	// timestamp. Falls back to 0 if no edits were recorded for this repo.
 	note.CodingTimeNanos = db.SessionDurationNanos(repoID, commitNanos)

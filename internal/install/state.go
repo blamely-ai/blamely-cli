@@ -21,6 +21,7 @@ type State struct {
 	CodexHookAdded     bool      `json:"codex_hook_added"`
 	CopilotHookAdded   bool      `json:"copilot_hook_added"`
 	GeminiHookAdded    bool      `json:"gemini_hook_added"`
+	DevinHookAdded     bool      `json:"devin_hook_added"`
 	// EditorExtensionsInstalled lists the editors (by label, e.g. "VS Code",
 	// "Cursor", "Antigravity IDE") whose Blamely marketplace extension THIS
 	// tool installed — never extensions the user installed themselves — so

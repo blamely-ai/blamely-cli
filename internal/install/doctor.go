@@ -140,6 +140,16 @@ func (d *doctor) gitHook() {
 	} else {
 		d.ok("post-commit script", hookFile)
 	}
+	// post-merge is what attributes work committed by someone else — a cloud
+	// agent's branch arrives by pull, so post-commit never sees it. Only a
+	// warning: everything a user commits locally still works without it.
+	mergeHook := hooksDir + "/post-merge"
+	if _, err := os.Stat(mergeHook); err != nil {
+		d.warn("post-merge script", fmt.Sprintf("missing (%s)", mergeHook),
+			"`blamely install` writes it; without it, pulled commits authored by a cloud agent aren't attributed")
+	} else {
+		d.ok("post-merge script", mergeHook)
+	}
 }
 
 func (d *doctor) path() {
@@ -204,6 +214,7 @@ func (d *doctor) hooks() {
 		{tool: "Codex (~/.codex/config.toml + custom)", paths: config.CodexConfigPaths, marker: "record codex", requires: det.Codex.Present},
 		{tool: "Copilot (~/.copilot/hooks/blamely.json)", path: config.CopilotBlamelyHookPath, marker: "record copilot", requires: det.Copilot.Present},
 		{tool: "Gemini (~/.gemini/settings.json)", path: config.GeminiSettingsPath, marker: "record gemini", requires: det.Gemini.Present},
+		{tool: "Devin (~/.config/devin/config.json)", path: config.DevinConfigPath, marker: "record devin", requires: det.Devin.Present},
 	}
 	for _, c := range checks {
 		// Resolve the location(s) to check. `paths` (union of default + custom) wins

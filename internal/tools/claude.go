@@ -110,10 +110,19 @@ func cursorGenType(p claudeHookPayload) string {
 // Claude Code AND Cursor — they share the same hooks framework. The payload
 // is distinguished by the presence of `cursor_version`: Cursor payloads
 // include it, Claude Code payloads do not.
+//
+// It also fields payloads from Devin CLI. Devin reads user-level hooks out of
+// ~/.claude/settings.json and ~/.claude.json in addition to its own config, so
+// on a machine running both, the `record claude` hook blamely installs is fired
+// by Devin too. Left alone that files every Devin edit under claude; the
+// IsDevinHookPayload check below reroutes them to the Devin recorder.
 func RecordClaudeFromStdin(r io.Reader) error {
 	raw, err := readHookPayload(r)
 	if err != nil {
 		return err
+	}
+	if IsDevinHookPayload(raw) {
+		return recordDevinPayload(raw)
 	}
 	var p claudeHookPayload
 	if err := json.Unmarshal(raw, &p); err != nil {

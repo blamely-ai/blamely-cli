@@ -474,7 +474,7 @@ func validateAndStore(db *store.DB, p EditPayload) error {
 	}
 	switch tool {
 	case "",
-		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolCopyPaste,
+		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolCopyPaste,
 		store.ToolHuman: // accepted only so the daemon doesn't reject legacy clients mid-upgrade
 	default:
 		return fmt.Errorf("unknown tool %q", p.Tool)

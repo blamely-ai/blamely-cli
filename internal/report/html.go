@@ -145,6 +145,7 @@ var toolGlyphs = map[string]struct {
 	"codex":   {"#19c37d", template.HTML(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 7.5 5 12l4.5 4.5M14.5 7.5 19 12l-4.5 4.5"/></svg>`)},
 	"copilot": {"#a371f7", template.HTML(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 7c1.6-2 3.4-2.6 5-2 1.4.5 1.6 2.3 1.4 4M12 7c-1.6-2-3.4-2.6-5-2C5.6 5.5 5.4 7.3 5.6 9.2"/><rect x="3.2" y="9" width="17.6" height="8.4" rx="4.2"/><circle cx="9" cy="13.2" r="1.25" fill="currentColor" stroke="none"/><circle cx="15" cy="13.2" r="1.25" fill="currentColor" stroke="none"/></svg>`)},
 	"gemini":  {"#4f9cf0", template.HTML(`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.4 5.4 4.2 9.2 9.6 9.6C16.2 12 12.4 15.8 12 21.2 11.6 15.8 7.8 12 2.4 11.6 7.8 11.2 11.6 7.4 12 2z"/></svg>`)},
+	"devin":   {"#4b8dd6", template.HTML(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 2.8 20.2 7v10L12 21.2 3.8 17V7z"/><path d="M12 8.2 16 10.5v4L12 16.8 8 14.5v-4z" fill="currentColor" stroke="none"/></svg>`)},
 }
 
 const (
@@ -427,7 +428,7 @@ func buildLeaderToolEntries(note *gitnotes.Note) []struct {
 		name  string
 		lines int
 	}, 0, 5)
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
 		tl, ok := note.ByTool[name]
 		if !ok || (tl.Lines == 0 && tl.DeletedLines == 0) {
 			continue
@@ -473,7 +474,7 @@ func toolForModel(model string) string {
 // its authored lines, model, acceptance, and tokens. Bar widths are relative to
 // the busiest tool.
 func buildTools(note *gitnotes.Note) []htmlTool {
-	order := []string{"claude", "cursor", "codex", "copilot", "gemini"}
+	order := []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"}
 	maxLines := 1
 	for _, name := range order {
 		if tl, ok := note.ByTool[name]; ok && tl.Lines+tl.DeletedLines > maxLines {

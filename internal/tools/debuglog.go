@@ -314,6 +314,34 @@ func DebugGeminiLogs(ctx context.Context, out io.Writer) error {
 	return nil
 }
 
+// DebugDevinLogs is the Devin CLI twin of DebugGeminiLogs: there is no passive
+// log to tail, so it traces the database for new tool=devin rows.
+func DebugDevinLogs(ctx context.Context, out io.Writer) error {
+	fmt.Fprintln(out, "Devin CLI attribution is hook-driven: the PostToolUse hook pipes each tool")
+	fmt.Fprintln(out, "call to `blamely record devin`, which POSTs directly to the daemon's /edit")
+	fmt.Fprintln(out, "endpoint — there is no passive log file to tail, so this traces the")
+	fmt.Fprintln(out, "database directly: every new tool=devin row is printed the moment it's")
+	fmt.Fprintln(out, "recorded. Trigger an edit in Devin CLI now and watch for it below. Nothing")
+	fmt.Fprintln(out, "is written to the database by this command. Ctrl-C to stop.")
+	fmt.Fprintln(out)
+	fmt.Fprintln(out, "Scope: this covers the LOCAL Devin CLI only. A Devin Cloud session edits")
+	fmt.Fprintln(out, "files inside a remote sandbox and reaches this machine as an ordinary git")
+	fmt.Fprintln(out, "pull, so no hook fires and nothing will appear here for those commits.")
+	fmt.Fprintln(out)
+	fmt.Fprintln(out, "If nothing appears after you edit a file via Devin CLI, check:")
+	fmt.Fprintln(out, "  1. ~/.config/devin/config.json has a PostToolUse hook running")
+	fmt.Fprintln(out, "     `blamely record devin` (run `blamely doctor` or `blamely install`).")
+	fmt.Fprintln(out, "  2. The daemon is running (`blamely status`).")
+	fmt.Fprintln(out, "  3. `echo '<hook payload>' | blamely record devin` prints no error.")
+	fmt.Fprintln(out, "     A rejection (e.g. \"daemon rejected: 400 ...\") prints directly to")
+	fmt.Fprintln(out, "     this command's own output — the daemon does NOT log rejected or")
+	fmt.Fprintln(out, "     malformed POSTs to ~/.blamely/daemon.log, so check here first.")
+	fmt.Fprintln(out)
+
+	tailToolEdits(ctx, out, store.ToolDevin, "devin_hook")
+	return nil
+}
+
 // homeDir returns the user's home directory (best-effort).
 func homeDir() string {
 	h, _ := config.Home()

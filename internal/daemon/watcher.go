@@ -35,7 +35,7 @@ type Sink interface {
 // keeps the original timing.
 type Event struct {
 	When       time.Time
-	Tool       string // claude|cursor|codex|copilot
+	Tool       string // claude|cursor|codex|copilot|gemini|devin
 	Confidence string // high|medium|low — defaulted from Tool if blank
 	// GenType describes how the edit was produced.
 	// Values: chat | cli | completion | unknown
@@ -110,7 +110,7 @@ func (s *dbSink) Record(ev Event) error {
 	}
 	switch tool {
 	case "",
-		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolCopyPaste,
+		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolCopyPaste,
 		store.ToolHuman: // accepted for legacy in-flight events; new emissions should use ""
 	default:
 		return fmt.Errorf("watcher sink: unknown tool %q", ev.Tool)

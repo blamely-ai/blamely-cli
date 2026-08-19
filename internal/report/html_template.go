@@ -131,7 +131,7 @@ body{
 .acc{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:11.5px;color:var(--dim)}
 .acc b{color:var(--acc2)}
 /* tools */
-.t-claude{--tc:#d97757}.t-cursor{--tc:#cdd3da}.t-codex{--tc:#19c37d}.t-copilot{--tc:#a371f7}.t-gemini{--tc:#5aa2f5}
+.t-claude{--tc:#d97757}.t-cursor{--tc:#cdd3da}.t-codex{--tc:#19c37d}.t-copilot{--tc:#a371f7}.t-gemini{--tc:#5aa2f5}.t-devin{--tc:#4b8dd6}
 .tlist{display:flex;flex-direction:column;gap:15px}
 .trow{display:flex;gap:13px;align-items:flex-start}
 .tav{width:36px;height:36px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;
@@ -294,7 +294,7 @@ body{
 
     {{if .Tools}}
     <div class="card">
-      <div class="ct"><div class="l"><span class="dot"></span><span class="t">Tools</span><span class="tip"><span class="tipq">i</span><span class="tipbox"><span class="th">How blamely attributes each line</span><div class="tiprow"><span class="sw sw-ai"></span><span><b>AI</b> — written by an AI tool (Copilot, Cursor, Claude, Codex, Gemini)</span></div><div class="tiprow"><span class="sw sw-human"></span><span><b>Human</b> — typed by you</span></div><div class="tiprow"><span class="sw sw-paste"></span><span><b>Copy&amp;Paste</b> — pasted from the clipboard; counts as human, tracked as its own bucket</span></div></span></span></div><span class="r mono">usage</span></div>
+      <div class="ct"><div class="l"><span class="dot"></span><span class="t">Tools</span><span class="tip"><span class="tipq">i</span><span class="tipbox"><span class="th">How blamely attributes each line</span><div class="tiprow"><span class="sw sw-ai"></span><span><b>AI</b> — written by an AI tool (Copilot, Cursor, Claude, Codex, Gemini, Devin)</span></div><div class="tiprow"><span class="sw sw-human"></span><span><b>Human</b> — typed by you</span></div><div class="tiprow"><span class="sw sw-paste"></span><span><b>Copy&amp;Paste</b> — pasted from the clipboard; counts as human, tracked as its own bucket</span></div></span></span></div><span class="r mono">usage</span></div>
       <div class="tlist">
         {{range .Tools}}
         <div class="trow t-{{.Name}}">

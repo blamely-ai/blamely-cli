@@ -188,6 +188,21 @@ func Run(installPlugins bool) error {
 		info("Gemini CLI", "not detected — skipped")
 	}
 
+	if detected.Devin.Present {
+		added, configPath, err := InstallDevinHook(binPath)
+		if err != nil {
+			return fmt.Errorf("devin hook: %w", err)
+		}
+		if added {
+			ok("Devin CLI", configPath)
+		} else {
+			info("Devin CLI", "hook already present · "+configPath)
+		}
+		s.DevinHookAdded = true
+	} else {
+		info("Devin CLI", "not detected — skipped")
+	}
+
 	prior, hadPrior, err := InstallGitHook(binPath)
 	if err != nil {
 		return fmt.Errorf("git hook: %w", err)
@@ -458,6 +473,10 @@ func Uninstall(keepDB bool) error {
 		_, err := UninstallGeminiHook()
 		report("removed Gemini record hook from ~/.gemini/settings.json", err)
 	}
+	if s.DevinHookAdded {
+		_, err := UninstallDevinHook()
+		report("removed Devin record hook from ~/.config/devin/config.json", err)
+	}
 	// Don't rely solely on state: the extension may have been already present
 	// when install ran (tracked as "Updated", not "Installed"), installed by the
 	// user from the marketplace, or predate state tracking. Discover every
@@ -607,6 +626,7 @@ func printDetected(d *Detected) {
 		{"Codex CLI", d.Codex},
 		{"GitHub Copilot", d.Copilot},
 		{"Gemini CLI", d.Gemini},
+		{"Devin CLI", d.Devin},
 	} {
 		hint := ""
 		if h := row.p.FirstHint(); h != "" {
@@ -630,8 +650,8 @@ func printNextSteps(d *Detected) {
 	} else {
 		fmt.Fprintln(uiOut, "  · Claude Code wasn't detected. Install it, run `blamely install` again, or add the hook manually.")
 	}
-	if !d.Cursor.Present || !d.Codex.Present || !d.Copilot.Present || !d.Gemini.Present {
-		fmt.Fprintln(uiOut, "  · Install Cursor/Codex/Copilot/Gemini later? Run `blamely repair` to wire up its hook (`blamely doctor` checks first).")
+	if !d.Cursor.Present || !d.Codex.Present || !d.Copilot.Present || !d.Gemini.Present || !d.Devin.Present {
+		fmt.Fprintln(uiOut, "  · Install Cursor/Codex/Copilot/Gemini/Devin later? Run `blamely repair` to wire up its hook (`blamely doctor` checks first).")
 	}
 	fmt.Fprintln(uiOut, "  · `blamely status` shows the daemon health.")
 	fmt.Fprintln(uiOut, "  · `blamely uninstall` reverses every change above.")

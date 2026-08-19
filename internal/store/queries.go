@@ -17,6 +17,12 @@ const (
 	ToolCodex   Tool = "codex"
 	ToolCopilot Tool = "copilot"
 	ToolGemini  Tool = "gemini"
+	// ToolDevin is Devin CLI — Cognition's local terminal agent, recorded via
+	// its Claude-Code-compatible PostToolUse hook. Note this covers the LOCAL
+	// CLI only: Devin Cloud sessions edit files in a remote sandbox that never
+	// touches this machine, so those arrive as an ordinary `git pull` and are
+	// invisible to the daemon.
+	ToolDevin Tool = "devin"
 	// ToolHuman is retained ONLY to recognise legacy rows written before the
 	// human/tool split. New code never writes this value — human-typed code
 	// is represented by tool="" + gen_type=GenTypeHuman. Readers normalise

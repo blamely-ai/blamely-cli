@@ -210,7 +210,7 @@ func renderStats(w io.Writer, note *gitnotes.Note, meta commitMeta_, sessionNano
 	// Attribution — one block per contributing AI tool.
 	if note.Totals.AILines > 0 {
 		sectionHead(w, "Attribution")
-		for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini"} {
+		for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
 			t, ok := note.ByTool[name]
 			if !ok || t.Lines == 0 {
 				continue
@@ -373,7 +373,7 @@ func toolGenType(note *gitnotes.Note, tool string) string {
 // is authoritative.
 func legacyToolGenType(tool string) string {
 	switch tool {
-	case "codex":
+	case "codex", "devin":
 		return "cli"
 	case "copilot":
 		return "completion"
@@ -393,7 +393,7 @@ func fileToolBreakdown(f gitnotes.FileEntry) string {
 		counts[l.Tool] += l.NumLines()
 	}
 	var parts []string
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "human"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin", "human"} {
 		if c := counts[name]; c > 0 {
 			parts = append(parts, fmt.Sprintf("%s %d", name, c))
 		}

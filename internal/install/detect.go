@@ -16,6 +16,7 @@ type Detected struct {
 	Codex   ToolPresence
 	Copilot ToolPresence
 	Gemini  ToolPresence
+	Devin   ToolPresence
 }
 
 type ToolPresence struct {
@@ -38,6 +39,7 @@ func Detect() (*Detected, error) {
 	d.Codex = detectCodex()
 	d.Copilot = detectCopilot()
 	d.Gemini = detectGemini()
+	d.Devin = detectDevin()
 	return d, nil
 }
 
@@ -139,6 +141,40 @@ func detectGemini() ToolPresence {
 	}
 	if path, ok := lookPath("gemini"); ok {
 		hints = append(hints, path)
+	}
+	return presence(hints)
+}
+
+// detectDevin looks for Devin CLI — Cognition's local terminal agent.
+//
+// Ambiguity worth knowing about: Devin ships two products that share these
+// paths. The CLI is what blamely can hook; the Devin IDE (a Windsurf/VS Code
+// fork) also creates ~/.devin and ~/.config/devin without the `devin` binary
+// ever being installed. We stay permissive anyway — matching how every other
+// tool here detects — because installing the hook is idempotent and harmless
+// when the CLI shows up later. The `devin` binary is listed first so
+// FirstHint() reports the strongest signal when it is present.
+//
+// Note the IDE's own edits are NOT covered by this hook: Devin Cloud sessions
+// mutate files inside a remote sandbox and reach this machine only as a git
+// pull, so there is no local edit for the daemon to observe.
+func detectDevin() ToolPresence {
+	var hints []string
+	if path, ok := lookPath("devin"); ok {
+		hints = append(hints, path)
+	}
+	// The CLI's user-wide config: ~/.config/devin/config.json (or the Windows
+	// %APPDATA% equivalent). This is also where blamely installs the hook.
+	if cfgPath, err := config.DevinConfigPath(); err == nil {
+		if fileExists(cfgPath) {
+			hints = append(hints, cfgPath)
+		} else if dirExists(filepath.Dir(cfgPath)) {
+			hints = append(hints, filepath.Dir(cfgPath))
+		}
+	}
+	// ~/.devin holds local state and extensions for both surfaces.
+	if stateDir, err := config.DevinStateDir(); err == nil && pathExists(stateDir) {
+		hints = append(hints, stateDir)
 	}
 	return presence(hints)
 }

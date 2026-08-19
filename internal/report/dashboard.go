@@ -133,7 +133,7 @@ func RenderCommitSummary(w io.Writer, note *gitnotes.Note) {
 // dashboard's Attribution card carries, compacted for the post-commit summary.
 func emitToolDetail(w io.Writer, note *gitnotes.Note) {
 	var names []string
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
 		if tl, ok := note.ByTool[name]; ok && tl.Lines > 0 {
 			names = append(names, name)
 		}
@@ -163,7 +163,7 @@ func emitToolDetail(w io.Writer, note *gitnotes.Note) {
 func toolsBody(note *gitnotes.Note) []string {
 	out := []string{""}
 	any := false
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
 		tl, ok := note.ByTool[name]
 		if !ok || (tl.Lines == 0 && tl.DeletedLines == 0 && tl.SuggestedLines == 0) {
 			continue
@@ -198,7 +198,7 @@ func toolsBody(note *gitnotes.Note) []string {
 
 // hasAITools reports whether any AI tool contributed (gates the Tools card).
 func hasAITools(note *gitnotes.Note) bool {
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
 		if tl, ok := note.ByTool[name]; ok && (tl.Lines > 0 || tl.DeletedLines > 0 || tl.SuggestedLines > 0) {
 			return true
 		}

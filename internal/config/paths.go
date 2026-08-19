@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -32,6 +33,9 @@ const (
 	copilotSessionState = "session-state"
 	geminiDirName       = ".gemini"
 	geminiSettings      = "settings.json"
+	devinDirName        = "devin"
+	devinConfig         = "config.json"
+	devinStateDirName   = ".devin"
 )
 
 func Home() (string, error) {
@@ -294,6 +298,59 @@ func GeminiSettingsPath() (string, error) {
 		return "", err
 	}
 	return filepath.Join(home, geminiDirName, geminiSettings), nil
+}
+
+// DevinConfigPath is Devin CLI's user-wide config file — the only global
+// location that accepts a `hooks` key. Devin also reads project-level
+// .devin/hooks.v1.json and .devin/config.json, but blamely installs globally so
+// a single install covers every repo.
+//
+// Unlike every other tool here, Devin does NOT put its config under the home
+// dir directly: it follows the XDG-ish ~/.config/devin layout on macOS and
+// Linux alike (macOS included — it does not use ~/Library/Application Support
+// for the CLI), and %APPDATA%\devin on Windows.
+func DevinConfigPath() (string, error) {
+	dir, err := DevinConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, devinConfig), nil
+}
+
+// DevinConfigDir is the directory holding DevinConfigPath.
+func DevinConfigDir() (string, error) {
+	if runtime.GOOS == "windows" {
+		if appData := os.Getenv("APPDATA"); appData != "" {
+			return filepath.Join(appData, devinDirName), nil
+		}
+		// APPDATA is effectively always set on Windows; fall through to the
+		// home-relative default rather than failing outright.
+		home, err := Home()
+		if err != nil {
+			return "", err
+		}
+		return filepath.Join(home, "AppData", "Roaming", devinDirName), nil
+	}
+	home, err := Home()
+	if err != nil {
+		return "", err
+	}
+	// Honour XDG_CONFIG_HOME when set — Devin resolves its config dir the same
+	// way, so a user who relocates it must still get a wired-up hook.
+	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
+		return filepath.Join(xdg, devinDirName), nil
+	}
+	return filepath.Join(home, ".config", devinDirName), nil
+}
+
+// DevinStateDir is ~/.devin — the CLI's local state/extension dir. Used for
+// detection only; nothing is written there.
+func DevinStateDir() (string, error) {
+	home, err := Home()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, devinStateDirName), nil
 }
 
 func EnsureBlamelyDir() (string, error) {

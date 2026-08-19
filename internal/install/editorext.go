@@ -75,6 +75,20 @@ var editorExtensionTargets = []editorExtensionTarget{
 		PathNames:  []string{"antigravity-ide", "antigravity"},
 		AppBundles: []string{"Antigravity IDE"},
 	},
+	{
+		// Devin IDE is a Windsurf/Code-OSS fork. Its CLI is named after
+		// product.json's applicationName ("devin-desktop"), not after the
+		// product, and its extension host reads ~/.devin/extensions in the
+		// standard VS Code layout.
+		//
+		// It ships its OWN gallery (marketplace.windsurf.com) rather than Open
+		// VSX, which does not matter here: InstallEditorExtensions installs a
+		// downloaded .vsix by path, and that is registry-independent. Only the
+		// id-based fallback would depend on the editor's gallery.
+		Label:      "Devin IDE",
+		PathNames:  []string{"devin-desktop"},
+		AppBundles: []string{"Devin"},
+	},
 }
 
 // EditorExtensionResult is one row of the install log's "Editors" group: the

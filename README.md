@@ -18,6 +18,23 @@ dasdas
 | [Codex CLI](https://github.com/openai/codex) | ✓ | cli |
 | [GitHub Copilot](https://github.com/features/copilot) | ✓ | chat, completion |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✓ | cli |
+| [Devin](https://docs.devin.ai) | ✓ | cli, chat |
+
+Devin is tracked across all three of its surfaces, by three different means:
+
+| Surface | How it's caught | Attribution |
+|---------|-----------------|-------------|
+| **Devin CLI** (terminal) | `PostToolUse` hook, like Claude Code | `cli`, per line |
+| **Devin IDE**, local session | Watches the IDE's session databases | `chat`, per line |
+| **Devin Cloud** (web, Slack, IDE cloud session) | `Co-Authored-By` trailer on the commit, read when it's pulled | `chat`, whole commit |
+
+The Cloud row is the odd one out and worth understanding. A cloud session runs
+the agent in a remote sandbox — it never touches your filesystem, so there is no
+local edit to observe. What does reach you is the commit, carrying Devin's own
+`Co-Authored-By` trailer. Blamely reads that on `git pull` (via a `post-merge`
+hook) and credits the commit's lines to Devin. It's commit-scoped rather than
+line-precise, and it never overrides a real recorded edit — but it's the
+difference between that work showing up as Devin's and showing up as yours.
 
 Blamely auto-detects which tools are installed and wires up hooks only for those. If you install a new tool later, run `blamely install` again — it's idempotent.
 
@@ -65,8 +82,8 @@ blamely stats          # deep single-commit view
 ```
 
 1. **Record** — When an AI tool edits a file, its hook calls `blamely record <tool>`, which sends the edit to the local daemon.
-2. **Watch** — The daemon also tails Codex sessions, Cursor logs, and Copilot transcripts to catch edits that don't go through hooks.
-3. **Attribute** — On every commit, a global `post-commit` hook runs `blamely attribute`, which diffs the commit against stored edits and writes a per-line attribution note.
+2. **Watch** — The daemon also tails Codex sessions, Cursor logs, Copilot transcripts, and Devin IDE session databases to catch edits that don't go through hooks.
+3. **Attribute** — On every commit, a global `post-commit` hook runs `blamely attribute`, which diffs the commit against stored edits and writes a per-line attribution note. A `post-merge` hook does the same for commits a `git pull` brings in that carry a cloud agent's `Co-Authored-By` trailer.
 4. **Report** — Use `blamely report`, `blamely stats`, or `blamely history` to inspect the results.
 
 Attribution data lives in two places, both local:
@@ -101,7 +118,7 @@ Everything Blamely writes lives under `~/.blamely/` (on Windows: `%USERPROFILE%\
 | `~/.blamely/db.sqlite` | Raw edit events from hooks and watchers |
 | `~/.blamely/daemon.port` | Localhost port the daemon listens on |
 | `~/.blamely/daemon.log` | Daemon logs |
-| `~/.blamely/git-hooks/` | Global git hooks (`post-commit` → `blamely attribute`) |
+| `~/.blamely/git-hooks/` | Global git hooks (`post-commit` → `blamely attribute`; `post-merge` → attribute pulled agent commits) |
 | `~/.blamely/state.json` | Install state (used by `blamely uninstall`) |
 | `~/.blamely/config.json` | What each commit git note includes (see below) |
 | `~/.blamely/exclude` | Paths skipped from attribution (gitignore-style) |

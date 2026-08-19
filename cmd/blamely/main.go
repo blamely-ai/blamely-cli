@@ -44,6 +44,13 @@ func init() {
 // `blamely --version` reports.
 var version = "1.8.1"
 
+// maxMergedAttributeScan caps how many incoming commits the post-merge hook
+// will look at. A pull after a long absence — or a first fetch of a big repo —
+// can carry thousands; scanning all of them would stall the pull for a payoff
+// that shrinks the further back you go. Recent history is where an agent's
+// branch lands.
+const maxMergedAttributeScan = 500
+
 // resolveVersion returns the effective CLI version. Precedence:
 //  1. an explicit -ldflags override (release builds);
 //  2. the module version Go records for `go install <module>@vX.Y.Z`;
@@ -119,6 +126,7 @@ func main() {
 	root.AddCommand(cmdDetect())
 	root.AddCommand(cmdRecord())
 	root.AddCommand(cmdAttribute())
+	root.AddCommand(cmdAttributeMerged())
 	root.AddCommand(cmdPostRewrite())
 	root.AddCommand(cmdAuthorship())
 	root.AddCommand(cmdRecordDeletion())
@@ -184,6 +192,7 @@ func cmdDaemon() *cobra.Command {
 				// retired here so the same edit isn't recorded twice (double-counted tokens).
 				func(db *store.DB) daemon.Watcher { return &tools.CopilotTranscriptWatcher{DB: db} },
 				func(db *store.DB) daemon.Watcher { return &tools.AntigravityGeminiWatcher{DB: db} },
+				func(db *store.DB) daemon.Watcher { return &tools.DevinIDEWatcher{DB: db} },
 				// Session-level (not per-edit) metric: the Copilot CLI's cumulative
 				// per-model token totals from each session's terminal shutdown event.
 				func(db *store.DB) daemon.Watcher { return &tools.CopilotCliUsageWatcher{DB: db} },
@@ -232,7 +241,7 @@ func cmdRepair() *cobra.Command {
 		Use:   "repair",
 		Short: "Configure hooks for newly-detected AI tools, remove stale hooks",
 		Long: "Re-checks every AI tool blamely supports (Claude, Cursor, Codex,\n" +
-			"Copilot, Gemini): if one is now present but its hook was never\n" +
+			"Copilot, Gemini, Devin): if one is now present but its hook was never\n" +
 			"configured — e.g. you installed it after running `blamely install` —\n" +
 			"repair configures it.\n\n" +
 			"Also scans your home directory for .git/hooks/post-commit files written\n" +
@@ -300,6 +309,7 @@ func cmdDetect() *cobra.Command {
 				{"Codex CLI", d.Codex},
 				{"GitHub Copilot", d.Copilot},
 				{"Gemini CLI", d.Gemini},
+				{"Devin CLI", d.Devin},
 			} {
 				mark := "absent"
 				if row.p.Present {
@@ -507,8 +517,10 @@ func cmdRecord() *cobra.Command {
 				recErr = tools.RecordCopilotFromStdin(os.Stdin)
 			case "gemini":
 				recErr = tools.RecordGeminiFromStdin(os.Stdin)
+			case "devin":
+				recErr = tools.RecordDevinFromStdin(os.Stdin)
 			default:
-				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini)", args[0])
+				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini, devin)", args[0])
 			}
 			if recErr != nil {
 				fmt.Fprintf(os.Stderr, "blamely record %s: %v\n", args[0], recErr)
@@ -756,6 +768,38 @@ func cmdAttribute() *cobra.Command {
 	return c
 }
 
+func cmdAttributeMerged() *cobra.Command {
+	return &cobra.Command{
+		Use: "attribute-merged <repo> <range>",
+		// Hidden: called by the global post-merge hook (see
+		// internal/install/hookspath.go) with ORIG_HEAD..HEAD after a pull or
+		// merge brings in commits made elsewhere.
+		Hidden: true,
+		Short:  "Internal: attribute pulled/merged commits authored by a cloud agent",
+		Args:   cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			repo, revRange := args[0], args[1]
+
+			shas, err := gitnotes.RevList(repo, revRange, maxMergedAttributeScan)
+			if err != nil {
+				return nil // best-effort by contract: never fail the user's pull
+			}
+			// A pull routinely brings in hundreds of ordinary commits. Only those
+			// carrying an agent's Co-Authored-By trailer have anything for us to
+			// attribute — everything else has no local edit record either, so
+			// attributing it would just write an all-Human note for someone
+			// else's work. Filtering first keeps a big pull cheap.
+			targets := gitnotes.CommitsWithAITrailer(repo, shas)
+			for _, sha := range targets {
+				if _, err := gitnotes.AttributeAndWrite(repo, sha); err != nil {
+					fmt.Fprintf(os.Stderr, "blamely attribute-merged %s: %v\n", sha, err)
+				}
+			}
+			return nil
+		},
+	}
+}
+
 func cmdPostRewrite() *cobra.Command {
 	return &cobra.Command{
 		Use: "post-rewrite <repo> <kind>",
@@ -900,6 +944,7 @@ func cmdLog() *cobra.Command {
 	parent.AddCommand(cmdLogCodex())
 	parent.AddCommand(cmdLogClaude())
 	parent.AddCommand(cmdLogGemini())
+	parent.AddCommand(cmdLogDevin())
 	return parent
 }
 
@@ -943,6 +988,16 @@ func cmdLogGemini() *cobra.Command {
 		Short: "Explain how to trace Gemini CLI attribution (hook-driven)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return tools.DebugGeminiLogs(cmd.Context(), os.Stdout)
+		},
+	}
+}
+
+func cmdLogDevin() *cobra.Command {
+	return &cobra.Command{
+		Use:   "devin",
+		Short: "Explain how to trace Devin CLI attribution (hook-driven)",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return tools.DebugDevinLogs(cmd.Context(), os.Stdout)
 		},
 	}
 }
