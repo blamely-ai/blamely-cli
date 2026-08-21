@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -137,6 +138,34 @@ func main() {
 	}
 }
 
+// logWriter forwards a child process's output into the standard logger, one
+// log line per output line, so the daemon's auto-update leaves the installer's
+// own messages in daemon.log instead of dropping them.
+//
+// Child output arrives in arbitrary chunks, not whole lines, so Write buffers
+// until a newline and logs complete lines only; CR is stripped so CRLF output
+// from a Windows installer doesn't leave a trailing \r in daemon.log. A final
+// unterminated line stays buffered — installer output ends with a newline, and
+// a truncated last line is not worth a Flush hook on an io.Writer.
+type logWriter struct {
+	buf []byte
+}
+
+func (w *logWriter) Write(p []byte) (int, error) {
+	w.buf = append(w.buf, p...)
+	for {
+		i := bytes.IndexByte(w.buf, '\n')
+		if i < 0 {
+			return len(p), nil
+		}
+		line := strings.TrimRight(string(w.buf[:i]), "\r")
+		w.buf = w.buf[i+1:]
+		if strings.TrimSpace(line) != "" {
+			log.Printf("update: %s", line)
+		}
+	}
+}
+
 func cmdDaemon() *cobra.Command {
 	var background bool
 	c := &cobra.Command{
@@ -205,6 +234,7 @@ func cmdDaemon() *cobra.Command {
 			// Hand the daemon its update check/apply as closures: internal/daemon
 			// cannot import internal/install (install imports daemon), so this is
 			// the same indirection the watcher lists above use.
+			daemon.CurrentVersion = install.Version
 			daemon.CheckUpdate = func(ctx context.Context) (updatehint.Hint, bool, error) {
 				rel, newer, err := install.CheckForUpdate(ctx, install.Version)
 				if err != nil {
@@ -214,7 +244,11 @@ func cmdDaemon() *cobra.Command {
 				return updatehint.Hint{Version: rel.Version, Tag: rel.Tag, URL: url}, newer, nil
 			}
 			daemon.ApplyUpdate = func(ctx context.Context) error {
-				_, err := install.Update(ctx, install.UpdateOptions{Current: install.Version, Out: io.Discard})
+				// Route the updater's own output — including the staged
+				// installer's stderr — into daemon.log. It used to be discarded,
+				// which left a failed auto-update reported as an exit status with
+				// no diagnosis anywhere on the machine.
+				_, err := install.Update(ctx, install.UpdateOptions{Current: install.Version, Out: &logWriter{}})
 				return err
 			}
 			return daemon.Run(cmd.Context())
