@@ -11,6 +11,7 @@ import (
 
 	"github.com/blamely/blamely/internal/gitnotes"
 	"github.com/blamely/blamely/internal/gitutil"
+	"github.com/blamely/blamely/internal/procattr"
 	"github.com/blamely/blamely/internal/store"
 )
 
@@ -144,8 +145,8 @@ func renderCurrentStatsIn(repoPath string, multi bool) (bool, error) {
 type commitMeta_ map[string]string
 
 func commitMeta(repoPath, sha string) (commitMeta_, error) {
-	out, err := exec.Command("git", "-C", repoPath, "show", "-s",
-		"--format=%H|%s|%ae|%ci", sha).Output()
+	out, err := procattr.Hide(exec.Command("git", "-C", repoPath, "show", "-s",
+		"--format=%H|%s|%ae|%ci", sha)).Output()
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +162,7 @@ func commitMeta(repoPath, sha string) (commitMeta_, error) {
 }
 
 func readNote(repoPath, sha string) ([]byte, error) {
-	return exec.Command("git", "-C", repoPath, "notes", "--ref="+gitnotes.NotesRef, "show", sha).Output()
+	return procattr.Hide(exec.Command("git", "-C", repoPath, "notes", "--ref="+gitnotes.NotesRef, "show", sha)).Output()
 }
 
 func renderStats(w io.Writer, note *gitnotes.Note, meta commitMeta_, sessionNanos int64) {

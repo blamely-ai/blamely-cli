@@ -34,8 +34,8 @@ func restrictMergeToResolution(repoPath, sha string, change *CommitChange) {
 	if secondParent == "" {
 		return
 	}
-	diff, err := exec.Command("git", "-C", repoPath, "diff", "--unified=0", "--no-color", "-M",
-		secondParent+".."+sha).Output()
+	diff, err := procattr.Hide(exec.Command("git", "-C", repoPath, "diff", "--unified=0", "--no-color", "-M",
+		secondParent+".."+sha)).Output()
 	if err != nil {
 		return
 	}
