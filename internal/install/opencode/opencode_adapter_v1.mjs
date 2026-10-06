@@ -1,5 +1,5 @@
-// Blamely-managed OpenCode V1 plugin; no npm dependencies required.
-import { createRecorder } from "./bridge.mjs"
+// Blamely-managed OpenCode V1 adapter; no npm dependencies required.
+import { createRecorder } from "./opencode_bridge.mjs"
 
 export default async function BlamelyPlugin({ directory }) {
     const recorder = createRecorder(1)

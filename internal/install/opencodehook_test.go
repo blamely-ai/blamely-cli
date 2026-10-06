@@ -16,11 +16,11 @@ import (
 func TestOpenCodeAdapters(t *testing.T) {
 	node, err := exec.LookPath("node")
 	if err != nil {
-		t.Skip("Node is unavailable; run node --test internal/install/opencode/bridge.test.mjs separately")
+		t.Skip("Node is unavailable; run node --test internal/install/opencode/opencode_bridge.test.mjs separately")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
-	if output, err := exec.CommandContext(ctx, node, "--test", "opencode/bridge.test.mjs").CombinedOutput(); err != nil {
+	if output, err := exec.CommandContext(ctx, node, "--test", "opencode/opencode_bridge.test.mjs").CombinedOutput(); err != nil {
 		t.Fatalf("OpenCode adapters: %v\n%s", err, output)
 	}
 }
@@ -51,7 +51,7 @@ func TestOpenCodeInstallVersionSwitchAndUninstall(t *testing.T) {
 			t.Fatalf("install V%d: %v %v", major, added, err)
 		}
 		data, err := os.ReadFile(entry)
-		if err != nil || !bytes.HasPrefix(data, []byte(openCodeMarker)) || !bytes.Contains(data, []byte("../blamely/bridge.mjs")) {
+		if err != nil || !bytes.HasPrefix(data, []byte(openCodeMarker)) || !bytes.Contains(data, []byte("../blamely/opencode_bridge.mjs")) {
 			t.Fatalf("entry: %s %v", data, err)
 		}
 		if major == 1 && !bytes.Contains(data, []byte(`"tool.execute.before"`)) {
@@ -64,7 +64,7 @@ func TestOpenCodeInstallVersionSwitchAndUninstall(t *testing.T) {
 			t.Fatalf("non-idempotent install: %v %v", added, err)
 		}
 	}
-	bridge, _ := os.ReadFile(filepath.Join(dir, "blamely", "bridge.mjs"))
+	bridge, _ := os.ReadFile(filepath.Join(dir, "blamely", "opencode_bridge.mjs"))
 	if !bytes.Contains(bridge, []byte(`C:\\Program Files\\Blamely\\blamely.exe`)) {
 		t.Fatal("binary path not JSON-escaped")
 	}
@@ -98,7 +98,7 @@ func TestOpenCodeInstallPreservesUnmanagedFiles(t *testing.T) {
 	if _, _, err := InstallOpenCodePlugin("blamely", dir, 2); err == nil {
 		t.Fatal("overwrote unmanaged file")
 	}
-	if _, err := os.Stat(filepath.Join(dir, "blamely", "bridge.mjs")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(dir, "blamely", "opencode_bridge.mjs")); !os.IsNotExist(err) {
 		t.Fatal("partially wrote helper before ownership check")
 	}
 	if removed, err := uninstallOpenCodePlugin(dir); err != nil || removed {
@@ -134,5 +134,33 @@ func TestOpenCodeConfigPathsAndDetection(t *testing.T) {
 	}
 	if !detectOpenCode().Present {
 		t.Fatal("custom OpenCode config was not detected")
+	}
+}
+
+func TestOpenCodeUninstallLegacyBridge(t *testing.T) {
+	for _, managed := range []bool{false, true} {
+		dir := t.TempDir()
+		legacy := filepath.Join(dir, "blamely", "bridge.mjs")
+		if err := os.MkdirAll(filepath.Dir(legacy), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		content := "user helper"
+		if managed {
+			content = openCodeMarker + " command-hook transport"
+		}
+		if err := os.WriteFile(legacy, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if removed, err := uninstallOpenCodePlugin(dir); err != nil || removed != managed {
+			t.Fatalf("legacy uninstall managed=%v: %v %v", managed, removed, err)
+		}
+		data, err := os.ReadFile(legacy)
+		if managed {
+			if !os.IsNotExist(err) {
+				t.Fatalf("managed legacy helper retained: %v", err)
+			}
+		} else if err != nil || string(data) != content {
+			t.Fatalf("unmanaged legacy helper modified: %q %v", data, err)
+		}
 	}
 }

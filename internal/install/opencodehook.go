@@ -17,7 +17,7 @@ import (
 	"github.com/blamely/blamely/internal/procattr"
 )
 
-//go:embed opencode/bridge.mjs opencode/v1.mjs opencode/v2.mjs
+//go:embed opencode/opencode_bridge.mjs opencode/opencode_adapter_v1.mjs opencode/opencode_adapter_v2.mjs
 var openCodePlugins embed.FS
 
 const openCodeMarker = "// Blamely-managed OpenCode"
@@ -38,7 +38,7 @@ func openCodeMajor() (int, error) {
 	defer cancel()
 	out, err := procattr.Hide(exec.CommandContext(ctx, "opencode", "--version")).Output()
 	if err != nil {
-		return 0, fmt.Errorf("detect OpenCode version: %w (use install-opencode --major 1 or 2)", err)
+		return 0, fmt.Errorf("detect OpenCode version: %w (ensure opencode is on PATH and run blamely repair)", err)
 	}
 	return parseOpenCodeMajor(string(out))
 }
@@ -75,16 +75,16 @@ func InstallOpenCodePlugin(binaryPath, dir string, major int) (bool, string, err
 	if major != 1 && major != 2 {
 		return false, entry, fmt.Errorf("OpenCode major must be 1 or 2")
 	}
-	adapter, _ := openCodePlugins.ReadFile(fmt.Sprintf("opencode/v%d.mjs", major))
-	adapter = bytes.ReplaceAll(adapter, []byte(`"./bridge.mjs"`), []byte(`"../blamely/bridge.mjs"`))
-	bridge, _ := openCodePlugins.ReadFile("opencode/bridge.mjs")
+	adapter, _ := openCodePlugins.ReadFile(fmt.Sprintf("opencode/opencode_adapter_v%d.mjs", major))
+	adapter = bytes.ReplaceAll(adapter, []byte(`"./opencode_bridge.mjs"`), []byte(`"../blamely/opencode_bridge.mjs"`))
+	bridge, _ := openCodePlugins.ReadFile("opencode/opencode_bridge.mjs")
 	encoded, _ := json.Marshal(binaryPath)
 	bridge = bytes.Replace(bridge, []byte(`const binary = "blamely"`), append([]byte("const binary = "), encoded...), 1)
 	files := []struct {
 		path string
 		data []byte
 	}{
-		{filepath.Join(dir, "blamely", "bridge.mjs"), bridge}, {entry, adapter},
+		{filepath.Join(dir, "blamely", "opencode_bridge.mjs"), bridge}, {entry, adapter},
 	}
 	// Check ownership of every target before changing any of them.
 	for _, file := range files {
@@ -127,7 +127,8 @@ func UninstallOpenCodeHook() (bool, error) {
 
 func uninstallOpenCodePlugin(dir string) (bool, error) {
 	removed := false
-	for _, path := range []string{filepath.Join(dir, "plugins", "blamely.ts"), filepath.Join(dir, "blamely", "bridge.mjs")} {
+	// Include the old helper name so uninstall also cleans earlier installations.
+	for _, path := range []string{filepath.Join(dir, "plugins", "blamely.ts"), filepath.Join(dir, "blamely", "opencode_bridge.mjs"), filepath.Join(dir, "blamely", "bridge.mjs")} {
 		info, err := os.Lstat(path)
 		if os.IsNotExist(err) {
 			continue

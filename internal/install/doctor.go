@@ -62,10 +62,10 @@ func (d *doctor) openCodePlugin() {
 		return
 	}
 	entry := filepath.Join(dir, "plugins", "blamely.ts")
-	for _, path := range []string{entry, filepath.Join(dir, "blamely", "bridge.mjs")} {
+	for _, path := range []string{entry, filepath.Join(dir, "blamely", "opencode_bridge.mjs")} {
 		data, err := os.ReadFile(path)
 		if err != nil || !strings.HasPrefix(string(data), openCodeMarker) {
-			d.bad("OpenCode plugin", path+" missing or unmanaged", "run `blamely repair` or `blamely install-opencode --major 1|2`")
+			d.bad("OpenCode plugin", path+" missing or unmanaged", "run `blamely repair`")
 			return
 		}
 	}

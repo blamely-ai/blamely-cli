@@ -1,4 +1,4 @@
-// Blamely-managed OpenCode command-hook transport; all capture logic is Go.
+// Blamely-managed OpenCode bridge; all capture logic is Go.
 import { spawn } from "node:child_process"
 
 const binary = "blamely" // replaced with the stable absolute path by the installer

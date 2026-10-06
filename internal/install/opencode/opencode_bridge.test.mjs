@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import test from "node:test"
-import { createRecorder } from "./bridge.mjs"
+import { createRecorder } from "./opencode_bridge.mjs"
 
 const event = { sessionID: "ses_test", id: "call_test", tool: "shell", input: { command: "script" } }
 
@@ -33,8 +33,8 @@ test("cleanup forwards each session identity and retains no capture contents", a
 // Replace only process transport. The API-specific callback mappings remain real.
 async function adapter(version, emit) {
     globalThis.__blamelyEmit = emit
-    let source = await readFile(new URL(`./v${version}.mjs`, import.meta.url), "utf8")
-    source = source.replace('"./bridge.mjs"', JSON.stringify(new URL("./bridge.mjs", import.meta.url).href))
+    let source = await readFile(new URL(`./opencode_adapter_v${version}.mjs`, import.meta.url), "utf8")
+    source = source.replace('"./opencode_bridge.mjs"', JSON.stringify(new URL("./opencode_bridge.mjs", import.meta.url).href))
     source = source.replace(`createRecorder(${version})`, `createRecorder(${version}, globalThis.__blamelyEmit)`)
     return (await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${Math.random()}`)).default
 }
