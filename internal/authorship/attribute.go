@@ -225,6 +225,14 @@ func splitLines(s string) []string {
 	return parts
 }
 
+// maxAlignCells caps the LCS table alignLines allocates for the region between the
+// common prefix and suffix (int32 cells: 64 MB). An edit to a large file only
+// touches a small middle, so this is reached only when thousands of lines change at
+// once; that middle is then left unmatched and detectMoves pairs identical lines back
+// to their prior authors. Without a cap the table was (n+1)×(m+1) cells over the
+// WHOLE file — tens of GB for a 50k-line file on every recorded edit.
+const maxAlignCells = 16_000_000
+
 // alignLines returns, for each NEW line index, the index of the OLD line it is
 // unchanged from (an LCS match), or -1 if it is added/changed. Standard LCS DP
 // with backtrack; positional matching is what makes duplicate identical lines
@@ -235,6 +243,18 @@ func splitLines(s string) []string {
 // only in indentation / trailing or collapsed whitespace counts as unchanged and
 // keeps its prior author — reformatting is not authorship ("formatting
 // non-substantial"). A genuine content change still mismatches → the editor.
+//
+// The DP only covers the lines between the common prefix and the common suffix,
+// yet the result is identical to running it over the whole file:
+//   - the backtrack matches equal lines at (i, i) immediately, so the common prefix
+//     is matched in place;
+//   - for a common last line x, LCS(A+x, B+x) = LCS(A, B) + 1 at every cell that
+//     still contains x, so the backtrack takes the same steps as on (A, B) until
+//     one side is exhausted. Then the full walk matches x against the FIRST x left
+//     on the other side, and ends exhausted on the same side. The suffix loop below
+//     replays exactly that, one suffix line at a time, in linear time.
+//
+// MUST match the TS and Kotlin ports exactly (the golden vectors enforce it).
 func alignLines(oldLines, newLines []string) []int {
 	n, m := len(oldLines), len(newLines)
 	matched := make([]int, m)
@@ -247,33 +267,68 @@ func alignLines(oldLines, newLines []string) []int {
 	oldN := normalizeLinesForMatch(oldLines)
 	newN := normalizeLinesForMatch(newLines)
 
-	// dp[i][j] = LCS length of oldN[i:] and newN[j:].
-	dp := make([][]int, n+1)
-	for i := range dp {
-		dp[i] = make([]int, m+1)
+	p := 0
+	for p < n && p < m && oldN[p] == newN[p] {
+		matched[p] = p
+		p++
 	}
-	for i := n - 1; i >= 0; i-- {
-		for j := m - 1; j >= 0; j-- {
-			if oldN[i] == newN[j] {
-				dp[i][j] = dp[i+1][j+1] + 1
-			} else if dp[i+1][j] >= dp[i][j+1] {
-				dp[i][j] = dp[i+1][j]
-			} else {
-				dp[i][j] = dp[i][j+1]
+	s := 0
+	for s < n-p && s < m-p && oldN[n-1-s] == newN[m-1-s] {
+		s++
+	}
+	oldEnd, newEnd := n-s, m-s // the middle is oldN[p:oldEnd] vs newN[p:newEnd]
+
+	i, j := p, p
+	rows, cols := oldEnd-p, newEnd-p
+	if rows > 0 && cols > 0 {
+		if (rows+1)*(cols+1) > maxAlignCells {
+			i, j = oldEnd, newEnd // too large: leave the middle unmatched
+		} else {
+			// dp[(a-p)*w + (b-p)] = LCS length of oldN[a:oldEnd] and newN[b:newEnd].
+			w := cols + 1
+			dp := make([]int32, (rows+1)*w)
+			for a := rows - 1; a >= 0; a-- {
+				for b := cols - 1; b >= 0; b-- {
+					if oldN[p+a] == newN[p+b] {
+						dp[a*w+b] = dp[(a+1)*w+b+1] + 1
+					} else if dp[(a+1)*w+b] >= dp[a*w+b+1] {
+						dp[a*w+b] = dp[(a+1)*w+b]
+					} else {
+						dp[a*w+b] = dp[a*w+b+1]
+					}
+				}
+			}
+			// Backtrack to recover the matched (unchanged) pairs.
+			for i < oldEnd && j < newEnd {
+				a, b := i-p, j-p
+				if oldN[i] == newN[j] {
+					matched[j] = i
+					i++
+					j++
+				} else if dp[(a+1)*w+b] >= dp[a*w+b+1] {
+					i++
+				} else {
+					j++
+				}
 			}
 		}
 	}
-	// Backtrack to recover the matched (unchanged) pairs.
-	i, j := 0, 0
-	for i < n && j < m {
-		if oldN[i] == newN[j] {
-			matched[j] = i
-			i++
-			j++
-		} else if dp[i+1][j] >= dp[i][j+1] {
-			i++
+	// Replay the common suffix (see above): one side is exhausted here.
+	for k := 0; k < s; k++ {
+		oi, nj := oldEnd+k, newEnd+k
+		x := oldN[oi]
+		if i == oi {
+			for newN[j] != x {
+				j++
+			}
+			matched[j] = oi
+			i, j = oi+1, j+1
 		} else {
-			j++
+			for oldN[i] != x {
+				i++
+			}
+			matched[nj] = i
+			i, j = i+1, nj+1
 		}
 	}
 	return matched
