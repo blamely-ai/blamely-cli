@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/blamely/blamely/internal/config"
+	"github.com/blamely/blamely/internal/filelock"
 	"github.com/blamely/blamely/internal/procattr"
 )
 
@@ -30,17 +31,20 @@ import (
 // syncLockFile serializes syncs in one repo. A sync clears every scratch ref
 // under syncScratchBase when it starts, so two overlapping background runs (two
 // quick pushes) would break each other's half-built chains.
+//
+// It is an OS lock (internal/filelock), not a marker file: the OS releases it
+// when its holder exits, so a killed sync never leaves it behind, and no one can
+// ever remove a lock another process still holds — there is no "stale" lock to
+// guess at, however long a sync's network retries take.
 const syncLockFile = "blamely-sync.lock"
 
 // syncErrorFile holds the last background sync's failure until a push reports it.
 const syncErrorFile = "blamely-sync.error"
 
-// syncLockStale is when a lock is treated as left behind by a killed sync: well
-// past what a live one can take (a fetch and a push, networkTimeout each).
-const syncLockStale = 3 * networkTimeout
-
-// syncLockWait bounds how long a sync waits for an earlier one to finish.
-const syncLockWait = syncLockStale
+// syncLockWait bounds how long a sync waits for an earlier one to finish: longer
+// than a sync can take (a ref-race retry makes two attempts, each a fetch and a
+// push bounded by networkTimeout).
+const syncLockWait = 5 * networkTimeout
 
 // StartSyncNotesInBackground launches `exe sync-notes --wait` for this push,
 // detached, and returns without waiting for it. tips are the commits the push
@@ -116,8 +120,8 @@ func recordSyncError(repo, remote string, err error) {
 	_ = os.WriteFile(p, []byte(msg+"\n"), 0o644)
 }
 
-// lockSync takes the repo's sync lock, waiting for a running sync to finish and
-// taking over a lock older than syncLockStale. The returned func releases it.
+// lockSync takes the repo's sync lock, waiting up to syncLockWait for a running
+// sync to finish. The returned func releases it.
 func lockSync(repo string) (func(), error) {
 	p := gitPath(repo, syncLockFile)
 	if p == "" {
@@ -125,18 +129,12 @@ func lockSync(repo string) (func(), error) {
 	}
 	deadline := time.Now().Add(syncLockWait)
 	for {
-		f, err := os.OpenFile(p, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o644)
-		if err == nil {
-			fmt.Fprintf(f, "%d\n", os.Getpid())
-			_ = f.Close()
-			return func() { _ = os.Remove(p) }, nil
-		}
-		if !os.IsExist(err) {
+		f, ok, err := filelock.TryLock(p)
+		if err != nil {
 			return nil, err
 		}
-		if st, serr := os.Stat(p); serr == nil && time.Since(st.ModTime()) > syncLockStale {
-			_ = os.Remove(p) // left behind by a sync that was killed
-			continue
+		if ok {
+			return func() { _ = f.Close() }, nil
 		}
 		if time.Now().After(deadline) {
 			return nil, errors.New("another notes sync is still running")

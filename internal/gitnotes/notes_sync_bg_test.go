@@ -3,6 +3,7 @@ package gitnotes
 import (
 	"bytes"
 	"errors"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/blamely/blamely/internal/filelock"
 )
 
 // tempHome points ~/.blamely at a temp dir so tests never touch the real log.
@@ -108,7 +111,8 @@ func TestSyncLog_OneASCIILineAndBounded(t *testing.T) {
 	}
 }
 
-// The lock serializes syncs and is taken over once it is stale.
+// The lock serializes syncs, frees itself when its holder goes away, and is
+// never removed from under a live holder.
 func TestLockSync(t *testing.T) {
 	f := newSyncFixture(t, false)
 	repo := f.clone()
@@ -125,6 +129,18 @@ func TestLockSync(t *testing.T) {
 		}
 	}()
 	time.Sleep(700 * time.Millisecond)
+	// However old the lock file looks, a live holder keeps it.
+	p := gitPath(repo, syncLockFile)
+	old := time.Now().Add(-time.Hour)
+	if err := os.Chtimes(p, old, old); err != nil {
+		t.Fatal(err)
+	}
+	time.Sleep(700 * time.Millisecond)
+	select {
+	case <-got:
+		t.Fatal("second sync took the lock while the first held it")
+	default:
+	}
 	released := time.Now()
 	unlock()
 	select {
@@ -135,21 +151,52 @@ func TestLockSync(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("second sync never got the lock")
 	}
+}
 
-	// A lock left by a killed sync is taken over.
+// A sync killed mid-run leaves no lock behind: the OS drops it with the process.
+func TestLockSync_ReleasedWhenHolderDies(t *testing.T) {
+	f := newSyncFixture(t, false)
+	repo := f.clone()
 	p := gitPath(repo, syncLockFile)
-	if err := os.WriteFile(p, []byte("1\n"), 0o644); err != nil {
+	// Hold the lock in a child process (this test binary, see
+	// TestHelperHoldSyncLock), then kill it.
+	holder := exec.Command(os.Args[0], "-test.run=^TestHelperHoldSyncLock$")
+	holder.Env = append(os.Environ(), "BLAMELY_HOLD_LOCK="+p)
+	stdout, err := holder.StdoutPipe()
+	if err != nil {
 		t.Fatal(err)
 	}
-	old := time.Now().Add(-syncLockStale - time.Minute)
-	if err := os.Chtimes(p, old, old); err != nil {
+	if err := holder.Start(); err != nil {
 		t.Fatal(err)
 	}
+	buf := make([]byte, 7)
+	if _, err := io.ReadFull(stdout, buf); err != nil || string(buf) != "locked\n" {
+		t.Fatalf("holder did not take the lock: %v %q", err, buf)
+	}
+	if _, ok, _ := filelock.TryLock(p); ok {
+		t.Fatal("lock must be held while the holder runs")
+	}
+	_ = holder.Process.Kill()
+	_ = holder.Wait()
 	u, err := lockSync(repo)
 	if err != nil {
-		t.Fatalf("stale lock not taken over: %v", err)
+		t.Fatalf("lock not free after its holder died: %v", err)
 	}
 	u()
+}
+
+// TestHelperHoldSyncLock is not a test: TestLockSync_ReleasedWhenHolderDies runs
+// this binary with BLAMELY_HOLD_LOCK set to make it a process holding the lock.
+func TestHelperHoldSyncLock(t *testing.T) {
+	p := os.Getenv("BLAMELY_HOLD_LOCK")
+	if p == "" {
+		t.Skip("helper process only")
+	}
+	if _, ok, err := filelock.TryLock(p); err != nil || !ok {
+		os.Exit(1)
+	}
+	os.Stdout.WriteString("locked\n")
+	time.Sleep(time.Hour)
 }
 
 // End to end through the real binary: the hook's `sync-notes` call returns

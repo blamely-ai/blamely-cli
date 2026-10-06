@@ -3,10 +3,9 @@
 package daemon
 
 import (
-	"errors"
 	"os"
 
-	"golang.org/x/sys/windows"
+	"github.com/blamely/blamely/internal/filelock"
 )
 
 // acquireInstanceLock takes an exclusive, fail-immediately lock on the first
@@ -18,23 +17,5 @@ import (
 // Like the Unix variant, the lock file is left on disk: deleting it would let a
 // racing acquirer lock a new handle while the original still holds the old one.
 func acquireInstanceLock(path string) (f *os.File, ok bool, err error) {
-	f, err = os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o644)
-	if err != nil {
-		return nil, false, err
-	}
-	ol := new(windows.Overlapped)
-	err = windows.LockFileEx(
-		windows.Handle(f.Fd()),
-		windows.LOCKFILE_EXCLUSIVE_LOCK|windows.LOCKFILE_FAIL_IMMEDIATELY,
-		0, 1, 0, ol,
-	)
-	if err != nil {
-		_ = f.Close()
-		// A lock already held by another process surfaces as ERROR_LOCK_VIOLATION.
-		if errors.Is(err, windows.ERROR_LOCK_VIOLATION) {
-			return nil, false, nil
-		}
-		return nil, false, err
-	}
-	return f, true, nil
+	return filelock.TryLock(path)
 }
