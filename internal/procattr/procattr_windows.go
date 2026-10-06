@@ -39,3 +39,28 @@ func Hide(cmd *exec.Cmd) *exec.Cmd {
 	cmd.SysProcAttr.CreationFlags |= createNoWindow
 	return cmd
 }
+
+// createNewConsole and createNewProcessGroup are CREATE_NEW_CONSOLE and
+// CREATE_NEW_PROCESS_GROUP.
+const (
+	createNewConsole      = 0x00000010
+	createNewProcessGroup = 0x00000200
+)
+
+// Detach starts cmd detached from the caller's console, so it outlives the
+// caller and a Ctrl-C or a closed terminal there does not reach it.
+//
+// It gets a console of its own, created hidden, rather than none
+// (CREATE_NO_WINDOW / DETACHED_PROCESS): a console-less process that runs a
+// console program — git, and the helpers git starts for a push — gets that child
+// a brand new, VISIBLE console. With a hidden console of its own, every
+// descendant inherits it instead (see install.removeInstalledBinary).
+func Detach(cmd *exec.Cmd) *exec.Cmd {
+	if cmd.SysProcAttr == nil {
+		cmd.SysProcAttr = &syscall.SysProcAttr{}
+	}
+	cmd.SysProcAttr.HideWindow = true
+	cmd.SysProcAttr.CreationFlags &^= createNoWindow
+	cmd.SysProcAttr.CreationFlags |= createNewConsole | createNewProcessGroup
+	return cmd
+}

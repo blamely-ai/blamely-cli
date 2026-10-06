@@ -243,7 +243,9 @@ SYNC_DIR="$REPO"
 # carrying that commit's message — servers that demand an issue key in every
 # commit message reject git's stock "Notes added by ..." commits. It reads
 # git's pre-push stdin to know which commits this push sends: their notes go
-# out with them. It prints its own error; failing it never fails the push.
+# out with them. It returns at once — the notes fetch and push run detached, so
+# the user's push does not wait for them — and reports a failed sync on the
+# next push. Failing it never fails the push.
 if [ -n "$BLAMELY" ] && [ -n "$SYNC_DIR" ]; then
     printf '%%s\n' "$STDIN" | "$BLAMELY" sync-notes "$SYNC_DIR" "$REMOTE" "$URL" || true
 fi
