@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/blamely/blamely/internal/gitutil"
 )
 
 // Working-log + baseline storage. The working log is the source of truth for
@@ -26,7 +28,7 @@ import (
 // commit gives a fresh tree for free; sanitizing the branch keeps slashes and
 // Windows-illegal characters out of path components.
 func workingLogDir(repoRoot, branch, baseSHA string) string {
-	return filepath.Join(repoRoot, ".git", "blamely", "working_logs",
+	return filepath.Join(gitutil.GitDir(repoRoot), "blamely", "working_logs",
 		sanitizeComponent(branch), sanitizeComponent(baseSHA))
 }
 
@@ -434,7 +436,7 @@ func AdoptWorkingLogsAtBase(repoRoot, branch, baseSHA string) (adopted int) {
 	if repoRoot == "" || branch == "" || baseSHA == "" {
 		return 0
 	}
-	root := filepath.Join(repoRoot, ".git", "blamely", "working_logs")
+	root := filepath.Join(gitutil.GitDir(repoRoot), "blamely", "working_logs")
 	entries, err := os.ReadDir(root)
 	if err != nil {
 		return 0

@@ -164,6 +164,7 @@ func shellWritePayloadsFrom(root string, files []string, o shellWriteOpts) []dae
 			GenType:        o.GenType,
 			Model:          o.Model,
 			RepoPath:       repoID,
+			WorktreePath:   root,
 			FilePath:       rel,
 			SuggestedLines: int64(len(ranges)),
 			Lines:          toDaemonRanges(ranges),

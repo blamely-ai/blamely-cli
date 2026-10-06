@@ -56,6 +56,7 @@ type EditPayload struct {
 	// GenType: chat | cli | completion | unknown
 	GenType          string `json:"gen_type,omitempty"`
 	RepoPath         string `json:"repo_path"`
+	WorktreePath     string `json:"worktree_path,omitempty"`
 	FilePath         string `json:"file_path"`
 	Model            string `json:"model,omitempty"`
 	InputTokens      *int64 `json:"input_tokens,omitempty"`
@@ -536,11 +537,15 @@ func validateAndStore(db *store.DB, p EditPayload) error {
 		})
 	}
 	netUnchangedEditLines(&e)
-	sessions.resolve(db, &e, p.Branch)
+	sessions.resolveIn(db, &e, p.Branch, p.WorktreePath)
 	if _, err := db.InsertEdit(e); err != nil {
 		return err
 	}
-	updateFileSnapshot(db, p.RepoPath, p.FilePath)
+	checkout := p.WorktreePath
+	if checkout == "" {
+		checkout = p.RepoPath // backwards-compatible with existing editor clients
+	}
+	updateFileSnapshot(db, checkout, p.FilePath)
 	return nil
 }
 

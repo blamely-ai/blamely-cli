@@ -107,7 +107,7 @@ func RecordCopilotFromStdin(r io.Reader) error {
 	// otherwise a Copilot CLI overwrite that drops lines loses the deletion.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -117,6 +117,7 @@ func RecordCopilotFromStdin(r io.Reader) error {
 		Confidence:     "high", // we have a real file+lines, not a session guess
 		GenType:        gen,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Model:          p.Model,
 		SuggestedLines: suggested,
@@ -132,7 +133,7 @@ func RecordCopilotFromStdin(r io.Reader) error {
 	})
 	// Attribution: mirror into the working log before the
 	// daemon POST so capture is daemon-independent. No-op when the flag is off.
-	captureAuthorship(repoPath, rel, "copilot", gen, payload.Model)
+	captureAuthorship(wt, rel, "copilot", gen, payload.Model)
 	return postToDaemon(payload)
 }
 

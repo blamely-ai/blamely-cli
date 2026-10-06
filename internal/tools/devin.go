@@ -125,7 +125,7 @@ func postDevinEdit(p devinHookPayload, cwd, filePath string, ranges []LineRange,
 	// are still detected.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -134,6 +134,7 @@ func postDevinEdit(p devinHookPayload, cwd, filePath string, ranges []LineRange,
 		Confidence:     "high",
 		GenType:        devinGenType,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		SuggestedLines: suggested,
 		Lines:          toDaemonRanges(ranges),
@@ -149,7 +150,7 @@ func postDevinEdit(p devinHookPayload, cwd, filePath string, ranges []LineRange,
 		sessionID:      p.SessionID,
 		tool:           "devin",
 	})
-	captureAuthorship(repoPath, rel, "devin", devinGenType, payload.Model)
+	captureAuthorship(wt, rel, "devin", devinGenType, payload.Model)
 	return postToDaemon(payload)
 }
 

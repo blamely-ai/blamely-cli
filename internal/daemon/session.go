@@ -33,10 +33,17 @@ var sessions = &sessionResolver{cache: map[string]gitInfo{}}
 // commit (the tip uncommitted work builds on). After a commit, HEAD advances and
 // the next edit opens a new session for that branch automatically.
 func (sr *sessionResolver) resolve(db *store.DB, e *store.Edit, branchHint string) {
+	sr.resolveIn(db, e, branchHint, "")
+}
+
+func (sr *sessionResolver) resolveIn(db *store.DB, e *store.Edit, branchHint, checkout string) {
 	if e.RepoPath == "" {
 		return
 	}
-	gi := sr.gitInfo(e.RepoPath)
+	if checkout == "" {
+		checkout = e.RepoPath
+	}
+	gi := sr.gitInfo(checkout)
 	branch := branchHint
 	if branch == "" {
 		branch = gi.branch

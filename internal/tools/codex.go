@@ -413,15 +413,16 @@ func processCodexLine(raw []byte, st *codexState) {
 				}
 			}
 			st.pending = append(st.pending, daemon.Event{
-				When:       when,
-				Tool:       "codex",
-				Confidence: "high",
-				GenType:    st.gen(),
-				RepoPath:   repo,
-				FilePath:   rel,
-				Model:      st.model,
-				Lines:      []daemon.LineRange{{Start: f.StartLine, End: f.EndLine, ContentSHA: f.ContentSHA, ContentSHANorm: f.ContentSHANorm}},
-				RawMeta:    fmt.Sprintf(`{"source":"codex_session","patch_name":%q}`, name),
+				When:         when,
+				Tool:         "codex",
+				Confidence:   "high",
+				GenType:      st.gen(),
+				RepoPath:     repo,
+				WorktreePath: wt,
+				FilePath:     rel,
+				Model:        st.model,
+				Lines:        []daemon.LineRange{{Start: f.StartLine, End: f.EndLine, ContentSHA: f.ContentSHA, ContentSHANorm: f.ContentSHANorm}},
+				RawMeta:      fmt.Sprintf(`{"source":"codex_session","patch_name":%q}`, name),
 			})
 		}
 	}
@@ -808,6 +809,7 @@ func emitCodexShellDeletion(inv codexShellInvocation, when time.Time, st *codexS
 			Confidence:     "high",
 			GenType:        st.gen(),
 			RepoPath:       repo,
+			WorktreePath:   root,
 			FilePath:       rel,
 			Model:          st.model,
 			RemovedLines:   toDaemonRemovedLines(removed),
@@ -930,6 +932,7 @@ func emitCodexPatchApplyEvents(payload json.RawMessage, when time.Time, st *code
 			Confidence:     "high",
 			GenType:        st.gen(),
 			RepoPath:       repo,
+			WorktreePath:   wt,
 			FilePath:       rel,
 			Model:          st.model,
 			Lines:          lines,

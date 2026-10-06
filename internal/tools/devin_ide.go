@@ -392,6 +392,7 @@ func (w *DevinIDEWatcher) recordDevinIDEEdit(dbPath string, e devinACPEdit, sink
 		Confidence:     "high",
 		GenType:        "chat", // an IDE agent panel, not the terminal CLI
 		RepoPath:       repo,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Lines:          toDaemonLineRanges(ranges),
 		RemovedLines:   toDaemonRemovedLines(removed),

@@ -87,7 +87,7 @@ func RecordGeminiFromStdin(r io.Reader) error {
 	// last recorded edit) so we can still detect lines this write removed.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -101,6 +101,7 @@ func RecordGeminiFromStdin(r io.Reader) error {
 		Confidence:     "high",
 		GenType:        genType,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		SuggestedLines: suggested,
 		Lines:          toDaemonRanges(ranges),
@@ -115,7 +116,7 @@ func RecordGeminiFromStdin(r io.Reader) error {
 	})
 	// Attribution: mirror into the working log before the
 	// daemon POST so capture is daemon-independent. No-op when the flag is off.
-	captureAuthorship(repoPath, rel, "gemini", genType, payload.Model)
+	captureAuthorship(wt, rel, "gemini", genType, payload.Model)
 	return postToDaemon(payload)
 }
 

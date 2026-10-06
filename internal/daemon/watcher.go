@@ -41,6 +41,7 @@ type Event struct {
 	// Values: chat | cli | completion | unknown
 	GenType          string
 	RepoPath         string
+	WorktreePath     string // checkout-local root; RepoPath remains the shared identity
 	FilePath         string // relative to repo root
 	Model            string
 	InputTokens      *int64
@@ -165,7 +166,7 @@ func (s *dbSink) Record(ev Event) error {
 		e.RemovedLines = append(e.RemovedLines, store.RemovedLineHash{ContentSHA: rl.ContentSHA, ContentSHANorm: rl.ContentSHANorm})
 	}
 	netUnchangedEditLines(&e)
-	sessions.resolve(s.db, &e, ev.Branch)
+	sessions.resolveIn(s.db, &e, ev.Branch, ev.WorktreePath)
 	if _, err := s.db.InsertEdit(e); err != nil {
 		log.Printf("watcher %q: insert edit failed file=%q: %v", ev.Tool, ev.FilePath, err)
 		return err
@@ -204,7 +205,11 @@ func captureWatcherAuthorship(ev Event) {
 	if ev.Tool == "" || ev.GenType == "human" {
 		author = authorship.HumanAuthor()
 	}
-	_, _ = authorship.RecordEdit(filepath.Join(ev.RepoPath, ev.FilePath), author)
+	checkout := ev.WorktreePath
+	if checkout == "" {
+		checkout = ev.RepoPath
+	}
+	_, _ = authorship.RecordEdit(filepath.Join(checkout, ev.FilePath), author)
 }
 
 // watcherLivenessWindow bounds how recent a watcher event must be to feed the
