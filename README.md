@@ -61,10 +61,6 @@ blamely stats          # deep single-commit view
 
 ## How it works
 
-### Linked Git worktrees
-
-CLI hooks and transcript/log watchers retain a shared canonical repository identity for database/commit matching, while carrying the active checkout as `worktree_path` for file reads, branch/HEAD sessions, and isolated before-image snapshots. Working logs, baselines, deletion logs, migration, and GC use the checkout-local `git rev-parse --absolute-git-dir` (normally `<main>/.git/worktrees/<name>/blamely/working_logs/` for linked worktrees). Detached siblings at the same HEAD remain isolated; regular checkouts keep `.git/blamely/working_logs/`. Run attribution/report commands from the checkout being committed. Older editor clients must supply `worktree_path` to gain safe linked-worktree support; omitting it preserves their previous behavior. No database migration is required.
-
 ```
  AI tool hook                Global git hook
  (PostToolUse)               (post-commit)
