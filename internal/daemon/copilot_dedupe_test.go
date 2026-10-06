@@ -1,6 +1,7 @@
 package daemon
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -10,6 +11,11 @@ import (
 const (
 	dupRepo = "/tmp/dup-repo"
 	dupFile = "tests/basic.spec.ts"
+
+	// One VS Code chat session as each recorder sees it.
+	vscodeWS         = "/Users/u/Library/Application Support/Code/User/workspaceStorage/ab12"
+	vscodeTranscript = vscodeWS + "/GitHub.copilot-chat/transcripts/sess-1.jsonl"
+	vscodeChatFile   = vscodeWS + "/chatSessions/sess-1.jsonl"
 )
 
 func dupLines() []LineRange {
@@ -30,7 +36,7 @@ func hookPayload() EditPayload {
 			{Start: 2, End: 2},
 			{Start: 3, End: 3, ContentSHA: "sha-b", ContentSHANorm: "norm-b"},
 		},
-		RawMeta: `{"session_id":"s1","tool":"create_file","source":"copilot_hook"}`,
+		RawMeta: `{"session_id":"s1","tool":"create_file","source":"copilot_hook","transcript_path":"` + vscodeTranscript + `"}`,
 	}
 }
 
@@ -43,7 +49,7 @@ func transcriptEvent(when time.Time) Event {
 		RepoPath: dupRepo, FilePath: dupFile, Model: "gpt-5-mini",
 		InputTokens: &in, OutputTokens: &out,
 		Lines:   dupLines(),
-		RawMeta: `{"source":"copilot_transcript","tool_kind":"create_file"}`,
+		RawMeta: `{"source":"copilot_transcript","tool_kind":"create_file","transcript_path":"` + vscodeTranscript + `"}`,
 	}
 }
 
@@ -134,5 +140,87 @@ func TestCopilotDedupe_OutsideWindowKeepsBoth(t *testing.T) {
 	}
 	if n := len(copilotEdits(t, db)); n != 2 {
 		t.Fatalf("want 2 rows, got %d", n)
+	}
+}
+
+// A Copilot CLI edit and a VS Code Chat edit that add the same lines are two
+// edits: the CLI's transcript lives in ~/.copilot, not in a VS Code session.
+func TestCopilotDedupe_CLIAndVSCodeChatKeepBoth(t *testing.T) {
+	db := openTestDB(t)
+	cli := hookPayload()
+	cli.GenType = "completion"
+	cli.RawMeta = `{"session_id":"c1","tool":"edit","source":"copilot_hook","transcript_path":"/Users/u/.copilot/session-state/c1/events.jsonl"}`
+	if err := validateAndStore(db, cli); err != nil {
+		t.Fatal(err)
+	}
+	if err := (&dbSink{db: db}).Record(transcriptEvent(time.Now())); err != nil {
+		t.Fatal(err)
+	}
+	if n := len(copilotEdits(t, db)); n != 2 {
+		t.Fatalf("want 2 rows (CLI edit + VS Code edit), got %d", n)
+	}
+}
+
+// Only reports from the same VS Code chat session are merged.
+func TestCopilotDedupe_DifferentSessionKeepsBoth(t *testing.T) {
+	for name, transcript := range map[string]string{
+		"other session":   vscodeWS + "/GitHub.copilot-chat/transcripts/sess-2.jsonl",
+		"other workspace": "/Users/u/Library/Application Support/Code/User/workspaceStorage/cd34/GitHub.copilot-chat/transcripts/sess-1.jsonl",
+		"no path":         "",
+	} {
+		t.Run(name, func(t *testing.T) {
+			db := openTestDB(t)
+			hook := hookPayload()
+			hook.RawMeta = `{"session_id":"s1","tool":"create_file","source":"copilot_hook","transcript_path":"` + transcript + `"}`
+			if err := validateAndStore(db, hook); err != nil {
+				t.Fatal(err)
+			}
+			if err := (&dbSink{db: db}).Record(transcriptEvent(time.Now())); err != nil {
+				t.Fatal(err)
+			}
+			if n := len(copilotEdits(t, db)); n != 2 {
+				t.Fatalf("want 2 rows, got %d", n)
+			}
+		})
+	}
+}
+
+// The chatSessions recorder names the session by its own file, and a Windows
+// hook reports a backslashed path in another case: still the same session.
+func TestCopilotDedupe_SameSessionAcrossPathShapes(t *testing.T) {
+	db := openTestDB(t)
+	hook := hookPayload()
+	winTranscript := `C:\\Users\\U\\AppData\\Roaming\\Code\\User\\workspaceStorage\\AB12\\GitHub.copilot-chat\\transcripts\\SESS-1.jsonl`
+	hook.RawMeta = `{"session_id":"s1","tool":"create_file","source":"copilot_hook","transcript_path":"` + winTranscript + `"}`
+	if err := validateAndStore(db, hook); err != nil {
+		t.Fatal(err)
+	}
+	ev := transcriptEvent(time.Now())
+	ev.RawMeta = `{"source":"copilot_chat_textedit","tool":"copilot","chat_session_path":"c:/users/u/appdata/roaming/code/user/workspacestorage/ab12/chatSessions/sess-1.jsonl"}`
+	if err := (&dbSink{db: db}).Record(ev); err != nil {
+		t.Fatal(err)
+	}
+	if n := len(copilotEdits(t, db)); n != 1 {
+		t.Fatalf("want the chatSessions report merged into the hook's row, got %d rows", n)
+	}
+}
+
+func TestCopilotSessionKey(t *testing.T) {
+	edit := func(meta string) *store.Edit {
+		e := &store.Edit{}
+		e.RawMeta.Valid, e.RawMeta.String = true, meta
+		return e
+	}
+	want := strings.ToLower(vscodeWS) + "/sess-1"
+	for meta, key := range map[string]string{
+		`{"source":"copilot_hook","transcript_path":"` + vscodeTranscript + `"}`:          want,
+		`{"source":"copilot_chat_session","chat_session_path":"` + vscodeChatFile + `"}`:  want,
+		`{"source":"copilot_hook","transcript_path":"/Users/u/.copilot/session-state/x"}`: "",
+		`{"source":"copilot_transcript"}`:                                                 "",
+		`not json`:                                                                        "",
+	} {
+		if got := copilotSessionKey(edit(meta)); got != key {
+			t.Errorf("copilotSessionKey(%s) = %q, want %q", meta, got, key)
+		}
 	}
 }

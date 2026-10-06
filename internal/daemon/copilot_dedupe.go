@@ -3,6 +3,8 @@ package daemon
 import (
 	"encoding/json"
 	"log"
+	"path"
+	"strings"
 
 	"github.com/blamely/blamely/internal/store"
 )
@@ -25,9 +27,13 @@ var copilotSources = map[string]bool{
 
 // mergeCopilotCrossSourceDuplicate reports whether e is a second report of a
 // Copilot edit another recorder already stored — same repo and file, within
-// copilotDupWindowNanos, from a DIFFERENT source, with the same net added and
-// removed lines. If so it folds e's model/tokens into the stored row and the
-// caller skips the insert.
+// copilotDupWindowNanos, from a DIFFERENT source, in the SAME VS Code chat
+// session, with the same net added and removed lines. If so it folds e's
+// model/tokens into the stored row and the caller skips the insert.
+//
+// The session check is what keeps two real edits apart: file, line hashes and
+// time alone matched a Copilot CLI edit and a VS Code Chat edit that happened to
+// add the same line, and stored one row for both. See copilotSessionKey.
 //
 // Storing both would credit the lines correctly but count the turn's tokens
 // twice (they are deduped per tool+timestamp, and the two rows differ in time)
@@ -42,6 +48,10 @@ func mergeCopilotCrossSourceDuplicate(db *store.DB, e *store.Edit) bool {
 	if !copilotSources[src] {
 		return false
 	}
+	session := copilotSessionKey(e)
+	if session == "" {
+		return false // not provably a VS Code chat edit: never merge
+	}
 	cands, err := db.EditsForFileSince(e.RepoPath, e.FilePath, e.TimestampNanos-copilotDupWindowNanos)
 	if err != nil {
 		return false
@@ -52,6 +62,9 @@ func mergeCopilotCrossSourceDuplicate(db *store.DB, e *store.Edit) bool {
 			continue
 		}
 		if cs := editSource(c); cs == src || !copilotSources[cs] {
+			continue
+		}
+		if copilotSessionKey(c) != session {
 			continue
 		}
 		if !sameNetLines(c, e) {
@@ -68,18 +81,64 @@ func mergeCopilotCrossSourceDuplicate(db *store.DB, e *store.Edit) bool {
 	return false
 }
 
+// copilotRawMeta is the part of a Copilot edit's raw_meta dedupe reads.
+type copilotRawMeta struct {
+	Source          string `json:"source"`
+	TranscriptPath  string `json:"transcript_path"`   // copilot_hook, copilot_transcript
+	ChatSessionPath string `json:"chat_session_path"` // copilot_chat_session, copilot_chat_textedit
+}
+
+func parseCopilotRawMeta(e *store.Edit) copilotRawMeta {
+	var meta copilotRawMeta
+	if e.RawMeta.Valid && e.RawMeta.String != "" {
+		_ = json.Unmarshal([]byte(e.RawMeta.String), &meta)
+	}
+	return meta
+}
+
 // editSource returns raw_meta's "source" tag ("" when absent or unparsable).
 func editSource(e *store.Edit) string {
-	if !e.RawMeta.Valid || e.RawMeta.String == "" {
+	return parseCopilotRawMeta(e).Source
+}
+
+// copilotSessionKey identifies the VS Code chat session an edit came from as
+// "<workspaceStorage hash dir>/<session id>", or "" when the edit is not
+// provably from one.
+//
+// Every recorder that can report the same VS Code edit points into one
+// workspace's storage, under the same session id:
+//
+//	hook, transcript watcher: <hash>/GitHub.copilot-chat/transcripts/<id>.jsonl
+//	chatSessions watcher:     <hash>/chatSessions/<id>.jsonl
+//
+// The Copilot CLI's hook points into ~/.copilot instead, so its edits get no key
+// and are never merged — the CLI has no second recorder that could double them.
+// Paths are compared case-insensitively with forward slashes (Windows paths).
+func copilotSessionKey(e *store.Edit) string {
+	meta := parseCopilotRawMeta(e)
+	p := meta.ChatSessionPath
+	if p == "" {
+		p = meta.TranscriptPath
+	}
+	p = strings.ToLower(strings.ReplaceAll(p, `\`, "/"))
+	dir, file := path.Split(p)
+	id := strings.TrimSuffix(file, path.Ext(file))
+	if id == "" {
 		return ""
 	}
-	var meta struct {
-		Source string `json:"source"`
-	}
-	if json.Unmarshal([]byte(e.RawMeta.String), &meta) != nil {
+	dir = strings.TrimSuffix(dir, "/")
+	switch {
+	case strings.HasSuffix(dir, "/github.copilot-chat/transcripts"):
+		dir = strings.TrimSuffix(dir, "/github.copilot-chat/transcripts")
+	case strings.HasSuffix(dir, "/chatsessions"):
+		dir = strings.TrimSuffix(dir, "/chatsessions")
+	default:
 		return ""
 	}
-	return meta.Source
+	if dir == "" {
+		return ""
+	}
+	return dir + "/" + id
 }
 
 // sameNetLines reports whether a and b added and removed exactly the same lines,
