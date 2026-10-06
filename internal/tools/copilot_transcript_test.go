@@ -172,3 +172,40 @@ func TestEmitCopilotInsertEditEdits(t *testing.T) {
 		t.Fatalf("want 1 event with 2 added lines, got %+v", sink.events)
 	}
 }
+
+// multi_replace_string_in_file carries several replacements, possibly across
+// files; each must be recorded against its own file (it was never recognized,
+// so every such edit fell to Human).
+func TestEmitCopilotMultiReplaceStringEdits(t *testing.T) {
+	repo := gitInitRepo(t)
+	a := filepath.Join(repo, "a.ts")
+	b := filepath.Join(repo, "b.ts")
+	for _, f := range []string{a, b} {
+		if err := os.WriteFile(f, []byte("x\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	inner, _ := json.Marshal(map[string]any{
+		"explanation": "rename across files",
+		"replacements": []map[string]string{
+			{"filePath": a, "oldString": "oldName()", "newString": "newName()"},
+			{"filePath": b, "oldString": "import { oldName }", "newString": "import { newName }\nnewName()"},
+		},
+	})
+	args, _ := json.Marshal(string(inner)) // double-encoded JSON string
+
+	sink := &mockSink{}
+	emitCopilotMultiReplaceStringEdits(json.RawMessage(args), "gpt-5-mini", 0, 0, "/tmp/t.jsonl", sink)
+	if len(sink.events) != 2 {
+		t.Fatalf("want 2 emitted edits, got %d", len(sink.events))
+	}
+	if sink.events[0].FilePath != "a.ts" || len(sink.events[0].Lines) != 1 || len(sink.events[0].RemovedLines) != 1 {
+		t.Errorf("edit 0 wrong: %+v", sink.events[0])
+	}
+	if sink.events[1].FilePath != "b.ts" || len(sink.events[1].Lines) != 2 || len(sink.events[1].RemovedLines) != 1 {
+		t.Errorf("edit 1 wrong: %+v", sink.events[1])
+	}
+	if !looksLikeMultiReplaceString("multi_replace_string_in_file") || looksLikeReplaceString("multi_replace_string_in_file") {
+		t.Errorf("tool-name routing wrong")
+	}
+}

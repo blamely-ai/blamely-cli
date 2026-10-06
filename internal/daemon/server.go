@@ -537,8 +537,10 @@ func validateAndStore(db *store.DB, p EditPayload) error {
 	}
 	netUnchangedEditLines(&e)
 	sessions.resolve(db, &e, p.Branch)
-	if _, err := db.InsertEdit(e); err != nil {
-		return err
+	if !mergeCopilotCrossSourceDuplicate(db, &e) {
+		if _, err := db.InsertEdit(e); err != nil {
+			return err
+		}
 	}
 	updateFileSnapshot(db, p.RepoPath, p.FilePath)
 	return nil

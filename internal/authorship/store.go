@@ -166,6 +166,13 @@ func SeedWorkingLog(repoRoot, branch, baseSHA, relPath, content string, lines []
 // (no stored baseline): pass the pre-edit capture or HEAD content per Decision B,
 // or "" for a brand-new file. nowMS=0 stamps with the wall clock.
 func Update(repoRoot, branch, baseSHA, relPath, newContent, fallbackBaseline string, author Author, nowMS int64) (*WorkingLog, error) {
+	return update(repoRoot, branch, baseSHA, relPath, newContent, func() string { return fallbackBaseline }, author, nowMS)
+}
+
+// update is Update with the fallback baseline computed only when it is needed
+// (no stored baseline), under the same lock that reads the stored one — so a
+// caller whose fallback costs a git process pays it on a file's first edit only.
+func update(repoRoot, branch, baseSHA, relPath, newContent string, fallbackBaseline func() string, author Author, nowMS int64) (*WorkingLog, error) {
 	rel := cleanRel(relPath)
 	wlPath := WorkingLogPath(repoRoot, branch, baseSHA, relPath)
 	basePath := BaselinePath(repoRoot, branch, baseSHA, relPath)
@@ -176,9 +183,9 @@ func Update(repoRoot, branch, baseSHA, relPath, newContent, fallbackBaseline str
 		if err != nil {
 			return err
 		}
-		baseline := fallbackBaseline
-		if stored, ok := loadBaseline(basePath); ok {
-			baseline = stored
+		baseline, ok := loadBaseline(basePath)
+		if !ok {
+			baseline = fallbackBaseline()
 		}
 
 		wl := Attribute(prior, baseline, newContent, author, nowMS)
