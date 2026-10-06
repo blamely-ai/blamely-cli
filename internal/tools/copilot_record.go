@@ -432,7 +432,9 @@ func extractCopilotMultiFileEdits(p copilotHookPayload) (edits []copilotFileEdit
 // storage (…/GitHub.copilot-chat/transcripts/…), the CLI's into ~/.copilot.
 // Chat-panel edits are "chat", the same as the transcript watcher records them.
 func copilotHookGenType(p copilotHookPayload) string {
-	if strings.Contains(strings.ToLower(filepath.ToSlash(p.TranscriptPath)), "/github.copilot-chat/") {
+	// Backslashes replaced explicitly: filepath.ToSlash is a no-op off Windows,
+	// and the path is matched the same whatever OS reads it.
+	if strings.Contains(strings.ToLower(strings.ReplaceAll(p.TranscriptPath, `\`, "/")), "/github.copilot-chat/") {
 		return "chat"
 	}
 	return copilotGenType(p.ToolName)
