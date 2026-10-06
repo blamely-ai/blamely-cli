@@ -3,7 +3,6 @@ package tools
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,8 +12,8 @@ import (
 	"github.com/blamely/blamely/internal/gitutil"
 )
 
-// OpenCode's V1 and V2 adapters both send actual before/after content. This
-// avoids guessing shell targets or treating an entire rewritten file as AI.
+// openCodePayload is an internal captured edit, not the plugin wire protocol.
+// Before/after content is discovered and read by the Go hook lifecycle.
 type openCodePayload struct {
 	Cwd       string `json:"cwd"`
 	SessionID string `json:"session_id"`
@@ -27,15 +26,7 @@ type openCodePayload struct {
 	After     string `json:"after"`
 }
 
-func RecordOpenCodeFromStdin(r io.Reader) error {
-	raw, err := readHookPayload(r)
-	if err != nil {
-		return err
-	}
-	var p openCodePayload
-	if err := json.Unmarshal(raw, &p); err != nil {
-		return fmt.Errorf("parse OpenCode payload: %w", err)
-	}
+func recordOpenCodeEdit(p openCodePayload) error {
 	if p.Before == p.After {
 		return nil
 	}

@@ -22,11 +22,11 @@ export default async function BlamelyPlugin({ directory }) {
             }
             if (event.type === "session.deleted") {
                 const id = event.properties?.info?.id
-                if (id) { recorder.clear(id); models.delete(id) }
+                if (id) { await recorder.clear(id); models.delete(id) }
             }
             if (event.type === "session.idle" || event.type === "session.error") {
                 const id = event.properties?.sessionID
-                if (id) recorder.clear(id)
+                if (id) await recorder.clear(id)
             }
         },
     }

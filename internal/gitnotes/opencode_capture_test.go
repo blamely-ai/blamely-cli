@@ -43,10 +43,16 @@ func TestOpenCodeCaptureToCommit(t *testing.T) {
 				file := filepath.Join(checkout, "file.txt")
 				before := "human committed\nhuman uncommitted\n"
 				after := before + "AI\n"
+				if err := os.WriteFile(file, []byte(before), 0o644); err != nil {
+					t.Fatal(err)
+				}
+				raw, _ := json.Marshal(map[string]any{"cwd": checkout, "tool_name": "edit", "tool_input": map[string]any{"filePath": file}, "call_id": "call", "version": major, "session_id": "opencode:test", "model": "openai/test"})
+				if err := tools.CaptureOpenCodeFromStdin(strings.NewReader(string(raw))); err != nil {
+					t.Fatal(err)
+				}
 				if err := os.WriteFile(file, []byte(after), 0o644); err != nil {
 					t.Fatal(err)
 				}
-				raw, _ := json.Marshal(map[string]any{"cwd": checkout, "file_path": file, "before": before, "after": after, "version": major, "session_id": "opencode:test", "model": "openai/test"})
 				err := tools.RecordOpenCodeFromStdin(strings.NewReader(string(raw)))
 				ctx, _ := authorship.ResolveContext(file)
 				if linked && strings.HasPrefix(authorship.WorkingLogPath(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath), filepath.Join(ctx.RepoRoot, ".git")+string(filepath.Separator)) {

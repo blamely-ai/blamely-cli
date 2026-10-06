@@ -33,11 +33,7 @@ func openCodeRepo(t *testing.T) string {
 
 func recordOpenCode(t *testing.T, payload openCodePayload) {
 	t.Helper()
-	raw, err := json.Marshal(payload)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := RecordOpenCodeFromStdin(strings.NewReader(string(raw))); err != nil {
+	if err := recordOpenCodeEdit(payload); err != nil {
 		t.Fatal(err)
 	}
 }

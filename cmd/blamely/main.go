@@ -535,7 +535,13 @@ func cmdRecord() *cobra.Command {
 			// recording an edit. The matching PostToolUse `record` then diffs the
 			// agent's write against this exact baseline.
 			if pre, _ := cmd.Flags().GetBool("pre"); pre {
-				if err := tools.CaptureBaselineFromStdin(os.Stdin); err != nil {
+				var err error
+				if args[0] == "opencode" {
+					err = tools.CaptureOpenCodeFromStdin(os.Stdin)
+				} else {
+					err = tools.CaptureBaselineFromStdin(os.Stdin)
+				}
+				if err != nil {
 					fmt.Fprintf(os.Stderr, "blamely record %s --pre: %v\n", args[0], err)
 				}
 				return nil
