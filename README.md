@@ -21,7 +21,7 @@ dasdas
 | [Devin](https://docs.devin.ai) | ✓ | cli, chat |
 | [OpenCode V1 / V2](https://opencode.ai) | ✓ | chat, agent tool edits |
 
-OpenCode has native, version-specific adapters installed by `blamely install` / `blamely repair`. Edits are recorded as `opencode` (not Codex), with provider/model, session, and tool-call metadata. `blamely doctor` checks the adapter; `blamely uninstall` removes the managed global files without changing other plugins or configuration.
+OpenCode has native, version-specific adapters installed by `blamely install` / `blamely repair`. Edits are recorded as `opencode`, with provider/model, session, and tool-call metadata. `blamely doctor` checks the adapter; `blamely uninstall` removes the managed global files without changing other plugins or configuration.
 
 To select the API explicitly or install only in a project:
 
@@ -31,7 +31,7 @@ blamely install-opencode --major 2
 blamely install-opencode --major 2 --directory /path/to/project/.opencode
 ```
 
-Restart OpenCode after installation; run `blamely repair` after changing major versions. The global directory follows `OPENCODE_CONFIG_DIR`, then `$XDG_CONFIG_HOME/opencode`, then `~/.config/opencode`. One adapter lives in `plugins/blamely.ts`, with its helper in `blamely/bridge.mjs`; no npm dependencies or JSON/JSONC changes are needed. Manual installation records the invoked Blamely binary's absolute path, so use a durable binary rather than `go run`. For project-local removal, remove only those two managed files. Remove older custom Blamely bridges first, and avoid enabling both global and project-local adapters for the same checkout.
+Restart OpenCode after installation; run `blamely repair` after changing major versions. The global directory follows `OPENCODE_CONFIG_DIR`, then `$XDG_CONFIG_HOME/opencode`, then `~/.config/opencode`. One adapter lives in `plugins/blamely.ts`, with its helper in `blamely/bridge.mjs`; no npm dependencies or JSON/JSONC changes are needed. Manual installation records the invoked Blamely binary's absolute path, so use a durable binary rather than `go run`. For project-local removal, remove only those two managed files. Avoid enabling both global and project-local adapters for the same checkout.
 
 Both APIs capture actual before/after content for write/edit/patch tools (including rename destinations) and foreground shell/scripts, including partial edits from failed tools. Existing human edits remain Human; capture survives an unavailable daemon. Linked worktrees require the separate native worktree fix ([PR #9](https://github.com/blamely-ai/blamely-cli/pull/9)); without it, recording fails closed instead of crediting the main checkout.
 
