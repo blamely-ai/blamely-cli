@@ -130,7 +130,7 @@ func TestLockSync(t *testing.T) {
 	}()
 	time.Sleep(700 * time.Millisecond)
 	// However old the lock file looks, a live holder keeps it.
-	p := gitPath(repo, syncLockFile)
+	p := syncStatePath(repo, syncLockFile)
 	old := time.Now().Add(-time.Hour)
 	if err := os.Chtimes(p, old, old); err != nil {
 		t.Fatal(err)
@@ -157,7 +157,7 @@ func TestLockSync(t *testing.T) {
 func TestLockSync_ReleasedWhenHolderDies(t *testing.T) {
 	f := newSyncFixture(t, false)
 	repo := f.clone()
-	p := gitPath(repo, syncLockFile)
+	p := syncStatePath(repo, syncLockFile)
 	// Hold the lock in a child process (this test binary, see
 	// TestHelperHoldSyncLock), then kill it.
 	holder := exec.Command(os.Args[0], "-test.run=^TestHelperHoldSyncLock$")
@@ -183,6 +183,78 @@ func TestLockSync_ReleasedWhenHolderDies(t *testing.T) {
 		t.Fatalf("lock not free after its holder died: %v", err)
 	}
 	u()
+}
+
+// Worktrees share the notes ref and the scratch refs, so they must share the
+// lock too: a sync in one worktree waits for a sync in another.
+func TestLockSync_SharedAcrossWorktrees(t *testing.T) {
+	f := newSyncFixture(t, false)
+	repo := f.clone()
+	commitWithNote(t, repo, "a.txt", "PROJ-1 a", `{"n":"a"}`)
+	wt := filepath.Join(t.TempDir(), "wt")
+	runIn(t, repo, "worktree", "add", "-q", "-b", "other", wt)
+
+	real := func(p string) string { // macOS: /var is /private/var
+		d, err := filepath.EvalSymlinks(filepath.Dir(p))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return filepath.Join(d, filepath.Base(p))
+	}
+	if a, b := real(syncStatePath(repo, syncLockFile)), real(syncStatePath(wt, syncLockFile)); a != b {
+		t.Fatalf("lock paths differ: %q vs %q", a, b)
+	}
+	unlock, err := lockSync(repo)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := make(chan struct{})
+	go func() {
+		if u, err := lockSync(wt); err == nil {
+			close(got)
+			u()
+		}
+	}()
+	select {
+	case <-got:
+		t.Fatal("the other worktree took the lock while this one held it")
+	case <-time.After(1500 * time.Millisecond):
+	}
+	unlock()
+	select {
+	case <-got:
+	case <-time.After(5 * time.Second):
+		t.Fatal("the other worktree never got the lock")
+	}
+}
+
+// Pushes from two worktrees at once both publish their notes: the shared lock
+// keeps one sync from clearing the other's scratch refs mid-build.
+func TestSyncNotesAndRecord_ConcurrentWorktrees(t *testing.T) {
+	tempHome(t)
+	f := newSyncFixture(t, false)
+	repo := f.clone()
+	wt := filepath.Join(t.TempDir(), "wt")
+	runIn(t, repo, "worktree", "add", "-q", "-b", "other", wt)
+	shaA := commitWithNote(t, repo, "a.txt", "PROJ-1 a", `{"n":"a"}`)
+	shaB := commitWithNote(t, wt, "b.txt", "PROJ-2 b", `{"n":"b"}`)
+	runIn(t, repo, "push", "-q", "origin", "HEAD")
+	runIn(t, wt, "push", "-q", "origin", "other")
+
+	errs := make(chan error, 2)
+	for _, dir := range []string{repo, wt} {
+		go func(dir string) { errs <- SyncNotesAndRecord(dir, "origin", "", nil) }(dir)
+	}
+	for i := 0; i < 2; i++ {
+		if err := <-errs; err != nil {
+			t.Errorf("sync: %v", err)
+		}
+	}
+	for _, sha := range []string{shaA, shaB} {
+		if _, ok := noteIn(t, f.remote, sha); !ok {
+			t.Errorf("remote is missing the note for %s", sha[:7])
+		}
+	}
 }
 
 // TestHelperHoldSyncLock is not a test: TestLockSync_ReleasedWhenHolderDies runs

@@ -13,6 +13,7 @@ import (
 
 	"github.com/blamely/blamely/internal/config"
 	"github.com/blamely/blamely/internal/filelock"
+	"github.com/blamely/blamely/internal/gitutil"
 	"github.com/blamely/blamely/internal/procattr"
 )
 
@@ -39,6 +40,8 @@ import (
 const syncLockFile = "blamely-sync.lock"
 
 // syncErrorFile holds the last background sync's failure until a push reports it.
+// Like the lock it lives in the common git directory: the notes ref, and so a
+// failed sync, belongs to the repository, not to the worktree that pushed.
 const syncErrorFile = "blamely-sync.error"
 
 // syncLockWait bounds how long a sync waits for an earlier one to finish: longer
@@ -84,7 +87,7 @@ func SyncNotesAndRecord(repo, remote, url string, pushedTips []string) error {
 	LogSyncOutcome(repo, remote, err)
 	if err != nil {
 		recordSyncError(repo, remote, err)
-	} else if p := gitPath(repo, syncErrorFile); p != "" {
+	} else if p := syncStatePath(repo, syncErrorFile); p != "" {
 		_ = os.Remove(p)
 	}
 	return err
@@ -93,7 +96,7 @@ func SyncNotesAndRecord(repo, remote, url string, pushedTips []string) error {
 // ReportPreviousSyncFailure prints, and forgets, the failure a background sync
 // recorded since the last push.
 func ReportPreviousSyncFailure(repo string, w io.Writer) {
-	p := gitPath(repo, syncErrorFile)
+	p := syncStatePath(repo, syncErrorFile)
 	if p == "" {
 		return
 	}
@@ -108,7 +111,7 @@ func ReportPreviousSyncFailure(repo string, w io.Writer) {
 }
 
 func recordSyncError(repo, remote string, err error) {
-	p := gitPath(repo, syncErrorFile)
+	p := syncStatePath(repo, syncErrorFile)
 	if p == "" {
 		return
 	}
@@ -120,10 +123,28 @@ func recordSyncError(repo, remote string, err error) {
 	_ = os.WriteFile(p, []byte(msg+"\n"), 0o644)
 }
 
+// syncStatePath returns name inside the repository's COMMON git directory.
+//
+// Not gitPath: in a linked worktree that resolves to the worktree's private
+// .git/worktrees/<name>/, while the notes ref and the refs/blamely-sync scratch
+// refs a sync works in are shared by every worktree. Per-worktree locks let two
+// worktrees' pushes sync at once and clear each other's scratch refs.
+func syncStatePath(repo, name string) string {
+	out, err := runGit(gitutil.DefaultTimeout, repo, nil, nil, "rev-parse", "--git-common-dir")
+	dir := strings.TrimSpace(out)
+	if err != nil || dir == "" {
+		return ""
+	}
+	if !filepath.IsAbs(dir) {
+		dir = filepath.Join(repo, dir) // relative to -C repo
+	}
+	return filepath.Join(dir, name)
+}
+
 // lockSync takes the repo's sync lock, waiting up to syncLockWait for a running
 // sync to finish. The returned func releases it.
 func lockSync(repo string) (func(), error) {
-	p := gitPath(repo, syncLockFile)
+	p := syncStatePath(repo, syncLockFile)
 	if p == "" {
 		return nil, errors.New("cannot locate the git directory")
 	}
