@@ -55,7 +55,7 @@ func TestOpenCodeTargets(t *testing.T) {
 		}
 	}
 	for _, tool := range []string{"write", "edit", "multiedit"} {
-		for _, key := range []string{"filePath", "file_path"} {
+		for _, key := range []string{"path", "filePath", "file_path"} {
 			if got := openCodeTargets(openCodeEvent("", tool, map[string]any{key: "file.txt"})); !reflect.DeepEqual(got, []string{"file.txt"}) {
 				t.Fatal(got)
 			}
@@ -69,40 +69,82 @@ func TestOpenCodeTargets(t *testing.T) {
 	}
 }
 
-func TestOpenCodeGoShellCapture(t *testing.T) {
-	root := openCodeRepo(t)
-	openCodeWrite(t, root, ".gitignore", "ignored/\n")
-	openCodeWrite(t, root, "edited.txt", "human\n")
-	openCodeWrite(t, root, "untouched.txt", "dirty human\n")
-	openCodeWrite(t, root, "deleted.txt", "deleted\n")
-	openCodeWrite(t, root, "binary.txt", "\x00")
-	event := openCodeEvent(root, "shell", map[string]any{"command": "script"})
-	runOpenCodeHook(t, event, true)
-	path, _ := openCodeCapturePath(event)
-	if info, err := os.Stat(filepath.Join(path, "0")); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
-		t.Fatalf("private snapshot: %v %v", info, err)
+func TestOpenCodeGoShellDoesNotClaimConcurrentHumanEdits(t *testing.T) {
+	for _, tool := range []string{"shell", "bash"} {
+		t.Run(tool, func(t *testing.T) {
+			root := openCodeRepo(t)
+			openCodeWrite(t, root, "edited.txt", "human\n")
+			event := openCodeEvent(root, tool, map[string]any{"command": "sleep 1"})
+			runOpenCodeHook(t, event, true)
+			path, _ := openCodeCapturePath(event)
+			if _, err := os.Stat(path); !os.IsNotExist(err) {
+				t.Fatalf("ambiguous shell snapshot created: %v", err)
+			}
+			openCodeWrite(t, root, "edited.txt", "human saved concurrently\n")
+			openCodeWrite(t, root, "new.txt", "human created concurrently\n")
+			runOpenCodeHook(t, event, false)
+			if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 0 {
+				t.Fatalf("human edits claimed: %+v %v", logs, err)
+			}
+		})
 	}
-	openCodeWrite(t, root, "edited.txt", "human\nAI\n")
-	openCodeWrite(t, root, "new ş.txt", "new\n")
-	openCodeWrite(t, root, "binary.txt", "now text\n")
-	openCodeWrite(t, root, "ignored/output.txt", "build\n")
-	if err := os.Remove(filepath.Join(root, "deleted.txt")); err != nil {
+}
+
+func TestOpenCodeGoNativeEditAndWrite(t *testing.T) {
+	for _, version := range []int{1, 2} {
+		for _, tool := range []string{"edit", "write"} {
+			t.Run(fmt.Sprintf("V%d/%s", version, tool), func(t *testing.T) {
+				root := openCodeRepo(t)
+				openCodeWrite(t, root, "file.txt", "human\n")
+				key := "filePath"
+				if version == 2 {
+					key = "path"
+				}
+				event := openCodeEvent(root, tool, map[string]any{key: filepath.Join(root, "file.txt")})
+				event.Version = version
+				runOpenCodeHook(t, event, true)
+				path, _ := openCodeCapturePath(event)
+				if info, err := os.Stat(filepath.Join(path, "0")); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
+					t.Fatalf("private snapshot: %v %v", info, err)
+				}
+				openCodeWrite(t, root, "file.txt", "human\nAI\n")
+				// After callbacks need only identity; metadata comes from Go state.
+				runOpenCodeHook(t, openCodeHook{SessionID: event.SessionID, CallID: event.CallID}, false)
+				authors, ok := authorship.AuthorsForFile(root, "main", "INITIAL", "file.txt")
+				if !ok || authors[1].Type != authorship.Human || authors[2].Tool != "opencode" || authors[2].Model != "openai/test" {
+					t.Fatal(authors)
+				}
+				if _, err := os.Stat(path); !os.IsNotExist(err) {
+					t.Fatal("capture not consumed")
+				}
+				runOpenCodeHook(t, event, false) // duplicate completion is a no-op
+			})
+		}
+	}
+}
+
+func TestOpenCodeGoDiscardsLegacyShellSnapshot(t *testing.T) {
+	root := openCodeRepo(t)
+	event := openCodeEvent(root, "shell", nil)
+	path, _ := openCodeCapturePath(event)
+	if err := os.MkdirAll(path, 0o700); err != nil {
 		t.Fatal(err)
 	}
-	// After callbacks need only identity: directory/tool/model come from Go state.
-	runOpenCodeHook(t, openCodeHook{SessionID: event.SessionID, CallID: event.CallID}, false)
-	logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL")
-	if err != nil || len(logs) != 3 {
-		t.Fatalf("changed files: %+v %v", logs, err)
+	manifest, _ := json.Marshal(map[string]any{"event": event, "revision": openCodeRevision(root), "shell": true, "known": []string{"file.txt"}, "files": []string{"file.txt"}})
+	if err := os.WriteFile(filepath.Join(path, "capture.json"), manifest, 0o600); err != nil {
+		t.Fatal(err)
 	}
-	authors, ok := authorship.AuthorsForFile(root, "main", "INITIAL", "edited.txt")
-	if !ok || authors[1].Type != authorship.Human || authors[2].Tool != "opencode" || authors[2].Model != "openai/test" {
-		t.Fatal(authors)
+	if err := os.WriteFile(filepath.Join(path, "0"), []byte("human\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	openCodeWrite(t, root, "file.txt", "human saved concurrently\n")
+	runOpenCodeHook(t, event, false)
+	if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 0 {
+		t.Fatalf("legacy shell snapshot claimed human edit: %+v %v", logs, err)
 	}
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
-		t.Fatal("capture not consumed")
+		t.Fatal("legacy snapshot not consumed")
 	}
-	runOpenCodeHook(t, event, false) // duplicate completion/error callback is a no-op
 }
 
 func TestOpenCodeGoPatchRenameAndNestedCreation(t *testing.T) {
@@ -118,14 +160,18 @@ func TestOpenCodeGoPatchRenameAndNestedCreation(t *testing.T) {
 	}
 	openCodeWrite(t, root, "new/created.txt", "created\n")
 	runOpenCodeHook(t, event, false)
-	if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 3 {
+	if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 2 {
 		t.Fatalf("rename/create: %v %v", logs, err)
+	}
+	authors, ok := authorship.AuthorsForFile(root, "main", "INITIAL", "new/renamed.txt")
+	if !ok || authors[1].Type != authorship.Human {
+		t.Fatalf("renamed human content claimed: %+v", authors)
 	}
 }
 
 func TestOpenCodeGoEmptyCheckoutAndBranchChange(t *testing.T) {
 	root := openCodeRepo(t)
-	event := openCodeEvent(root, "bash", map[string]any{"command": "script"})
+	event := openCodeEvent(root, "write", map[string]any{"path": "new.txt"})
 	runOpenCodeHook(t, event, true)
 	openCodeWrite(t, root, "new.txt", "created\n")
 	runOpenCodeHook(t, event, false)
@@ -140,6 +186,69 @@ func TestOpenCodeGoEmptyCheckoutAndBranchChange(t *testing.T) {
 	runOpenCodeHook(t, event, false)
 	if logs, err := authorship.ListWorkingLogs(root, "other", "INITIAL"); err != nil || len(logs) != 0 {
 		t.Fatalf("branch change claimed: %v %v", logs, err)
+	}
+}
+
+func TestOpenCodeGoPatchRenamePreservesPreviousAI(t *testing.T) {
+	for _, edited := range []bool{false, true} {
+		t.Run(fmt.Sprintf("edited=%v", edited), func(t *testing.T) {
+			root := openCodeRepo(t)
+			previousAI := authorship.Author{Type: authorship.AI, Tool: "claude", Model: "previous/model"}
+			before := "human\nprevious AI\nhuman later\n"
+			if _, err := authorship.Update(root, "main", "INITIAL", "old.txt", "human\nprevious AI\n", "human\n", previousAI, 1); err != nil {
+				t.Fatal(err)
+			}
+			openCodeWrite(t, root, "old.txt", before)
+			event := openCodeEvent(root, "patch", map[string]any{"patchText": "*** Update File: old.txt\n*** Move to: new.txt\n"})
+			runOpenCodeHook(t, event, true)
+			if err := os.Rename(filepath.Join(root, "old.txt"), filepath.Join(root, "new.txt")); err != nil {
+				t.Fatal(err)
+			}
+			if edited {
+				openCodeWrite(t, root, "new.txt", before+"new AI\n")
+			}
+			runOpenCodeHook(t, event, false)
+			authors, ok := authorship.AuthorsForFile(root, "main", "INITIAL", "new.txt")
+			if !ok || authors[1].Type != authorship.Human || authors[2] != previousAI || authors[3].Type != authorship.Human || (edited && authors[4].Tool != "opencode") {
+				t.Fatalf("lost rename authorship: %+v", authors)
+			}
+			wl, err := authorship.LoadWorkingLog(root, "main", "INITIAL", "old.txt")
+			if err != nil || wl != nil {
+				t.Fatalf("stale source log: %+v %v", wl, err)
+			}
+			if _, err := os.Stat(authorship.BaselinePath(root, "main", "INITIAL", "old.txt")); !os.IsNotExist(err) {
+				t.Fatalf("stale source baseline: %v", err)
+			}
+			if deletions, err := authorship.LoadDeletions(root, "main", "INITIAL"); err != nil || len(deletions) != 0 {
+				t.Fatalf("pure move recorded deletions: %+v %v", deletions, err)
+			}
+		})
+	}
+}
+
+func TestOpenCodeGoFailedPatchDoesNotTransferAuthorship(t *testing.T) {
+	root := openCodeRepo(t)
+	openCodeWrite(t, root, "old.txt", "human\n")
+	event := openCodeEvent(root, "patch", map[string]any{"patchText": "*** Update File: old.txt\n*** Move to: new.txt\n"})
+	runOpenCodeHook(t, event, true)
+	runOpenCodeHook(t, event, false)
+	if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 0 {
+		t.Fatalf("failed rename changed authorship: %+v %v", logs, err)
+	}
+}
+
+func TestOpenCodeGoRenameWithoutSourceBaselineIsSkipped(t *testing.T) {
+	root := openCodeRepo(t)
+	openCodeWrite(t, root, "old.txt", strings.Repeat("x", openCodeMaxFileBytes+1))
+	event := openCodeEvent(root, "patch", map[string]any{"patchText": "*** Update File: old.txt\n*** Move to: new.txt\n"})
+	runOpenCodeHook(t, event, true)
+	if err := os.Rename(filepath.Join(root, "old.txt"), filepath.Join(root, "new.txt")); err != nil {
+		t.Fatal(err)
+	}
+	openCodeWrite(t, root, "new.txt", "now small\n")
+	runOpenCodeHook(t, event, false)
+	if logs, err := authorship.ListWorkingLogs(root, "main", "INITIAL"); err != nil || len(logs) != 0 {
+		t.Fatalf("uncaptured rename claimed: %+v %v", logs, err)
 	}
 }
 
@@ -216,10 +325,12 @@ func TestOpenCodeGoSessionIsolationCleanupAndExpiry(t *testing.T) {
 
 func TestOpenCodeGoSnapshotBudget(t *testing.T) {
 	root := openCodeRepo(t)
+	var patch strings.Builder
 	for index := 0; index < 65; index++ {
 		openCodeWrite(t, root, fmt.Sprintf("f%02d.txt", index), strings.Repeat("x", openCodeMaxFileBytes))
+		fmt.Fprintf(&patch, "*** Update File: f%02d.txt\n", index)
 	}
-	event := openCodeEvent(root, "shell", map[string]any{"command": "script"})
+	event := openCodeEvent(root, "patch", map[string]any{"patchText": patch.String()})
 	runOpenCodeHook(t, event, true)
 	path, _ := openCodeCapturePath(event)
 	data, err := os.ReadFile(filepath.Join(path, "capture.json"))
@@ -230,8 +341,8 @@ func TestOpenCodeGoSnapshotBudget(t *testing.T) {
 	if err := json.Unmarshal(data, &state); err != nil {
 		t.Fatal(err)
 	}
-	if len(state.Files) != 64 || len(state.Known) != 65 {
-		t.Fatalf("budget: %d captured, %d known", len(state.Files), len(state.Known))
+	if len(state.Files) != 64 {
+		t.Fatalf("budget: %d captured", len(state.Files))
 	}
 	openCodeWrite(t, root, "f64.txt", "excluded file changed\n")
 	runOpenCodeHook(t, event, false)

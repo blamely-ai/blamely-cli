@@ -89,11 +89,49 @@ func TestOpenCodePayloadCarriesNativeIdentityAndChangedLines(t *testing.T) {
 	if p.Tool != "opencode" || p.GenType != "chat" || p.Model != "anthropic/test" || p.WorktreePath != root || p.Branch != "main" {
 		t.Fatalf("incorrect metadata: %+v", p)
 	}
-	if len(p.Lines) != 1 || p.Lines[0].Start != 2 || len(p.RemovedLines) != 1 {
+	if len(p.Lines) != 1 || p.Lines[0].Start != 2 || len(p.RemovedLines) != 1 || p.SuggestedLines != 1 {
 		t.Fatalf("incorrect changed lines: %+v", p)
 	}
 	if !strings.Contains(p.RawMeta, "opencode:v1") || !strings.Contains(p.RawMeta, `"version":1`) {
 		t.Fatal(p.RawMeta)
+	}
+}
+
+func TestOpenCodeSuggestedLines(t *testing.T) {
+	for _, tc := range []struct {
+		name, before, after string
+		want                int64
+	}{
+		{"small edit in large file", strings.Repeat("unchanged\n", 100) + "old\n", strings.Repeat("unchanged\n", 100) + "new\n", 1},
+		{"multiple additions", "human\n", "human\none\ntwo\n", 2},
+		{"new file", "", "one\ntwo\n", 2},
+		{"deletion only", "keep\nremove\n", "keep\n", 1},
+		{"delete file", "one\ntwo\n", "", 2},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			root := openCodeRepo(t)
+			received := make(chan daemon.EditPayload, 1)
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				var p daemon.EditPayload
+				if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+					t.Errorf("decode: %v", err)
+				}
+				received <- p
+				w.WriteHeader(http.StatusNoContent)
+			}))
+			t.Cleanup(server.Close)
+			dir := filepath.Join(os.Getenv("HOME"), ".blamely")
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(dir, "daemon.port"), []byte(server.URL[strings.LastIndex(server.URL, ":")+1:]), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			recordOpenCode(t, openCodePayload{Cwd: root, FilePath: "file.txt", Before: tc.before, After: tc.after})
+			if p := <-received; p.SuggestedLines != tc.want {
+				t.Fatalf("suggested lines: got %d, want %d", p.SuggestedLines, tc.want)
+			}
+		})
 	}
 }
 

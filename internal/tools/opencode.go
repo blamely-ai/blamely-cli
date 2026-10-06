@@ -15,19 +15,20 @@ import (
 // openCodePayload is an internal captured edit, not the plugin wire protocol.
 // Before/after content is discovered and read by the Go hook lifecycle.
 type openCodePayload struct {
-	Cwd       string `json:"cwd"`
-	SessionID string `json:"session_id"`
-	CallID    string `json:"call_id"`
-	ToolName  string `json:"tool_name"`
-	Version   int    `json:"version"`
-	Model     string `json:"model"`
-	FilePath  string `json:"file_path"`
-	Before    string `json:"before"`
-	After     string `json:"after"`
+	Cwd          string `json:"cwd"`
+	SessionID    string `json:"session_id"`
+	CallID       string `json:"call_id"`
+	ToolName     string `json:"tool_name"`
+	Version      int    `json:"version"`
+	Model        string `json:"model"`
+	FilePath     string `json:"file_path"`
+	PreviousPath string `json:"previous_path,omitempty"`
+	Before       string `json:"before"`
+	After        string `json:"after"`
 }
 
 func recordOpenCodeEdit(p openCodePayload) error {
-	if p.Before == p.After {
+	if p.Before == p.After && p.PreviousPath == "" {
 		return nil
 	}
 	if p.Cwd == "" || p.FilePath == "" {
@@ -52,6 +53,19 @@ func recordOpenCodeEdit(p openCodePayload) error {
 		return nil
 	}
 	ctx.RelPath = filepath.ToSlash(rel)
+	baselinePath := ctx.RelPath
+	if p.PreviousPath != "" {
+		previous := p.PreviousPath
+		if !filepath.IsAbs(previous) {
+			previous = filepath.Join(top, previous)
+		}
+		previous = openCodeResolvedPath(previous)
+		sourceRel, err := filepath.Rel(top, previous)
+		if err != nil || sourceRel == "." || sourceRel == ".." || strings.HasPrefix(sourceRel, ".."+string(filepath.Separator)) || filepath.IsAbs(sourceRel) || sourceRel == ".git" || strings.HasPrefix(sourceRel, ".git"+string(filepath.Separator)) {
+			return fmt.Errorf("rename source outside checkout")
+		}
+		baselinePath = filepath.ToSlash(sourceRel)
+	}
 	// Until checkout-local storage is available, fail closed rather than send a
 	// worktree edit under the main checkout's HEAD. The worktree fix makes the
 	// working-log path reside in the actual gitdir, so this guard stops applying.
@@ -59,24 +73,38 @@ func recordOpenCodeEdit(p openCodePayload) error {
 		return fmt.Errorf("linked worktree recording requires checkout-local working-log support")
 	}
 	if authorship.SeedHook != nil {
-		authorship.SeedHook(top, ctx.Branch, ctx.BaseSHA, ctx.RelPath)
+		authorship.SeedHook(top, ctx.Branch, ctx.BaseSHA, baselinePath)
 	}
 	// First fold any unobserved pre-existing edits as Human, preserving previous
 	// AI attribution. Then fold ONLY this tool's actual changes as OpenCode.
-	if _, err := authorship.Update(top, ctx.Branch, ctx.BaseSHA, ctx.RelPath, p.Before, p.Before, authorship.HumanAuthor(), 0); err != nil {
+	if _, err := authorship.Update(top, ctx.Branch, ctx.BaseSHA, baselinePath, p.Before, p.Before, authorship.HumanAuthor(), 0); err != nil {
 		return err
+	}
+	if baselinePath != ctx.RelPath {
+		if err := authorship.RenameWorkingLog(top, ctx.Branch, ctx.BaseSHA, baselinePath, ctx.RelPath); err != nil {
+			return err
+		}
 	}
 	if _, err := authorship.Update(top, ctx.Branch, ctx.BaseSHA, ctx.RelPath, p.After, p.Before, authorship.Author{Type: authorship.AI, Tool: "opencode", GenType: "chat", Model: p.Model}, 0); err != nil {
 		return err
+	}
+	if p.Before == p.After {
+		return nil // pure rename: preserve authorship without inventing suggestions
+	}
+	added := narrowWholeFileAddedLines(p.Before, p.After)
+	removed := RemovedLineHashes(p.Before, p.After)
+	suggested := int64(len(added))
+	if suggested == 0 {
+		suggested = int64(len(removed)) // deletion-only edits still have suggestions
 	}
 	repoID, _ := gitutil.RepoID(top)
 	meta, _ := json.Marshal(map[string]any{"source": "opencode_plugin", "session_id": p.SessionID, "call_id": p.CallID, "tool": p.ToolName, "version": p.Version})
 	return postToDaemon(daemon.EditPayload{
 		Tool: "opencode", Confidence: "high", GenType: "chat", Model: p.Model,
 		RepoPath: repoID, WorktreePath: top, Branch: ctx.Branch, FilePath: ctx.RelPath,
-		Lines:          toDaemonRanges(narrowWholeFileAddedLines(p.Before, p.After)),
-		RemovedLines:   toDaemonRemovedLines(RemovedLineHashes(p.Before, p.After)),
-		SuggestedLines: int64(countLines(p.After)), RawMeta: string(meta),
+		Lines:          toDaemonRanges(added),
+		RemovedLines:   toDaemonRemovedLines(removed),
+		SuggestedLines: suggested, RawMeta: string(meta),
 	})
 }
 

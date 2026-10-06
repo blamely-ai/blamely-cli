@@ -41,11 +41,10 @@ type openCodeHook struct {
 }
 
 type openCodeCapture struct {
-	Event    openCodeHook `json:"event"`
-	Revision string       `json:"revision"`
-	Shell    bool         `json:"shell"`
-	Known    []string     `json:"known"`
-	Files    []string     `json:"files"`
+	Event    openCodeHook      `json:"event"`
+	Revision string            `json:"revision"`
+	Moves    map[string]string `json:"moves,omitempty"` // destination → source
+	Files    []string          `json:"files"`
 }
 
 func decodeOpenCodeHook(r io.Reader) (openCodeHook, error) {
@@ -99,10 +98,16 @@ func openCodeCapturePath(event openCodeHook) (string, error) {
 	return filepath.Join(dir, "opencode", openCodeHash(event.SessionID), openCodeHash(event.CallID)), nil
 }
 
-var openCodePatchHeader = regexp.MustCompile(`(?m)^\*\*\* (?:(?:Add|Update|Delete) File|Move to): ([^\r\n]+)\r?$`)
+var openCodePatchHeader = regexp.MustCompile(`(?m)^\*\*\* ((?:Add|Update|Delete) File|Move to): ([^\r\n]+)\r?$`)
 
 func openCodeTargets(event openCodeHook) []string {
+	paths, _ := openCodeTargetDetails(event)
+	return paths
+}
+
+func openCodeTargetDetails(event openCodeHook) ([]string, map[string]string) {
 	var args struct {
+		Path          string `json:"path"`
 		FilePath      string `json:"filePath"`
 		FilePathSnake string `json:"file_path"`
 		PatchText     string `json:"patchText"`
@@ -110,50 +115,43 @@ func openCodeTargets(event openCodeHook) []string {
 		Input         string `json:"input"`
 	}
 	if json.Unmarshal(event.ToolInput, &args) != nil {
-		return nil
+		return nil, nil
 	}
 	switch event.ToolName {
 	case "write", "edit", "multiedit":
-		if path := firstNonEmpty(args.FilePath, args.FilePathSnake); path != "" {
-			return []string{path}
+		if path := firstNonEmpty(args.Path, args.FilePath, args.FilePathSnake); path != "" {
+			return []string{path}, nil
 		}
 	case "patch", "apply_patch":
 		var paths []string
 		seen := map[string]bool{}
+		moves := map[string]string{}
+		source := ""
 		for _, match := range openCodePatchHeader.FindAllStringSubmatch(firstNonEmpty(args.PatchText, args.Patch, args.Input), -1) {
-			if !seen[match[1]] {
-				paths = append(paths, match[1])
-				seen[match[1]] = true
+			if match[1] == "Move to" {
+				if source != "" && source != match[2] {
+					moves[match[2]] = source
+				}
+				source = ""
+			} else if match[1] == "Update File" {
+				source = match[2]
+			} else {
+				source = ""
+			}
+			if !seen[match[2]] {
+				paths = append(paths, match[2])
+				seen[match[2]] = true
 			}
 		}
-		return paths
+		return paths, moves
 	}
-	return nil
+	return nil, nil
 }
 
 func openCodeRevision(root string) string {
 	head, _ := gitutil.OutputTimeout(5*time.Second, root, "rev-parse", "--verify", "HEAD")
 	branch, _ := gitutil.OutputTimeout(5*time.Second, root, "symbolic-ref", "--quiet", "HEAD")
 	return string(head) + "\x00" + string(branch)
-}
-
-func openCodeFiles(root string) ([]string, error) {
-	out, err := gitutil.OutputTimeout(5*time.Second, root, "ls-files", "--cached", "--others", "--exclude-standard", "-z")
-	if err != nil {
-		return nil, err
-	}
-	if len(out) > 8<<20 {
-		return nil, fmt.Errorf("OpenCode file list exceeds limit")
-	}
-	var paths []string
-	seen := map[string]bool{}
-	for _, path := range strings.Split(string(out), "\x00") {
-		if path != "" && !seen[path] {
-			paths = append(paths, path)
-			seen[path] = true
-		}
-	}
-	return paths, nil
 }
 
 func openCodeContent(root, path string) (string, bool) {
@@ -186,9 +184,10 @@ func openCodeContent(root, path string) (string, bool) {
 }
 
 func captureOpenCodeHook(event openCodeHook) error {
-	shell := event.ToolName == "shell" || event.ToolName == "bash"
-	paths := openCodeTargets(event)
-	if !shell && len(paths) == 0 {
+	// A repository-wide shell diff cannot distinguish a tool write from a
+	// concurrent human save. Only capture tools with explicit file targets.
+	paths, moves := openCodeTargetDetails(event)
+	if len(paths) == 0 {
 		return nil
 	}
 	if event.Cwd == "" {
@@ -199,42 +198,33 @@ func captureOpenCodeHook(event openCodeHook) error {
 	if !ok {
 		return nil
 	}
-	if shell {
-		var args struct {
-			Workdir string `json:"workdir"`
+	resolve := func(path string) string {
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(event.Cwd, path)
 		}
-		_ = json.Unmarshal(event.ToolInput, &args)
-		if args.Workdir != "" {
-			dir := args.Workdir
-			if !filepath.IsAbs(dir) {
-				dir = filepath.Join(event.Cwd, dir)
-			}
-			if checkout, _ := gitutil.Toplevel(dir); checkout != root {
-				return nil
-			}
-		}
-		var err error
-		paths, err = openCodeFiles(root)
+		rel, err := filepath.Rel(root, path)
 		if err != nil {
-			return err
+			return ""
 		}
-	} else {
-		resolved := []string{}
-		seen := map[string]bool{}
-		for _, path := range paths {
-			if !filepath.IsAbs(path) {
-				path = filepath.Join(event.Cwd, path)
-			}
-			rel, err := filepath.Rel(root, path)
-			if err == nil && !seen[rel] {
-				resolved = append(resolved, rel)
-				seen[rel] = true
-			}
-		}
-		paths = resolved
+		return rel
 	}
+	resolved := []string{}
+	seen := map[string]bool{}
+	for _, path := range paths {
+		if rel := resolve(path); rel != "" && !seen[rel] {
+			resolved = append(resolved, rel)
+			seen[rel] = true
+		}
+	}
+	resolvedMoves := map[string]string{}
+	for dest, source := range moves {
+		if dest, source = resolve(dest), resolve(source); dest != "" && source != "" && dest != source {
+			resolvedMoves[dest] = source
+		}
+	}
+	paths = resolved
 	event.Cwd, event.ToolInput, event.Phase = root, nil, ""
-	state := openCodeCapture{Event: event, Shell: shell, Known: paths, Revision: openCodeRevision(root)}
+	state := openCodeCapture{Event: event, Moves: resolvedMoves, Revision: openCodeRevision(root)}
 	path, err := openCodeCapturePath(event)
 	if err != nil {
 		return err
@@ -306,27 +296,37 @@ func finishOpenCodeHook(path string) error {
 	if err := json.NewDecoder(io.LimitReader(file, openCodeMaxManifestBytes+1)).Decode(&state); err != nil {
 		return err
 	}
+	// Also discard shell snapshots created by older plugin/CLI versions.
+	if state.Event.ToolName == "shell" || state.Event.ToolName == "bash" {
+		return nil
+	}
 	if openCodeRevision(state.Event.Cwd) != state.Revision {
 		return nil
 	}
-	paths := append([]string(nil), state.Files...)
-	if state.Shell {
-		known := map[string]bool{}
-		for _, path := range state.Known {
-			known[path] = true
+	indices := map[string]int{}
+	for index, rel := range state.Files {
+		indices[rel] = index
+	}
+	moved := map[string]string{}
+	skip := map[string]bool{}
+	for dest, source := range state.Moves {
+		_, sourceErr := os.Lstat(filepath.Join(state.Event.Cwd, source))
+		destInfo, destErr := os.Lstat(filepath.Join(state.Event.Cwd, dest))
+		if !os.IsNotExist(sourceErr) || destErr != nil || !destInfo.Mode().IsRegular() {
+			continue // failed or partial patch: do not transfer authorship
 		}
-		current, err := openCodeFiles(state.Event.Cwd)
-		if err != nil {
-			return err
+		skip[source] = true
+		if _, ok := indices[source]; !ok {
+			skip[dest] = true // no source baseline: never claim moved content as new
+			continue
 		}
-		for _, path := range current {
-			if !known[path] {
-				paths = append(paths, path)
-			}
-		}
+		moved[dest] = source
 	}
 	bytes := 0
-	for index, rel := range paths {
+	for index, rel := range state.Files {
+		if skip[rel] {
+			continue
+		}
 		after, ok := openCodeContent(state.Event.Cwd, rel)
 		if !ok {
 			continue
@@ -335,19 +335,20 @@ func finishOpenCodeHook(path string) error {
 		if bytes > openCodeMaxSnapshotBytes {
 			break
 		}
-		before := ""
-		if index < len(state.Files) {
-			data, err := os.ReadFile(filepath.Join(claimed, strconv.Itoa(index)))
-			if err != nil {
-				return err
-			} // missing baseline is not an empty/new file
-			before = string(data)
+		previousPath := moved[rel]
+		if previousPath != "" {
+			index = indices[previousPath]
 		}
-		if before == after {
+		data, err := os.ReadFile(filepath.Join(claimed, strconv.Itoa(index)))
+		if err != nil {
+			return err // missing baseline is not an empty/new file
+		}
+		before := string(data)
+		if before == after && previousPath == "" {
 			continue
 		}
 		event := state.Event
-		if err := recordOpenCodeEdit(openCodePayload{Cwd: event.Cwd, SessionID: event.SessionID, CallID: event.CallID, ToolName: event.ToolName, Version: event.Version, Model: event.Model, FilePath: rel, Before: before, After: after}); err != nil {
+		if err := recordOpenCodeEdit(openCodePayload{Cwd: event.Cwd, SessionID: event.SessionID, CallID: event.CallID, ToolName: event.ToolName, Version: event.Version, Model: event.Model, FilePath: rel, PreviousPath: previousPath, Before: before, After: after}); err != nil {
 			return err
 		}
 	}

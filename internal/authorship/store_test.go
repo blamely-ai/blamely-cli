@@ -44,6 +44,36 @@ func TestUpdate_RoundTripAndChaining(t *testing.T) {
 	}
 }
 
+func TestRenameWorkingLogCarriesBaselineAndReplacesDestination(t *testing.T) {
+	repo := t.TempDir()
+	const branch, base = "main", "base"
+	if _, err := Update(repo, branch, base, "old.txt", joinLines("human", "AI"), joinLines("human"), ai("claude"), 1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Update(repo, branch, base, "new/renamed.txt", "replaced", "", human(), 2); err != nil {
+		t.Fatal(err)
+	}
+	if err := RenameWorkingLog(repo, branch, base, "old.txt", "new/renamed.txt"); err != nil {
+		t.Fatal(err)
+	}
+	wl, err := LoadWorkingLog(repo, branch, base, "new/renamed.txt")
+	if err != nil || wl == nil || wl.File != "new/renamed.txt" || !equalTypes(typesByLine(wl, 2), []AuthorType{Human, AI}) {
+		t.Fatalf("rename log: %+v %v", wl, err)
+	}
+	if baseline, ok := loadBaseline(BaselinePath(repo, branch, base, "new/renamed.txt")); !ok || baseline != joinLines("human", "AI") {
+		t.Fatalf("rename baseline: %q %v", baseline, ok)
+	}
+	if wl, err := LoadWorkingLog(repo, branch, base, "old.txt"); err != nil || wl != nil {
+		t.Fatalf("stale source: %+v %v", wl, err)
+	}
+	if _, ok := loadBaseline(BaselinePath(repo, branch, base, "old.txt")); ok {
+		t.Fatal("stale source baseline")
+	}
+	if err := RenameWorkingLog(repo, branch, base, "new/renamed.txt", "new/renamed.txt"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // Paths must be OS-safe for filenames with spaces and branches with slashes — the
 // exact cases that broke the old commit-time diff-path parsing.
 func TestPaths_SpacesAndSlashes(t *testing.T) {

@@ -46,7 +46,11 @@ func TestOpenCodeCaptureToCommit(t *testing.T) {
 				if err := os.WriteFile(file, []byte(before), 0o644); err != nil {
 					t.Fatal(err)
 				}
-				raw, _ := json.Marshal(map[string]any{"cwd": checkout, "tool_name": "edit", "tool_input": map[string]any{"filePath": file}, "call_id": "call", "version": major, "session_id": "opencode:test", "model": "openai/test"})
+				key := "filePath"
+				if major == 2 {
+					key = "path"
+				}
+				raw, _ := json.Marshal(map[string]any{"cwd": checkout, "tool_name": "edit", "tool_input": map[string]any{key: file}, "call_id": "call", "version": major, "session_id": "opencode:test", "model": "openai/test"})
 				if err := tools.CaptureOpenCodeFromStdin(strings.NewReader(string(raw))); err != nil {
 					t.Fatal(err)
 				}

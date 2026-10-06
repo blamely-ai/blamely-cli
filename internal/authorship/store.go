@@ -203,6 +203,53 @@ func Update(repoRoot, branch, baseSHA, relPath, newContent, fallbackBaseline str
 	return result, err
 }
 
+// RenameWorkingLog carries the source log and its baseline to a new path after
+// an observed file move. The caller first reconciles the source's captured
+// pre-edit content, then applies any edits at the destination. Lock both paths
+// in a stable order so opposing moves cannot deadlock.
+func RenameWorkingLog(repoRoot, branch, baseSHA, oldRel, newRel string) error {
+	oldRel, newRel = cleanRel(oldRel), cleanRel(newRel)
+	if oldRel == newRel {
+		return nil
+	}
+	oldPath := WorkingLogPath(repoRoot, branch, baseSHA, oldRel)
+	newPath := WorkingLogPath(repoRoot, branch, baseSHA, newRel)
+	first, second := oldPath, newPath
+	if first > second {
+		first, second = second, first
+	}
+	return withFileLock(first, func() error {
+		return withFileLock(second, func() error {
+			wl, err := loadWorkingLogFile(oldPath)
+			if err != nil {
+				return err
+			}
+			if wl == nil {
+				return fmt.Errorf("authorship: missing rename source log %s", oldRel)
+			}
+			baseline, err := os.ReadFile(BaselinePath(repoRoot, branch, baseSHA, oldRel))
+			if err != nil {
+				return err
+			}
+			wl.File = newRel
+			data, err := json.MarshalIndent(wl, "", "  ")
+			if err != nil {
+				return err
+			}
+			if err := atomicWrite(newPath, data); err != nil {
+				return err
+			}
+			if err := atomicWrite(BaselinePath(repoRoot, branch, baseSHA, newRel), baseline); err != nil {
+				return err
+			}
+			if err := os.Remove(oldPath); err != nil {
+				return err
+			}
+			return os.Remove(BaselinePath(repoRoot, branch, baseSHA, oldRel))
+		})
+	})
+}
+
 // atomicWrite writes data to path via temp-file + rename (atomic, replace-existing
 // on all three OSes — Go's os.Rename uses MOVEFILE_REPLACE_EXISTING on Windows).
 func atomicWrite(path string, data []byte) error {
