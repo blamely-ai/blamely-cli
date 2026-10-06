@@ -41,6 +41,7 @@ func Doctor(w io.Writer) error {
 	d.path()
 	d.db()
 	d.hooks()
+	d.openCodePlugin()
 	d.editors()
 	d.summary()
 	return nil
@@ -50,6 +51,31 @@ type doctor struct {
 	w        io.Writer
 	problems []string // human-readable list of failures, used in the summary
 	notes    int      // `!` lines that are configuration, not faults (see note)
+}
+
+func (d *doctor) openCodePlugin() {
+	if !detectOpenCode().Present {
+		return
+	}
+	dir, err := OpenCodeConfigDir()
+	if err != nil {
+		return
+	}
+	entry := filepath.Join(dir, "plugins", "blamely.ts")
+	for _, path := range []string{entry, filepath.Join(dir, "blamely", "bridge.mjs")} {
+		data, err := os.ReadFile(path)
+		if err != nil || !strings.HasPrefix(string(data), openCodeMarker) {
+			d.bad("OpenCode plugin", path+" missing or unmanaged", "run `blamely repair` or `blamely install-opencode --major 1|2`")
+			return
+		}
+	}
+	major, err := openCodeMajor()
+	data, _ := os.ReadFile(entry)
+	if err == nil && ((major == 1 && !strings.Contains(string(data), "createRecorder(1)")) || (major == 2 && !strings.Contains(string(data), "createRecorder(2)"))) {
+		d.bad("OpenCode plugin", "adapter API major differs from installed OpenCode", "run `blamely repair` after upgrading/downgrading OpenCode")
+		return
+	}
+	d.ok("OpenCode plugin", entry)
 }
 
 func (d *doctor) ok(label, detail string) {

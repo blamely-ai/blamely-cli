@@ -13,12 +13,13 @@ import (
 
 // Detected is the set of AI tools found on the current machine.
 type Detected struct {
-	Claude  ToolPresence
-	Cursor  ToolPresence
-	Codex   ToolPresence
-	Copilot ToolPresence
-	Gemini  ToolPresence
-	Devin   ToolPresence
+	Claude   ToolPresence
+	Cursor   ToolPresence
+	Codex    ToolPresence
+	Copilot  ToolPresence
+	Gemini   ToolPresence
+	Devin    ToolPresence
+	OpenCode ToolPresence
 }
 
 type ToolPresence struct {
@@ -42,6 +43,7 @@ func Detect() (*Detected, error) {
 	d.Copilot = detectCopilot()
 	d.Gemini = detectGemini()
 	d.Devin = detectDevin()
+	d.OpenCode = detectOpenCode()
 	return d, nil
 }
 
@@ -177,6 +179,17 @@ func detectDevin() ToolPresence {
 	// ~/.devin holds local state and extensions for both surfaces.
 	if stateDir, err := config.DevinStateDir(); err == nil && pathExists(stateDir) {
 		hints = append(hints, stateDir)
+	}
+	return presence(hints)
+}
+
+func detectOpenCode() ToolPresence {
+	var hints []string
+	if path, ok := lookPath("opencode"); ok {
+		hints = append(hints, path)
+	}
+	if dir, err := OpenCodeConfigDir(); err == nil && dirExists(dir) {
+		hints = append(hints, dir)
 	}
 	return presence(hints)
 }

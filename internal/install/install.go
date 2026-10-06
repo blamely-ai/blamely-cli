@@ -202,6 +202,15 @@ func Run(installPlugins bool) error {
 	} else {
 		info("Devin CLI", "not detected — skipped")
 	}
+	if detected.OpenCode.Present {
+		_, path, err := InstallOpenCodeHook(binPath)
+		if err != nil {
+			fail("OpenCode plugin", err.Error())
+		} else {
+			s.OpenCodeHookAdded = true
+			ok("OpenCode plugin", path)
+		}
+	}
 
 	prior, hadPrior, err := InstallGitHook(binPath)
 	if err != nil {
@@ -479,6 +488,10 @@ func Uninstall(keepDB bool) error {
 		_, err := UninstallDevinHook()
 		report("removed Devin record hook from ~/.config/devin/config.json", err)
 	}
+	if s.OpenCodeHookAdded {
+		_, err := UninstallOpenCodeHook()
+		report("removed OpenCode plugin", err)
+	}
 	// Don't rely solely on state: the extension may have been already present
 	// when install ran (tracked as "Updated", not "Installed"), installed by the
 	// user from the marketplace, or predate state tracking. Discover every
@@ -629,6 +642,7 @@ func printDetected(d *Detected) {
 		{"GitHub Copilot", d.Copilot},
 		{"Gemini CLI", d.Gemini},
 		{"Devin CLI", d.Devin},
+		{"OpenCode", d.OpenCode},
 	} {
 		hint := ""
 		if h := row.p.FirstHint(); h != "" {

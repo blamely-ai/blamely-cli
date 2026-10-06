@@ -120,6 +120,7 @@ func main() {
 
 	root.AddCommand(cmdDaemon())
 	root.AddCommand(cmdInstall())
+	root.AddCommand(cmdInstallOpenCode())
 	root.AddCommand(cmdUpdate())
 	root.AddCommand(cmdInstallJetbrainsZip())
 	root.AddCommand(cmdUninstall())
@@ -554,8 +555,10 @@ func cmdRecord() *cobra.Command {
 				recErr = tools.RecordGeminiFromStdin(os.Stdin)
 			case "devin":
 				recErr = tools.RecordDevinFromStdin(os.Stdin)
+			case "opencode":
+				recErr = tools.RecordOpenCodeFromStdin(os.Stdin)
 			default:
-				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini, devin)", args[0])
+				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini, devin, opencode)", args[0])
 			}
 			if recErr != nil {
 				fmt.Fprintf(os.Stderr, "blamely record %s: %v\n", args[0], recErr)
@@ -564,6 +567,48 @@ func cmdRecord() *cobra.Command {
 		},
 	}
 	c.Flags().Bool("pre", false, "PreToolUse mode: snapshot the target file's pre-edit content as the Attribution baseline (no edit recorded)")
+	return c
+}
+
+func cmdInstallOpenCode() *cobra.Command {
+	var major int
+	var directory string
+	c := &cobra.Command{
+		Use: "install-opencode", Short: "Install the native OpenCode V1 or V2 adapter",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			global := directory == ""
+			if global {
+				var err error
+				directory, err = install.OpenCodeConfigDir()
+				if err != nil {
+					return err
+				}
+			}
+			binary, err := os.Executable()
+			if err != nil {
+				return err
+			}
+			_, path, err := install.InstallOpenCodePlugin(binary, directory, major)
+			if err != nil {
+				return err
+			}
+			if global {
+				state, err := install.LoadState()
+				if err != nil {
+					return err
+				}
+				state.OpenCodeHookAdded = true
+				if err := install.SaveState(state); err != nil {
+					return err
+				}
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "Installed OpenCode V%d plugin: %s\nRestart OpenCode to load it.\n", major, path)
+			return nil
+		},
+	}
+	c.Flags().IntVar(&major, "major", 0, "OpenCode API major version (1 or 2)")
+	c.MarkFlagRequired("major")
+	c.Flags().StringVar(&directory, "directory", "", "OpenCode config directory (e.g. a project's .opencode); default: global config")
 	return c
 }
 

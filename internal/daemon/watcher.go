@@ -110,7 +110,7 @@ func (s *dbSink) Record(ev Event) error {
 	}
 	switch tool {
 	case "",
-		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolCopyPaste,
+		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolOpenCode, store.ToolCopyPaste,
 		store.ToolHuman: // accepted for legacy in-flight events; new emissions should use ""
 	default:
 		return fmt.Errorf("watcher sink: unknown tool %q", ev.Tool)

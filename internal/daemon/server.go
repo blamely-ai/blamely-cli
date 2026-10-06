@@ -56,6 +56,7 @@ type EditPayload struct {
 	// GenType: chat | cli | completion | unknown
 	GenType          string `json:"gen_type,omitempty"`
 	RepoPath         string `json:"repo_path"`
+	WorktreePath     string `json:"worktree_path,omitempty"`
 	FilePath         string `json:"file_path"`
 	Model            string `json:"model,omitempty"`
 	InputTokens      *int64 `json:"input_tokens,omitempty"`
@@ -474,7 +475,7 @@ func validateAndStore(db *store.DB, p EditPayload) error {
 	}
 	switch tool {
 	case "",
-		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolCopyPaste,
+		store.ToolClaude, store.ToolCursor, store.ToolCodex, store.ToolCopilot, store.ToolGemini, store.ToolDevin, store.ToolOpenCode, store.ToolCopyPaste,
 		store.ToolHuman: // accepted only so the daemon doesn't reject legacy clients mid-upgrade
 	default:
 		return fmt.Errorf("unknown tool %q", p.Tool)
