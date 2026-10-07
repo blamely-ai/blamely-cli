@@ -526,6 +526,7 @@ func chatSessionModelUsage(transcriptPath string) (model string, inputTokens, ou
 }
 
 type copilotPatchFile struct {
+	abs          string
 	repoPath     string
 	worktreePath string
 	rel          string
@@ -599,7 +600,7 @@ func parseApplyPatchPerLine(body string) []copilotPatchFile {
 				rel = r
 			}
 		}
-		cur = &copilotPatchFile{repoPath: repo, worktreePath: wt, rel: rel}
+		cur = &copilotPatchFile{abs: abs, repoPath: repo, worktreePath: wt, rel: rel}
 	}
 	addN := 0
 	for _, line := range strings.Split(body, "\n") {

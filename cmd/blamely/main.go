@@ -43,7 +43,7 @@ func init() {
 // JetBrains plugins. The release workflow can still override it at link time via
 // `-ldflags "-X main.version=<tag>"`; otherwise this hardcoded value is what
 // `blamely --version` reports.
-var version = "1.8.4"
+var version = "1.8.5"
 
 // maxMergedAttributeScan caps how many incoming commits the post-merge hook
 // will look at. A pull after a long absence — or a first fetch of a big repo —

@@ -156,7 +156,7 @@ func recordCopilotFileEdit(p copilotHookPayload, filePath string, ranges []LineR
 	})
 	// Attribution: mirror into the working log before the
 	// daemon POST so capture is daemon-independent. No-op when the flag is off.
-	captureAuthorship(wt, rel, "copilot", gen, payload.Model)
+	captureAuthorshipAt(loc, resolved, wt, rel, "copilot", gen, payload.Model)
 	return postToDaemon(payload)
 }
 

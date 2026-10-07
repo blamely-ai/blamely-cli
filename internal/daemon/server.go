@@ -538,8 +538,10 @@ func validateAndStore(db *store.DB, p EditPayload) error {
 	}
 	netUnchangedEditLines(&e)
 	sessions.resolveIn(db, &e, p.Branch, p.WorktreePath)
-	if _, err := db.InsertEdit(e); err != nil {
-		return err
+	if !mergeCopilotCrossSourceDuplicate(db, &e) {
+		if _, err := db.InsertEdit(e); err != nil {
+			return err
+		}
 	}
 	checkout := p.WorktreePath
 	if checkout == "" {
