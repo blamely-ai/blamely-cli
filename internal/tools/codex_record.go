@@ -107,7 +107,7 @@ func RecordCodexFromStdin(r io.Reader) error {
 	// shared rule every whole-file tool uses.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -116,6 +116,7 @@ func RecordCodexFromStdin(r io.Reader) error {
 		Confidence:     "high",
 		GenType:        gt,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Model:          p.Model,
 		SuggestedLines: suggested,
@@ -131,7 +132,7 @@ func RecordCodexFromStdin(r io.Reader) error {
 	})
 	// Attribution: mirror into the working log before the
 	// daemon POST so capture is daemon-independent. No-op when the flag is off.
-	captureAuthorship(repoPath, rel, "codex", gt, payload.Model)
+	captureAuthorship(wt, rel, "codex", gt, payload.Model)
 	return postToDaemon(payload)
 }
 

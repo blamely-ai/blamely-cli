@@ -205,7 +205,7 @@ func RecordClaudeFromStdin(r io.Reader) error {
 	// recorded edit) so we can still detect what this Write changed.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -241,6 +241,7 @@ func RecordClaudeFromStdin(r io.Reader) error {
 		Confidence:     "high",
 		GenType:        genType,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		SuggestedLines: suggested,
 		Lines:          toDaemonRanges(ranges),
@@ -261,7 +262,7 @@ func RecordClaudeFromStdin(r io.Reader) error {
 	// Attribution: mirror this edit into the working log
 	// BEFORE the daemon POST, so capture is daemon-independent. No-op when the flag
 	// is off; never affects the recording below.
-	captureAuthorship(repoPath, rel, tool, genType, payload.Model)
+	captureAuthorship(wt, rel, tool, genType, payload.Model)
 
 	return postToDaemon(payload)
 }
@@ -400,6 +401,7 @@ func buildHeadDeletionPayload(root, rel, tool, genType, model, sessionID, transc
 		Confidence:     "high",
 		GenType:        genType,
 		RepoPath:       repoID,
+		WorktreePath:   root,
 		FilePath:       rel,
 		SuggestedLines: int64(len(removed)),
 		RemovedLines:   toDaemonRemovedLines(removed),

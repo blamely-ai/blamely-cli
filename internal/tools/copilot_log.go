@@ -345,14 +345,15 @@ func emitCopilotLogEvent(line string, sink daemon.Sink) {
 		return
 	}
 	ev := daemon.Event{
-		When:       time.Now(),
-		Tool:       "copilot",
-		Confidence: "medium",
-		GenType:    gen,
-		RepoPath:   repo,
-		FilePath:   rel,
-		Lines:      toDaemonLineRanges(lr),
-		RawMeta:    `{"source":"copilot_log"}`,
+		When:         time.Now(),
+		Tool:         "copilot",
+		Confidence:   "medium",
+		GenType:      gen,
+		RepoPath:     repo,
+		WorktreePath: wt,
+		FilePath:     rel,
+		Lines:        toDaemonLineRanges(lr),
+		RawMeta:      `{"source":"copilot_log"}`,
 	}
 	if err := sink.Record(ev); err != nil {
 		log.Printf("copilot-log sink: %v", err)

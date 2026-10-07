@@ -647,9 +647,9 @@ func (w *chatSessionWatcher) recordTextEditGroup(teg *textEditGroupPart, model, 
 		abs = r
 	}
 	repo, _ := gitutil.RepoID(abs)
+	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
 	if repo != "" {
-		wt, _ := gitutil.Toplevel(abs)
 		if wt != "" {
 			if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
 				rel = r
@@ -665,7 +665,7 @@ func (w *chatSessionWatcher) recordTextEditGroup(teg *textEditGroupPart, model, 
 	// for AI line-reordering / block-swap edits that the multiset diff would miss.
 	snapshot, hasFreshSnap := "", false
 	if repo != "" {
-		snapshot, hasFreshSnap = fetchPreChatSnapshot(repo, rel)
+		snapshot, hasFreshSnap = fetchPreChatSnapshot(wt, rel)
 	}
 
 	var ranges []daemon.LineRange
@@ -764,7 +764,7 @@ func (w *chatSessionWatcher) recordTextEditGroup(teg *textEditGroupPart, model, 
 	if hasRemoval {
 		removalSnap := snapshot
 		if !hasFreshSnap {
-			removalSnap, _ = fetchSnapshot(repo, rel)
+			removalSnap, _ = fetchSnapshot(wt, rel)
 		}
 		if removalSnap != "" {
 			for _, grp := range teg.Edits {
@@ -784,6 +784,7 @@ func (w *chatSessionWatcher) recordTextEditGroup(teg *textEditGroupPart, model, 
 		GenType:        "chat",
 		Model:          model,
 		RepoPath:       repo,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Lines:          ranges,
 		SuggestedLines: suggested,

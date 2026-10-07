@@ -292,6 +292,7 @@ func emitCopilotPatchEdits(args json.RawMessage, model string, inputTokens, outp
 			GenType:      "chat",
 			Model:        model,
 			RepoPath:     fe.repoPath,
+			WorktreePath: fe.worktreePath,
 			FilePath:     fe.rel,
 			Lines:        fe.added,
 			RemovedLines: fe.removed,
@@ -396,7 +397,8 @@ func emitCopilotFileEdit(absPath string, added []daemon.LineRange, removed []dae
 		return
 	}
 	rel := abs
-	if wt, _ := gitutil.Toplevel(abs); wt != "" {
+	wt, _ := gitutil.Toplevel(abs)
+	if wt != "" {
 		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
 			rel = r
 		}
@@ -408,6 +410,7 @@ func emitCopilotFileEdit(absPath string, added []daemon.LineRange, removed []dae
 		GenType:      "chat",
 		Model:        model,
 		RepoPath:     repo,
+		WorktreePath: wt,
 		FilePath:     rel,
 		Lines:        added,
 		RemovedLines: removed,
@@ -523,11 +526,11 @@ func chatSessionModelUsage(transcriptPath string) (model string, inputTokens, ou
 }
 
 type copilotPatchFile struct {
-	abs      string
-	repoPath string
-	rel      string
-	added    []daemon.LineRange
-	removed  []daemon.RemovedLineHash
+	repoPath     string
+	worktreePath string
+	rel          string
+	added        []daemon.LineRange
+	removed      []daemon.RemovedLineHash
 }
 
 // parseApplyPatchPerLine parses a codex `*** Begin Patch` body into per-file,
@@ -590,12 +593,13 @@ func parseApplyPatchPerLine(body string) []copilotPatchFile {
 		}
 		repo, _ := gitutil.RepoID(abs)
 		rel := abs
-		if wt, _ := gitutil.Toplevel(abs); wt != "" {
+		wt, _ := gitutil.Toplevel(abs)
+		if wt != "" {
 			if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
 				rel = r
 			}
 		}
-		cur = &copilotPatchFile{abs: abs, repoPath: repo, rel: rel}
+		cur = &copilotPatchFile{repoPath: repo, worktreePath: wt, rel: rel}
 	}
 	addN := 0
 	for _, line := range strings.Split(body, "\n") {

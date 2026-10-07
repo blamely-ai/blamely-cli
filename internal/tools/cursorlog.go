@@ -343,6 +343,7 @@ func emitCursorTabSuggestion(block []string, roots []string, seen map[string]boo
 		Confidence:     "medium",
 		GenType:        "completion",
 		RepoPath:       repo,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Lines:          toDaemonLineRanges(sug.Added),
 		RemovedLines:   toDaemonRemovedLines(sug.Removed),
@@ -662,14 +663,15 @@ func emitCursorLogEvent(abs string, sink daemon.Sink) {
 		return
 	}
 	ev := daemon.Event{
-		When:       time.Now(),
-		Tool:       "cursor",
-		Confidence: "medium",
-		GenType:    "chat", // cursor log events are AI apply events (Composer)
-		RepoPath:   repo,
-		FilePath:   rel,
-		Lines:      toDaemonLineRanges(lr),
-		RawMeta:    `{"source":"cursor_log"}`,
+		When:         time.Now(),
+		Tool:         "cursor",
+		Confidence:   "medium",
+		GenType:      "chat", // cursor log events are AI apply events (Composer)
+		RepoPath:     repo,
+		WorktreePath: wt,
+		FilePath:     rel,
+		Lines:        toDaemonLineRanges(lr),
+		RawMeta:      `{"source":"cursor_log"}`,
 	}
 	if err := sink.Record(ev); err != nil {
 		log.Printf("cursor-log sink: %v", err)

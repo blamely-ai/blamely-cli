@@ -130,7 +130,7 @@ func recordCopilotFileEdit(p copilotHookPayload, filePath string, ranges []LineR
 	// otherwise a Copilot CLI overwrite that drops lines loses the deletion.
 	if newFullContent != nil {
 		var wfRemoved []DeletedLineHash
-		ranges, wfRemoved = ResolveWholeFileWrite(repoPath, rel, *newFullContent, ranges)
+		ranges, wfRemoved = ResolveWholeFileWrite(wt, rel, *newFullContent, ranges)
 		removed = append(removed, wfRemoved...)
 	}
 
@@ -140,6 +140,7 @@ func recordCopilotFileEdit(p copilotHookPayload, filePath string, ranges []LineR
 		Confidence:     "high", // we have a real file+lines, not a session guess
 		GenType:        gen,
 		RepoPath:       repoPath,
+		WorktreePath:   wt,
 		FilePath:       rel,
 		Model:          p.Model,
 		SuggestedLines: suggested,
@@ -155,7 +156,7 @@ func recordCopilotFileEdit(p copilotHookPayload, filePath string, ranges []LineR
 	})
 	// Attribution: mirror into the working log before the
 	// daemon POST so capture is daemon-independent. No-op when the flag is off.
-	captureAuthorshipAt(loc, resolved, repoPath, rel, "copilot", gen, payload.Model)
+	captureAuthorship(wt, rel, "copilot", gen, payload.Model)
 	return postToDaemon(payload)
 }
 

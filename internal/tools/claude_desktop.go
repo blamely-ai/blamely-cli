@@ -206,6 +206,7 @@ func (c *ClaudeDesktopWatcher) recordDeletion(host, rel string, sink daemon.Sink
 	if err := sink.Record(daemon.Event{
 		When: time.Now(), Tool: "claude", Confidence: "medium", GenType: "chat",
 		RepoPath: repoID, FilePath: rel,
+		WorktreePath:   host,
 		SuggestedLines: int64(len(removed)),
 		RemovedLines:   toDaemonRemovedLines(removed),
 		RawMeta:        `{"tool":"claude","source":"claude_desktop_cowork"}`,
@@ -242,6 +243,7 @@ func (c *ClaudeDesktopWatcher) reconcileWrites(host string, sink daemon.Sink) {
 		_ = sink.Record(daemon.Event{
 			When: time.Now(), Tool: "claude", Confidence: "medium", GenType: "chat",
 			RepoPath: repoID, FilePath: rel,
+			WorktreePath:   host,
 			SuggestedLines: int64(len(ranges)),
 			Lines:          toDaemonLineRanges(ranges),
 			RawMeta:        `{"tool":"claude","source":"claude_desktop_cowork"}`,

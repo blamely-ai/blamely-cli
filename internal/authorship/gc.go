@@ -42,7 +42,7 @@ const workingLogRetainDepth = 200
 // Best-effort and cross-platform (path/filepath + git plumbing only). Returns the
 // number of base_sha directories removed. When git can't answer, nothing is pruned.
 func GCWorkingLogs(repoRoot string) (pruned int, err error) {
-	root := filepath.Join(repoRoot, ".git", "blamely", "working_logs")
+	root := filepath.Join(gitutil.GitDir(repoRoot), "blamely", "working_logs")
 	branchDirs, err := os.ReadDir(root)
 	if os.IsNotExist(err) {
 		return 0, nil
