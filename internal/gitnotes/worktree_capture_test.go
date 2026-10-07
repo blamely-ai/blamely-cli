@@ -27,6 +27,9 @@ func TestLinkedWorktreeCodexCommit(t *testing.T) {
 		return strings.TrimSpace(string(out))
 	}
 	git(root, "init", "-qb", "main")
+	// AttributeAndWrite runs git notes itself, with HOME pointing at a temp dir.
+	git(root, "config", "user.name", "Test")
+	git(root, "config", "user.email", "test@example.com")
 	os.WriteFile(filepath.Join(root, "file.txt"), []byte("human\n"), 0o644)
 	git(root, "add", ".")
 	git(root, "commit", "-qm", "initial")

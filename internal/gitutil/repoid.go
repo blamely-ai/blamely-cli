@@ -132,10 +132,12 @@ func Locate(p string) Location {
 
 // GitDir returns the checkout-local git directory. Unlike CommonDir, this is
 // different for each linked worktree; .git may be a file rather than a directory.
+// git prints the path with forward slashes on Windows too; Clean converts it to
+// the native form the rest of this package returns.
 func GitDir(root string) string {
 	out, err := Output(root, "rev-parse", "--absolute-git-dir")
 	if err == nil && strings.TrimSpace(string(out)) != "" {
-		return strings.TrimSpace(string(out))
+		return filepath.Clean(strings.TrimSpace(string(out)))
 	}
 	return filepath.Join(root, ".git")
 }

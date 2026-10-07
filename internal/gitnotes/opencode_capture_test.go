@@ -30,6 +30,9 @@ func TestOpenCodeCaptureToCommit(t *testing.T) {
 					return strings.TrimSpace(string(out))
 				}
 				git(root, "init", "-qb", "main")
+				// AttributeAndWrite runs git notes itself, with HOME pointing at a temp dir.
+				git(root, "config", "user.name", "Test")
+				git(root, "config", "user.email", "test@example.com")
 				if err := os.WriteFile(filepath.Join(root, "file.txt"), []byte("human committed\n"), 0o644); err != nil {
 					t.Fatal(err)
 				}
