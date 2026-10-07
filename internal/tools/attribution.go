@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"path/filepath"
+	"strings"
 
 	"github.com/blamely/blamely/internal/authorship"
 	"github.com/blamely/blamely/internal/gitutil"
@@ -14,8 +15,8 @@ import (
 // matching PostToolUse `record` diffs the agent's write against the true pre-edit
 // state even for a file the editor never had open (Decision B fallback). Flag-gated
 // and best-effort; tool-agnostic (reads the file path from the common hook shapes).
-// apply_patch payloads (codex/copilot) carry paths in the patch body rather than a
-// tool_input.file_path, so those fall back to HEAD at record time — documented gap.
+// Tools that name their files elsewhere — apply_patch in the patch body, VS Code's
+// multi_replace_string_in_file in replacements[] — get a baseline per named file.
 func CaptureBaselineFromStdin(r io.Reader) error {
 	if !authorship.Enabled() {
 		return nil
@@ -25,18 +26,36 @@ func CaptureBaselineFromStdin(r io.Reader) error {
 		return nil // best-effort: a pre-hook must never block the tool
 	}
 	var p struct {
-		Cwd       string `json:"cwd"`
-		ToolName  string `json:"tool_name"`
-		ToolInput struct {
-			FilePathSnake string `json:"file_path"`
-			FilePathCamel string `json:"filePath"`
-			Path          string `json:"path"`
-		} `json:"tool_input"`
+		Cwd       string          `json:"cwd"`
+		ToolName  string          `json:"tool_name"`
+		ToolInput json.RawMessage `json:"tool_input"`
 	}
 	if json.Unmarshal(raw, &p) != nil {
 		return nil
 	}
-	fp := firstNonEmpty(p.ToolInput.FilePathSnake, p.ToolInput.FilePathCamel, p.ToolInput.Path)
+	var in struct {
+		FilePathSnake string `json:"file_path"`
+		FilePathCamel string `json:"filePath"`
+		Path          string `json:"path"`
+		Command       string `json:"command"`
+	}
+	_ = json.Unmarshal(p.ToolInput, &in)
+	if isReadOnlyToolCall(p.ToolName, in.Command) {
+		// Nothing will be written. A baseline taken now is stale by the time
+		// the agent does write — the write's own pre-hook takes a fresh one —
+		// and resolving it costs git processes on every read the agent makes.
+		return nil
+	}
+	if paths := multiFileTargets(p.ToolName, p.ToolInput); len(paths) > 0 {
+		for _, fp := range paths {
+			if !filepath.IsAbs(fp) && p.Cwd != "" {
+				fp = filepath.Join(p.Cwd, fp)
+			}
+			captureBaselineIfUntracked(fp)
+		}
+		return nil
+	}
+	fp := firstNonEmpty(in.FilePathSnake, in.FilePathCamel, in.Path)
 	if fp == "" {
 		// A shell command names no target file — it may write anything — so snapshot
 		// the repo's untracked-by-Attribution files instead. apply_patch still falls
@@ -50,6 +69,70 @@ func CaptureBaselineFromStdin(r io.Reader) error {
 		fp = filepath.Join(p.Cwd, fp)
 	}
 	captureBaselineIfUntracked(fp)
+	return nil
+}
+
+// readOnlyToolNames are agent tools that name a file or directory but never
+// write it: VS Code Copilot's read_file/list_dir, the Copilot CLI's view, Gemini's
+// read_file/read_many_files/list_directory, and the generic read/ls shapes. Only
+// names known to read are listed — an unknown tool keeps taking its baseline.
+var readOnlyToolNames = map[string]bool{
+	"read_file": true, "list_dir": true, "view": true, "read": true, "ls": true,
+	"read_many_files": true, "list_directory": true,
+}
+
+// isReadOnlyToolCall reports whether a tool call only reads. str_replace_editor is
+// both an editor and a viewer; its command says which.
+func isReadOnlyToolCall(toolName, command string) bool {
+	n := strings.ToLower(toolName)
+	if n == "str_replace_editor" {
+		return strings.EqualFold(command, "view")
+	}
+	return readOnlyToolNames[n]
+}
+
+// multiFileTargets returns the files a tool call will write when they are not in
+// a top-level path field: every `*** Update/Delete File:` of an apply_patch body,
+// and every replacements[].filePath of multi_replace_string_in_file. Without a
+// baseline for each, their first record diffs against HEAD and claims every
+// uncommitted line in the file — the human's included — for the agent.
+// (*** Add File targets are new, so there is nothing to snapshot.)
+func multiFileTargets(toolName string, input json.RawMessage) []string {
+	n := strings.ToLower(toolName)
+	switch {
+	case n == "multi_replace_string_in_file":
+		var in struct {
+			Replacements []struct {
+				FilePath string `json:"filePath"`
+			} `json:"replacements"`
+		}
+		if json.Unmarshal(input, &in) != nil {
+			return nil
+		}
+		seen := map[string]bool{}
+		var out []string
+		for _, r := range in.Replacements {
+			if r.FilePath != "" && !seen[r.FilePath] {
+				seen[r.FilePath] = true
+				out = append(out, r.FilePath)
+			}
+		}
+		return out
+	case strings.Contains(n, "patch"):
+		body, _ := patchEnvelope(input)
+		var out []string
+		for _, line := range strings.Split(body, "\n") {
+			line = strings.TrimRight(line, "\r")
+			for _, prefix := range []string{"*** Update File: ", "*** Delete File: "} {
+				if strings.HasPrefix(line, prefix) {
+					if p := strings.TrimSpace(strings.TrimPrefix(line, prefix)); p != "" {
+						out = append(out, p)
+					}
+				}
+			}
+		}
+		return out
+	}
 	return nil
 }
 
@@ -71,7 +154,7 @@ func captureBaselineIfUntracked(absPath string) {
 	if wl, err := authorship.LoadWorkingLog(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath); err == nil && wl != nil {
 		return
 	}
-	_ = authorship.CaptureBaseline(absPath)
+	_ = authorship.CaptureBaselineIn(ctx, absPath)
 }
 
 // maxShellBaselineFiles caps how many pre-command baselines one shell command
@@ -131,9 +214,34 @@ func captureAuthorship(repoPath, rel, tool, genType, model string) {
 	if !authorship.Enabled() || repoPath == "" || rel == "" {
 		return
 	}
-	author := authorship.Author{Type: authorship.AI, Tool: tool, GenType: genType, Model: model}
-	if tool == "" || genType == "human" {
-		author = authorship.HumanAuthor()
+	_, _ = authorship.RecordEdit(filepath.Join(repoPath, rel), captureAuthor(tool, genType, model))
+}
+
+// captureAuthorshipAt is captureAuthorship for a hook that already located the
+// file (gitutil.Locate), sparing the git calls RecordEdit would repeat. It takes
+// the shortcut only when the repo IS the work tree (RepoID == Toplevel, i.e. not a
+// linked worktree); otherwise it calls captureAuthorship unchanged, so the file
+// the working log describes is the same either way.
+func captureAuthorshipAt(loc gitutil.Location, absPath, repoPath, rel, tool, genType, model string) {
+	if !authorship.Enabled() || repoPath == "" || rel == "" {
+		return
 	}
-	_, _ = authorship.RecordEdit(filepath.Join(repoPath, rel), author)
+	if loc.Toplevel == "" || loc.RepoID != repoPath || filepath.Clean(loc.Toplevel) != filepath.Clean(repoPath) {
+		captureAuthorship(repoPath, rel, tool, genType, model)
+		return
+	}
+	ctx, ok := authorship.ContextAt(loc, absPath)
+	if !ok {
+		return
+	}
+	_, _ = authorship.RecordEditIn(ctx, absPath, captureAuthor(tool, genType, model))
+}
+
+// captureAuthor is the working-log author for (tool, genType): an empty tool or
+// a human gen_type (typing, copypaste) is Human; anything else is the AI tool.
+func captureAuthor(tool, genType, model string) authorship.Author {
+	if tool == "" || genType == "human" {
+		return authorship.HumanAuthor()
+	}
+	return authorship.Author{Type: authorship.AI, Tool: tool, GenType: genType, Model: model}
 }

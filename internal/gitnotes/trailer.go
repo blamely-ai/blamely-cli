@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/blamely/blamely/internal/procattr"
 )
 
 // Attribution from commit trailers.
@@ -95,8 +97,8 @@ func RevList(repoPath, revRange string, limit int) ([]string, error) {
 	if limit <= 0 {
 		return nil, nil
 	}
-	out, err := exec.Command("git", "-C", repoPath, "rev-list", "--no-merges",
-		"-n", strconv.Itoa(limit), revRange).Output()
+	out, err := procattr.Hide(exec.Command("git", "-C", repoPath, "rev-list", "--no-merges",
+		"-n", strconv.Itoa(limit), revRange)).Output()
 	if err != nil {
 		return nil, fmt.Errorf("rev-list %s: %w", revRange, err)
 	}

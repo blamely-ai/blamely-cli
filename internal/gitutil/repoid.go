@@ -38,7 +38,12 @@ func RepoID(p string) (string, bool) {
 	if err != nil {
 		return "", false
 	}
-	gitDir := strings.TrimSpace(string(out))
+	return repoIDFromCommonDir(strings.TrimSpace(string(out)))
+}
+
+// repoIDFromCommonDir turns `rev-parse --git-common-dir` output into RepoID's
+// result.
+func repoIDFromCommonDir(gitDir string) (string, bool) {
 	if gitDir == "" {
 		return "", false
 	}
@@ -71,11 +76,58 @@ func Toplevel(p string) (string, bool) {
 	if err != nil {
 		return "", false
 	}
-	root := strings.TrimSpace(string(out))
+	return toplevelFromOutput(strings.TrimSpace(string(out))), true
+}
+
+func toplevelFromOutput(root string) string {
 	if r, err := filepath.EvalSymlinks(root); err == nil {
 		root = r
 	}
-	return root, true
+	return root
+}
+
+// Location is what a hook needs to know about the repo holding a path:
+// RepoID, Toplevel and HeadSHA, each exactly as those functions return it
+// ("" where one fails).
+type Location struct {
+	RepoID   string
+	Toplevel string
+	HeadSHA  string
+}
+
+// Locate resolves RepoID, Toplevel and HeadSHA for p with ONE git process
+// instead of three. Hooks run on every agent tool call and a git spawn is the
+// dominant cost of one (worse on machines whose antivirus scans each process),
+// so this matters. If the combined call fails — no commit yet, a bare repo, a
+// file literally named HEAD — it falls back to the three separate calls, so
+// the result is always the same as calling them one by one.
+func Locate(p string) Location {
+	if r, err := filepath.EvalSymlinks(p); err == nil {
+		p = r
+	}
+	dir := p
+	if fi, err := pathStat(p); err != nil || !fi.IsDir() {
+		dir = filepath.Dir(p) // see RepoID
+	}
+	out, err := procattr.Hide(exec.Command("git", "-C", dir, "rev-parse",
+		"--path-format=absolute", "--git-common-dir", "--show-toplevel", "HEAD")).Output()
+	if err == nil {
+		if lines := strings.Split(strings.TrimSpace(string(out)), "\n"); len(lines) == 3 {
+			id, ok := repoIDFromCommonDir(strings.TrimSpace(lines[0]))
+			top := strings.TrimSpace(lines[1])
+			head := strings.TrimSpace(lines[2])
+			if ok && top != "" && head != "" {
+				return Location{RepoID: id, Toplevel: toplevelFromOutput(top), HeadSHA: head}
+			}
+		}
+	}
+	var loc Location
+	loc.RepoID, _ = RepoID(p)
+	if top, ok := Toplevel(p); ok {
+		loc.Toplevel = top
+		loc.HeadSHA = HeadSHA(top)
+	}
+	return loc
 }
 
 // GitDir returns the checkout-local git directory. Unlike CommonDir, this is

@@ -243,7 +243,9 @@ SYNC_DIR="$REPO"
 # carrying that commit's message — servers that demand an issue key in every
 # commit message reject git's stock "Notes added by ..." commits. It reads
 # git's pre-push stdin to know which commits this push sends: their notes go
-# out with them. It prints its own error; failing it never fails the push.
+# out with them. It returns at once — the notes fetch and push run detached, so
+# the user's push does not wait for them — and reports a failed sync on the
+# next push. Failing it never fails the push.
 if [ -n "$BLAMELY" ] && [ -n "$SYNC_DIR" ]; then
     printf '%%s\n' "$STDIN" | "$BLAMELY" sync-notes "$SYNC_DIR" "$REMOTE" "$URL" || true
 fi
@@ -251,8 +253,18 @@ fi
 [ -n "$REPO" ] || { printf '%%s\n' "$STDIN"; exit 0; }
 
 # Reap stale per-repo artifacts from older installs. Hooks are global now, so
-# the per-repo runner directory is pure dead weight — remove it unconditionally.
-rm -rf "$REPO/.git/blamely" 2>/dev/null || true
+# the per-repo runner files are pure dead weight. working_logs is Attribution
+# state, not a leftover: commits that haven't been pushed yet (including ones
+# whose earlier push failed) are re-attributed from it, so it must survive —
+# this runs before the push is even attempted. Mirrors RemoveLegacyRepoHooks.
+if [ -d "$REPO/.git/blamely" ]; then
+    for ENTRY in "$REPO/.git/blamely"/*; do
+        [ -e "$ENTRY" ] || continue
+        [ "${ENTRY##*/}" = "working_logs" ] && continue
+        rm -rf "$ENTRY" 2>/dev/null || true
+    done
+    rmdir "$REPO/.git/blamely" 2>/dev/null || true
+fi
 
 # Chain to a repo-local pre-push hook only if it is the user's own. We never
 # touch user hooks: only a hook carrying a Blamely-generated marker is treated

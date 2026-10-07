@@ -223,7 +223,8 @@ func tailCopilotTranscript(ctx context.Context, path string, sink daemon.Sink, d
 			hasEdit := false
 			for _, tr := range ev.Data.ToolRequests {
 				if looksLikePatch(tr.Name) || looksLikeCreateFile(tr.Name) ||
-					looksLikeReplaceString(tr.Name) || looksLikeInsertEdit(tr.Name) {
+					looksLikeReplaceString(tr.Name) || looksLikeMultiReplaceString(tr.Name) ||
+					looksLikeInsertEdit(tr.Name) {
 					hasEdit = true
 					break
 				}
@@ -252,6 +253,9 @@ func tailCopilotTranscript(ctx context.Context, path string, sink daemon.Sink, d
 					// apply_patch) — the "file replace" case; without this the edit
 					// isn't recorded and the changed lines fall to Human.
 					emitCopilotReplaceStringEdits(tr.Arguments, m, inTok, outTok, path, sink)
+				case looksLikeMultiReplaceString(tr.Name):
+					// Several replacements, possibly across files, in one call.
+					emitCopilotMultiReplaceStringEdits(tr.Arguments, m, inTok, outTok, path, sink)
 				case looksLikeInsertEdit(tr.Name):
 					emitCopilotInsertEditEdits(tr.Arguments, m, inTok, outTok, path, sink)
 				}
@@ -321,6 +325,9 @@ func looksLikeCreateFile(name string) bool {
 func looksLikeReplaceString(name string) bool {
 	n := strings.ToLower(name)
 	return n == "replace_string_in_file" || n == "replace_string" || n == "str_replace"
+}
+func looksLikeMultiReplaceString(name string) bool {
+	return strings.ToLower(name) == "multi_replace_string_in_file"
 }
 func looksLikeInsertEdit(name string) bool {
 	n := strings.ToLower(name)
@@ -457,6 +464,25 @@ func emitCopilotReplaceStringEdits(args json.RawMessage, model string, inputToke
 		copilotAddedRangesFromContent(rep.NewString),
 		copilotRemovedHashesFromContent(rep.OldString),
 		model, inputTokens, outputTokens, sessionPath, "replace_string_in_file", sink)
+}
+
+// emitCopilotMultiReplaceStringEdits parses a multi_replace_string_in_file tool
+// argument ({"explanation","replacements":[{"filePath","oldString","newString"},…]})
+// and records each replacement like a replace_string_in_file call. One call can
+// span several files, so each replacement resolves its own repo.
+func emitCopilotMultiReplaceStringEdits(args json.RawMessage, model string, inputTokens, outputTokens int64, sessionPath string, sink daemon.Sink) {
+	var in struct {
+		Replacements []copilotReplacement `json:"replacements"`
+	}
+	if json.Unmarshal(unwrapToolArgs(args), &in) != nil {
+		return
+	}
+	for _, r := range in.Replacements {
+		emitCopilotFileEdit(r.FilePath,
+			copilotAddedRangesFromContent(r.NewString),
+			copilotRemovedHashesFromContent(r.OldString),
+			model, inputTokens, outputTokens, sessionPath, "multi_replace_string_in_file", sink)
+	}
 }
 
 // emitCopilotInsertEditEdits parses an insert_edit_into_file tool argument

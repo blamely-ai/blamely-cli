@@ -3,6 +3,7 @@ package authorship
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"math"
 	"strings"
 	"time"
 	"unicode"
@@ -225,6 +226,17 @@ func splitLines(s string) []string {
 	return parts
 }
 
+// maxAlignCells is the largest middle region (between the common prefix and
+// suffix) whose LCS table alignLines keeps whole: int32 cells, 64 MB. An edit to
+// a large file only touches a small middle, so this covers nearly every edit.
+// Larger middles — thousands of lines changed at once, or two far-apart edits in
+// one recorded change — go through alignMiddleCheckpointed: the same result in
+// O(sqrt(rows)·cols) memory, for about twice the time. (Without either, the table
+// was (n+1)×(m+1) cells over the WHOLE file — tens of GB for a 50k-line file.)
+//
+// A variable only so tests can force the checkpointed path on small inputs.
+var maxAlignCells = 16_000_000
+
 // alignLines returns, for each NEW line index, the index of the OLD line it is
 // unchanged from (an LCS match), or -1 if it is added/changed. Standard LCS DP
 // with backtrack; positional matching is what makes duplicate identical lines
@@ -235,6 +247,18 @@ func splitLines(s string) []string {
 // only in indentation / trailing or collapsed whitespace counts as unchanged and
 // keeps its prior author — reformatting is not authorship ("formatting
 // non-substantial"). A genuine content change still mismatches → the editor.
+//
+// The DP only covers the lines between the common prefix and the common suffix,
+// yet the result is identical to running it over the whole file:
+//   - the backtrack matches equal lines at (i, i) immediately, so the common prefix
+//     is matched in place;
+//   - for a common last line x, LCS(A+x, B+x) = LCS(A, B) + 1 at every cell that
+//     still contains x, so the backtrack takes the same steps as on (A, B) until
+//     one side is exhausted. Then the full walk matches x against the FIRST x left
+//     on the other side, and ends exhausted on the same side. The suffix loop below
+//     replays exactly that, one suffix line at a time, in linear time.
+//
+// MUST match the TS and Kotlin ports exactly (the golden vectors enforce it).
 func alignLines(oldLines, newLines []string) []int {
 	n, m := len(oldLines), len(newLines)
 	matched := make([]int, m)
@@ -247,36 +271,142 @@ func alignLines(oldLines, newLines []string) []int {
 	oldN := normalizeLinesForMatch(oldLines)
 	newN := normalizeLinesForMatch(newLines)
 
-	// dp[i][j] = LCS length of oldN[i:] and newN[j:].
-	dp := make([][]int, n+1)
-	for i := range dp {
-		dp[i] = make([]int, m+1)
+	p := 0
+	for p < n && p < m && oldN[p] == newN[p] {
+		matched[p] = p
+		p++
 	}
-	for i := n - 1; i >= 0; i-- {
-		for j := m - 1; j >= 0; j-- {
-			if oldN[i] == newN[j] {
-				dp[i][j] = dp[i+1][j+1] + 1
-			} else if dp[i+1][j] >= dp[i][j+1] {
-				dp[i][j] = dp[i+1][j]
-			} else {
-				dp[i][j] = dp[i][j+1]
+	s := 0
+	for s < n-p && s < m-p && oldN[n-1-s] == newN[m-1-s] {
+		s++
+	}
+	oldEnd, newEnd := n-s, m-s // the middle is oldN[p:oldEnd] vs newN[p:newEnd]
+
+	i, j := p, p
+	rows, cols := oldEnd-p, newEnd-p
+	if rows > 0 && cols > 0 {
+		if (rows+1)*(cols+1) > maxAlignCells {
+			i, j = alignMiddleCheckpointed(oldN, newN, p, oldEnd, newEnd, matched)
+		} else {
+			// dp[(a-p)*w + (b-p)] = LCS length of oldN[a:oldEnd] and newN[b:newEnd].
+			w := cols + 1
+			dp := make([]int32, (rows+1)*w)
+			for a := rows - 1; a >= 0; a-- {
+				fillLCSRow(oldN[p+a], newN[p:newEnd], dp[a*w:(a+1)*w], dp[(a+1)*w:(a+2)*w], 0)
+			}
+			// Backtrack to recover the matched (unchanged) pairs.
+			for i < oldEnd && j < newEnd {
+				a, b := i-p, j-p
+				if oldN[i] == newN[j] {
+					matched[j] = i
+					i++
+					j++
+				} else if dp[(a+1)*w+b] >= dp[a*w+b+1] {
+					i++
+				} else {
+					j++
+				}
 			}
 		}
 	}
-	// Backtrack to recover the matched (unchanged) pairs.
-	i, j := 0, 0
-	for i < n && j < m {
-		if oldN[i] == newN[j] {
-			matched[j] = i
-			i++
-			j++
-		} else if dp[i+1][j] >= dp[i][j+1] {
-			i++
+	// Replay the common suffix (see above): one side is exhausted here.
+	for k := 0; k < s; k++ {
+		oi, nj := oldEnd+k, newEnd+k
+		x := oldN[oi]
+		if i == oi {
+			for newN[j] != x {
+				j++
+			}
+			matched[j] = oi
+			i, j = oi+1, j+1
 		} else {
-			j++
+			for oldN[i] != x {
+				i++
+			}
+			matched[nj] = i
+			i, j = i+1, nj+1
 		}
 	}
 	return matched
+}
+
+// fillLCSRow computes one row of the suffix-LCS table: row[b] = LCS length of
+// (oldLine + the old lines below) and newMid[b:], for b >= from, given the row
+// below (next). row and next span all of newMid plus one trailing zero.
+func fillLCSRow(oldLine string, newMid []string, row, next []int32, from int) {
+	cols := len(newMid)
+	row[cols] = 0
+	for b := cols - 1; b >= from; b-- {
+		if oldLine == newMid[b] {
+			row[b] = next[b+1] + 1
+		} else if next[b] >= row[b+1] {
+			row[b] = next[b]
+		} else {
+			row[b] = row[b+1]
+		}
+	}
+}
+
+// alignMiddleCheckpointed is alignLines' DP + backtrack over the middle
+// oldN[p:oldEnd] × newN[p:newEnd] without holding the whole table. It keeps
+// every step-th row (step ≈ sqrt(rows)), then walks the backtrack block by block,
+// rebuilding each block's rows from the checkpoint below it. A block is rebuilt
+// only from the backtrack's current column rightward: a row's values there
+// depend on nothing to their left. The backtrack sees exactly the values the
+// whole table holds, so the matches — duplicates included — are identical.
+// Returns where the backtrack stopped.
+func alignMiddleCheckpointed(oldN, newN []string, p, oldEnd, newEnd int, matched []int) (int, int) {
+	rows, cols := oldEnd-p, newEnd-p
+	newMid := newN[p:newEnd]
+	w := cols + 1
+	step := int(math.Ceil(math.Sqrt(float64(rows))))
+
+	// checkpoint[k] = table row k*step; the row past the last (rows) is all zeros.
+	checkpoint := make([][]int32, rows/step+1)
+	cur, below := make([]int32, w), make([]int32, w)
+	for a := rows - 1; a >= 0; a-- {
+		fillLCSRow(oldN[p+a], newMid, cur, below, 0)
+		if a%step == 0 {
+			checkpoint[a/step] = append([]int32(nil), cur...)
+		}
+		cur, below = below, cur
+	}
+	zero := make([]int32, w)
+	rowAt := func(a int) []int32 {
+		if a == rows {
+			return zero
+		}
+		return checkpoint[a/step]
+	}
+
+	block := make([][]int32, step+1)
+	for k := range block {
+		block[k] = make([]int32, w)
+	}
+	i, j := p, p
+	for i < oldEnd && j < newEnd {
+		top := (i - p) / step * step
+		bottom := min(top+step, rows)
+		from := j - p
+		// block[a-top] = table row a, for top <= a <= bottom, columns >= from.
+		copy(block[bottom-top][from:], rowAt(bottom)[from:])
+		for a := bottom - 1; a >= top; a-- {
+			fillLCSRow(oldN[p+a], newMid, block[a-top], block[a-top+1], from)
+		}
+		for i-p < bottom && j < newEnd {
+			a, b := i-p, j-p
+			if oldN[i] == newN[j] {
+				matched[j] = i
+				i++
+				j++
+			} else if block[a+1-top][b] >= block[a-top][b+1] {
+				i++
+			} else {
+				j++
+			}
+		}
+	}
+	return i, j
 }
 
 // normalizeLineForMatch reduces a line to its whitespace-insensitive form by

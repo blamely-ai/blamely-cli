@@ -4,7 +4,8 @@ package daemon
 
 import (
 	"os"
-	"syscall"
+
+	"github.com/blamely/blamely/internal/filelock"
 )
 
 // acquireInstanceLock takes an exclusive, non-blocking flock on path. The lock
@@ -18,16 +19,5 @@ import (
 // the old one, defeating the mutual exclusion. A stale zero-byte daemon.lock is
 // harmless and gets re-locked next start.
 func acquireInstanceLock(path string) (f *os.File, ok bool, err error) {
-	f, err = os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o644)
-	if err != nil {
-		return nil, false, err
-	}
-	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
-		_ = f.Close()
-		if err == syscall.EWOULDBLOCK {
-			return nil, false, nil // held by another daemon
-		}
-		return nil, false, err
-	}
-	return f, true, nil
+	return filelock.TryLock(path)
 }

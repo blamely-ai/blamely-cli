@@ -19,6 +19,7 @@ const (
 	hooksDirName        = "git-hooks"
 	logFileName         = "daemon.log"
 	updateLogFileName   = "update.log"
+	syncLogFileName     = "sync-notes.log"
 	excludeFileName     = "exclude"
 	claudeDirName       = ".claude"
 	claudeSettings      = "settings.json"
@@ -144,6 +145,17 @@ func UpdateLogFile() (string, error) {
 		return "", err
 	}
 	return filepath.Join(d, updateLogFileName), nil
+}
+
+// SyncLogFile returns the path of the notes sync history: one line per
+// background `sync-notes` attempt. Those run detached from the push that started
+// them, so their outcome reaches no terminal; this is where it is kept.
+func SyncLogFile() (string, error) {
+	d, err := BlamelyDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(d, syncLogFileName), nil
 }
 
 // ExcludeFile returns the path to the user's exclude list. Paths matching

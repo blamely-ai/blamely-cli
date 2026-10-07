@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/blamely/blamely/internal/gitnotes"
+	"github.com/blamely/blamely/internal/procattr"
 )
 
 // blameDate formats a committer epoch (seconds) in the commit's own timezone
@@ -159,7 +160,7 @@ type blameEntry struct {
 // per-commit header blocks (emitted once per commit, the first time it's seen)
 // with per-line "<tab>content" records — see `git help blame`.
 func gitBlame(repo, rev, path string) ([]blameEntry, error) {
-	cmd := exec.Command("git", "-C", repo, "blame", "--porcelain", rev, "--", path)
+	cmd := procattr.Hide(exec.Command("git", "-C", repo, "blame", "--porcelain", rev, "--", path))
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("git blame %s: %w", path, err)
@@ -303,7 +304,7 @@ func aiRangeFor(repo string, e blameEntry, cache map[string]*gitnotes.Note, path
 // loadNote reads and parses the blamely git note for sha, or nil if there is
 // none (or it fails to parse) — a miss just means "treat lines as human".
 func loadNote(repo, sha string) *gitnotes.Note {
-	out, err := exec.Command("git", "-C", repo, "notes", "--ref="+gitnotes.NotesRef, "show", sha).Output()
+	out, err := procattr.Hide(exec.Command("git", "-C", repo, "notes", "--ref="+gitnotes.NotesRef, "show", sha)).Output()
 	if err != nil {
 		return nil
 	}
