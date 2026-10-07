@@ -32,6 +32,17 @@ type DeletedLineHash struct {
 // LocateNewString finds where `newString` lives in `filePath` and returns
 // its post-edit line range. If newString is empty (pure deletion) or not
 // found, returns (nil, nil). Multi-occurrence matches return the first one.
+//
+// The match ignores line endings: CRLF is folded to LF on both sides before
+// searching, so the result is the same whether the file on disk is LF
+// (macOS/Linux) or CRLF (Windows, a core.autocrlf=true checkout, eol=crlf) and
+// whichever ending the tool's payload carries. Agents typically send an LF
+// new_string while keeping the file's CRLF on disk; a raw byte search missed
+// that, so the edit was stored with no line hashes and — once its working log
+// was gone — its lines were committed as Human. Folding drops only the \r of
+// each \r\n, never a \n, so the line numbers counted below are unchanged, and
+// ContentSHA covers the folded text, like the per-line hashes that strip a
+// trailing \r.
 func LocateNewString(filePath, newString string) (*LineRange, error) {
 	if newString == "" {
 		return nil, nil
@@ -40,6 +51,8 @@ func LocateNewString(filePath, newString string) (*LineRange, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %w", filePath, err)
 	}
+	data = foldCRLF(data)
+	newString = strings.ReplaceAll(newString, "\r\n", "\n")
 	idx := bytes.Index(data, []byte(newString))
 	if idx < 0 {
 		return nil, nil
@@ -90,6 +103,17 @@ func LineRangeForWholeFile(filePath string) ([]LineRange, error) {
 		return nil, nil
 	}
 	return out, nil
+}
+
+// foldCRLF returns b with every CRLF folded to LF. Only the \r of a \r\n pair is
+// dropped, so line boundaries — and every line number counted by \n — are the
+// same before and after. A lone \r is left alone. Returns b itself when it holds
+// no CRLF.
+func foldCRLF(b []byte) []byte {
+	if !bytes.Contains(b, []byte("\r\n")) {
+		return b
+	}
+	return bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n"))
 }
 
 func sha256Hex(b []byte) string {

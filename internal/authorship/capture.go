@@ -36,8 +36,18 @@ func ResolveContext(absPath string) (Context, bool) {
 	if resolved, err := filepath.EvalSymlinks(absPath); err == nil {
 		absPath = resolved
 	}
-	top, ok := gitutil.Toplevel(absPath)
-	if !ok || top == "" {
+	return ContextAt(gitutil.Locate(absPath), absPath)
+}
+
+// ContextAt is ResolveContext for a caller that already holds the path's
+// gitutil.Location (a hook that needed its RepoID anyway), so the top level and
+// HEAD aren't asked of git a second time; only the branch is.
+func ContextAt(loc gitutil.Location, absPath string) (Context, bool) {
+	if resolved, err := filepath.EvalSymlinks(absPath); err == nil {
+		absPath = resolved
+	}
+	top := loc.Toplevel
+	if top == "" {
 		return Context{}, false
 	}
 	if resolved, err := filepath.EvalSymlinks(top); err == nil {
@@ -51,7 +61,7 @@ func ResolveContext(absPath string) (Context, bool) {
 	if branch == "" {
 		branch = "DETACHED"
 	}
-	base := gitutil.HeadSHA(top)
+	base := loc.HeadSHA
 	if base == "" {
 		base = "INITIAL" // repo has no commits yet
 	}
@@ -75,6 +85,13 @@ func RecordEdit(absPath string, author Author) (*WorkingLog, error) {
 	if !ok {
 		return nil, fmt.Errorf("authorship: %q is not inside a git work tree", absPath)
 	}
+	return RecordEditIn(ctx, absPath, author)
+}
+
+// RecordEditIn is RecordEdit for a caller that already resolved the Context.
+// The HEAD content (a git process) is read only on the file's first observed
+// edit, the one case it is used.
+func RecordEditIn(ctx Context, absPath string, author Author) (*WorkingLog, error) {
 	if SeedHook != nil {
 		SeedHook(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath)
 	}
@@ -82,8 +99,8 @@ func RecordEdit(absPath string, author Author) (*WorkingLog, error) {
 	if err != nil {
 		return nil, err
 	}
-	fallback := headContent(ctx.RepoRoot, ctx.BaseSHA, ctx.RelPath)
-	return Update(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath, string(data), fallback, author, 0)
+	fallback := func() string { return headContent(ctx.RepoRoot, ctx.BaseSHA, ctx.RelPath) }
+	return update(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath, string(data), fallback, author, 0)
 }
 
 // PutBaselinesIfUntracked snapshots the current content of each repo-relative path
@@ -135,6 +152,12 @@ func CaptureBaseline(absPath string) error {
 	if !ok {
 		return fmt.Errorf("authorship: %q is not inside a git work tree", absPath)
 	}
+	return CaptureBaselineIn(ctx, absPath)
+}
+
+// CaptureBaselineIn is CaptureBaseline for a caller that already resolved the
+// Context.
+func CaptureBaselineIn(ctx Context, absPath string) error {
 	data, err := os.ReadFile(absPath)
 	if err != nil {
 		return err

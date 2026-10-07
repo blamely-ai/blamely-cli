@@ -10,6 +10,7 @@ import (
 
 	"github.com/blamely/blamely/internal/gitnotes"
 	"github.com/blamely/blamely/internal/gitutil"
+	"github.com/blamely/blamely/internal/procattr"
 	"github.com/blamely/blamely/internal/store"
 )
 
@@ -91,8 +92,8 @@ func RenderHistory(opts HistoryOptions) error {
 	}
 
 	for _, c := range commits {
-		noteBytes, err := exec.Command("git", "-C", c.RepoPath,
-			"notes", "--ref="+gitnotes.NotesRef, "show", c.SHA).Output()
+		noteBytes, err := procattr.Hide(exec.Command("git", "-C", c.RepoPath,
+			"notes", "--ref="+gitnotes.NotesRef, "show", c.SHA)).Output()
 		if err != nil {
 			continue
 		}

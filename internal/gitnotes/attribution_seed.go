@@ -308,8 +308,8 @@ func addNewSideHunk(line string, set map[int]bool) {
 // working-log File keys. A file absent from the result simply has no current changes.
 func UncommittedAddedLinesAll(repoPath string) map[string]map[int]bool {
 	byFile := map[string]map[int]bool{}
-	out, err := exec.Command("git", "-C", repoPath, "-c", "core.quotepath=false",
-		"diff", "HEAD", "--unified=0", "--no-color").Output()
+	out, err := procattr.Hide(exec.Command("git", "-C", repoPath, "-c", "core.quotepath=false",
+		"diff", "HEAD", "--unified=0", "--no-color")).Output()
 	if err != nil {
 		return byFile
 	}
@@ -341,8 +341,8 @@ func UncommittedAddedLinesAll(repoPath string) map[string]map[int]bool {
 // probing each file separately.
 func UntrackedFiles(repoPath string) map[string]bool {
 	set := map[string]bool{}
-	out, err := exec.Command("git", "-C", repoPath, "-c", "core.quotepath=false",
-		"ls-files", "--others", "--exclude-standard").Output()
+	out, err := procattr.Hide(exec.Command("git", "-C", repoPath, "-c", "core.quotepath=false",
+		"ls-files", "--others", "--exclude-standard")).Output()
 	if err != nil {
 		return set
 	}

@@ -859,40 +859,69 @@ func cmdPostRewrite() *cobra.Command {
 }
 
 func cmdSyncNotes() *cobra.Command {
-	return &cobra.Command{
+	var wait bool
+	var tips []string
+	c := &cobra.Command{
 		Use: "sync-notes <repo> <remote> [<url>]",
 		// Hidden: called by the global pre-push hook (see
 		// internal/install/hookspath.go) with its remote name and URL, and
 		// git's pre-push stdin. Publishes each annotated commit's note in a
 		// notes commit carrying that commit's message, so servers that require
 		// an issue key in every commit message accept it.
+		//
+		// The hook's call returns at once: the sync itself runs in a detached
+		// `sync-notes --wait` (gitnotes.StartSyncNotesInBackground), so the
+		// user's push no longer waits for the notes fetch and push.
 		Hidden: true,
 		Short:  "Internal: push attribution notes to a remote",
 		Args:   cobra.RangeArgs(2, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			repo, remote, url := args[0], args[1], ""
+			if len(args) == 3 {
+				url = args[2]
+			}
+			if wait {
+				// The detached run. Its output reaches no one; a failure is
+				// recorded for the next push to print.
+				_ = gitnotes.SyncNotesAndRecord(repo, remote, url, tips)
+				return nil
+			}
+
 			var info gitnotes.PrePushInfo
 			// Only read piped stdin (the hook's): a terminal would block forever.
 			if fi, err := os.Stdin.Stat(); err == nil && fi.Mode()&os.ModeCharDevice == 0 {
 				info = gitnotes.ParsePrePushStdin(cmd.InOrStdin())
-			}
-			url := ""
-			if len(args) == 3 {
-				url = args[2]
-			}
-			if err := gitnotes.SyncNotes(args[0], args[1], url, info.Tips); err != nil {
-				// Visible — silence is what once let a rejected notes push go
-				// unnoticed for good — but never fatal to the user's own push.
-				fmt.Fprintf(os.Stderr, "blamely: could not sync %s to %s - attribution stays local\n  %s\n",
-					gitnotes.NotesRef, args[1], strings.ReplaceAll(err.Error(), "\n", "\n  "))
 			}
 			if info.PushesNotesRef {
 				fmt.Fprintf(os.Stderr, "blamely: %s is published automatically on every push. Pushing it yourself\n"+
 					"  sends git's own notes commits, which servers requiring an issue key reject;\n"+
 					"  leave it out of the push (and out of remote.<name>.push).\n", gitnotes.NotesRef)
 			}
+			// Visible — silence is what once let a rejected notes push go
+			// unnoticed for good — but never fatal to the user's own push.
+			gitnotes.ReportPreviousSyncFailure(repo, os.Stderr)
+			exe, err := os.Executable()
+			if err == nil {
+				err = gitnotes.StartSyncNotesInBackground(exe, repo, remote, url, info.Tips)
+			}
+			if err != nil {
+				// Could not detach: sync in the foreground, as before.
+				gitnotes.LogSyncOutcome(repo, remote, fmt.Errorf("could not start the background sync, syncing in the foreground: %w", err))
+				err := gitnotes.SyncNotes(repo, remote, url, info.Tips)
+				gitnotes.LogSyncOutcome(repo, remote, err)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "blamely: could not sync %s to %s - attribution stays local\n  %s\n",
+						gitnotes.NotesRef, remote, strings.ReplaceAll(err.Error(), "\n", "\n  "))
+				}
+			}
 			return nil // best-effort by contract
 		},
 	}
+	c.Flags().BoolVar(&wait, "wait", false, "sync in the foreground (the detached background run)")
+	c.Flags().StringArrayVar(&tips, "tip", nil, "a commit the surrounding push sends (repeatable)")
+	_ = c.Flags().MarkHidden("wait")
+	_ = c.Flags().MarkHidden("tip")
+	return c
 }
 
 func cmdReport() *cobra.Command {

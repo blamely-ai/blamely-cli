@@ -366,6 +366,29 @@ func (db *DB) UpgradeRecentCompletionsToChat(tool Tool, tsNanos, windowNanos int
 	return nil
 }
 
+// FillEditUsage copies model, token counts and suggested_lines from `from` onto
+// edit id wherever the stored row has none, never overwriting what it has. Used
+// when a second recorder reports an edit already stored, so the kept row ends
+// up with everything either recorder knew.
+func (db *DB) FillEditUsage(id int64, from Edit) error {
+	_, err := db.Exec(`
+		UPDATE edits SET
+			model              = COALESCE(model, ?),
+			input_tokens       = COALESCE(input_tokens, ?),
+			output_tokens      = COALESCE(output_tokens, ?),
+			cache_read_tokens  = COALESCE(cache_read_tokens, ?),
+			cache_write_tokens = COALESCE(cache_write_tokens, ?),
+			suggested_lines    = MAX(suggested_lines, ?)
+		WHERE id = ?`,
+		nullableString(from.Model), nullableInt(from.InputTokens), nullableInt(from.OutputTokens),
+		nullableInt(from.CacheReadTokens), nullableInt(from.CacheWriteTokens),
+		from.SuggestedLines, id)
+	if err != nil {
+		return fmt.Errorf("fill edit usage: %w", err)
+	}
+	return nil
+}
+
 // KnownCommits returns all noted commits for the given repos, ordered by ts desc.
 // If sinceNanos > 0, only commits with ts >= sinceNanos are returned.
 func (db *DB) KnownCommits(repos []string, sinceNanos int64) ([]CommitRow, error) {

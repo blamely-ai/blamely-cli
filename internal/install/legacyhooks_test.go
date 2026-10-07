@@ -4,6 +4,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -121,5 +123,47 @@ func TestRemoveLegacyRepoHooks_PreservesWorkingLogs(t *testing.T) {
 	}
 	if _, err := os.Stat(legacy); !os.IsNotExist(err) {
 		t.Errorf("legacy runner must be removed, got err=%v", err)
+	}
+}
+
+// The pre-push hook reaps legacy per-repo runner files but must keep working_logs:
+// it runs before the push is attempted, so wiping it would lose the logs of
+// commits whose push then fails.
+func TestPrePushScript_PreservesWorkingLogs(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("needs a POSIX sh")
+	}
+	root := initRepo(t)
+	bl := filepath.Join(root, ".git", "blamely")
+	logFile := filepath.Join(bl, "working_logs", "main", strings.Repeat("a", 40), "f.json")
+	runner := filepath.Join(bl, "hookRunner-pre-push.sh")
+	if err := os.MkdirAll(filepath.Dir(logFile), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range []string{logFile, runner} {
+		if err := os.WriteFile(f, []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	dir := t.TempDir()
+	stub := filepath.Join(dir, "blamely")
+	if err := os.WriteFile(stub, []byte("#!/bin/sh\ncat >/dev/null\nexit 0\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	script := filepath.Join(dir, "pre-push")
+	if err := writePrePushScript(script, stub); err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command("sh", script, "origin", "https://example.invalid/r.git")
+	cmd.Dir = root
+	cmd.Env = append(os.Environ(), "HOME="+dir)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("pre-push: %v\n%s", err, out)
+	}
+	if _, err := os.Stat(logFile); err != nil {
+		t.Errorf("working log must survive pre-push: %v", err)
+	}
+	if _, err := os.Stat(runner); !os.IsNotExist(err) {
+		t.Errorf("legacy runner should be removed, stat err=%v", err)
 	}
 }

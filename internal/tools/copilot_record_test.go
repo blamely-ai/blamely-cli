@@ -2,6 +2,7 @@ package tools
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"testing"
 )
 
@@ -190,5 +191,141 @@ func TestExtractCopilotRanges_AddCarriesPerLineSha(t *testing.T) {
 	}
 	if ranges[0].ContentSHA != sha256Hex([]byte("  <p>1</p>")) {
 		t.Errorf("range[0] content_sha mismatch")
+	}
+}
+
+// VS Code's agent hooks send camelCase field names. This is the create_file
+// payload from a live session whose new test file committed as Human: the tool
+// branch read only "path", found nothing, and the edit was never recorded.
+func TestExtractCopilotRanges_VSCodeCreateFile(t *testing.T) {
+	raw := json.RawMessage(`{"filePath":"c:\\Users\\dev\\git\\worker\\tests\\basic.spec.ts","content":"import { describe } from '@jest/globals';\n\ndescribe('x', () => {});\n"}`)
+	file, ranges, suggested, _, _ := extractCopilotRanges(copilotHookPayload{ToolName: "create_file", ToolInput: raw})
+	if file != `c:\Users\dev\git\worker\tests\basic.spec.ts` {
+		t.Fatalf("file: got %q", file)
+	}
+	if suggested != 3 || len(ranges) != 3 {
+		t.Fatalf("want suggested=3 and 3 ranges, got suggested=%d ranges=%d", suggested, len(ranges))
+	}
+	// The blank line carries no content_sha; the two code lines do.
+	if ranges[1].ContentSHA != "" || ranges[2].ContentSHA == "" {
+		t.Errorf("blank/non-blank content_sha mismatch: %+v", ranges)
+	}
+	if ranges[0].ContentSHA != sha256Hex([]byte("import { describe } from '@jest/globals';")) {
+		t.Errorf("range[0] content_sha mismatch")
+	}
+}
+
+func TestExtractCopilotRanges_VSCodeInsertEdit(t *testing.T) {
+	raw, _ := json.Marshal(map[string]any{"filePath": "/tmp/a.ts", "code": "x()\ny()", "explanation": "add calls"})
+	file, ranges, suggested, _, _ := extractCopilotRanges(copilotHookPayload{ToolName: "insert_edit_into_file", ToolInput: raw})
+	if file != "/tmp/a.ts" || len(ranges) != 2 || suggested != 2 {
+		t.Fatalf("got file=%q ranges=%d suggested=%d", file, len(ranges), suggested)
+	}
+}
+
+func TestExtractCopilotRanges_VSCodeReplaceString(t *testing.T) {
+	raw, _ := json.Marshal(map[string]any{
+		"filePath":  "/tmp/r.ts",
+		"oldString": "a\nb",
+		"newString": "a\nB\nc",
+	})
+	file, ranges, suggested, removed, _ := extractCopilotRanges(copilotHookPayload{ToolName: "replace_string_in_file", ToolInput: raw})
+	if file != "/tmp/r.ts" {
+		t.Fatalf("file: got %q", file)
+	}
+	// "a" is unchanged context; only B and c are the AI's.
+	if suggested != 2 || len(ranges) != 2 {
+		t.Fatalf("want 2 changed lines, got suggested=%d ranges=%d", suggested, len(ranges))
+	}
+	if len(removed) != 1 || removed[0].ContentSHA != sha256Hex([]byte("b")) {
+		t.Errorf("want removed [b], got %+v", removed)
+	}
+}
+
+func TestExtractCopilotRanges_GenericFallbackCamelCase(t *testing.T) {
+	raw, _ := json.Marshal(map[string]any{"filePath": "/tmp/g.ts", "oldString": "", "newString": "one\ntwo"})
+	file, ranges, suggested, _, _ := extractCopilotRanges(copilotHookPayload{ToolName: "some_future_edit_tool", ToolInput: raw})
+	if file != "/tmp/g.ts" || len(ranges) != 2 || suggested != 2 {
+		t.Fatalf("got file=%q ranges=%d suggested=%d", file, len(ranges), suggested)
+	}
+}
+
+func TestExtractCopilotMultiFileEdits_MultiReplace(t *testing.T) {
+	raw, _ := json.Marshal(map[string]any{
+		"explanation": "rename",
+		"replacements": []map[string]any{
+			{"filePath": "/tmp/one.ts", "oldString": "old1", "newString": "new1"},
+			{"filePath": "/tmp/two.ts", "oldString": "gone1\ngone2", "newString": ""},
+		},
+	})
+	edits, ok := extractCopilotMultiFileEdits(copilotHookPayload{ToolName: "multi_replace_string_in_file", ToolInput: raw})
+	if !ok || len(edits) != 2 {
+		t.Fatalf("want 2 edits, got ok=%v %d", ok, len(edits))
+	}
+	if edits[0].path != "/tmp/one.ts" || len(edits[0].ranges) != 1 || edits[0].suggested != 1 {
+		t.Errorf("edit 0: %+v", edits[0])
+	}
+	// Second replacement is a pure deletion: nothing added, both removals kept.
+	if edits[1].path != "/tmp/two.ts" || len(edits[1].ranges) != 0 || len(edits[1].removed) != 2 || edits[1].suggested != 2 {
+		t.Errorf("edit 1: %+v", edits[1])
+	}
+}
+
+func TestExtractCopilotMultiFileEdits_ApplyPatch(t *testing.T) {
+	dir := t.TempDir()
+	a := filepath.Join(dir, "a.go")
+	b := filepath.Join(dir, "b.go")
+	patch := "*** Begin Patch\n*** Update File: " + a + "\n@@\n-old\n+new\n*** Add File: " + b + "\n+package b\n+\n+func B() {}\n*** End Patch"
+	raw, _ := json.Marshal(map[string]any{"input": patch, "explanation": "edit two files"})
+	edits, ok := extractCopilotMultiFileEdits(copilotHookPayload{ToolName: "apply_patch", ToolInput: raw})
+	if !ok || len(edits) != 2 {
+		t.Fatalf("want 2 edits, got ok=%v %d", ok, len(edits))
+	}
+	if edits[0].path != a || len(edits[0].ranges) != 1 || len(edits[0].removed) != 1 {
+		t.Errorf("edit 0: %+v", edits[0])
+	}
+	if edits[1].path != b || len(edits[1].ranges) != 2 || edits[1].suggested != 2 {
+		t.Errorf("edit 1: %+v", edits[1])
+	}
+}
+
+func TestExtractCopilotMultiFileEdits_OtherToolsFallThrough(t *testing.T) {
+	for _, name := range []string{"create_file", "replace_string_in_file", "run_in_terminal", "shell", "read_file"} {
+		if _, ok := extractCopilotMultiFileEdits(copilotHookPayload{ToolName: name, ToolInput: json.RawMessage(`{"command":"ls"}`)}); ok {
+			t.Errorf("%s: must fall through to the single-file path", name)
+		}
+	}
+}
+
+func TestCopilotHookGenType(t *testing.T) {
+	vscode := `c:\Users\dev\AppData\Roaming\Code\User\workspaceStorage\7d91\GitHub.copilot-chat\transcripts\8a17.jsonl`
+	if got := copilotHookGenType(copilotHookPayload{ToolName: "create_file", TranscriptPath: vscode}); got != "chat" {
+		t.Errorf("VS Code hook: want chat, got %q", got)
+	}
+	cli := `/home/dev/.copilot/session-state/8a17/events.jsonl`
+	if got := copilotHookGenType(copilotHookPayload{ToolName: "create_file", TranscriptPath: cli}); got != "cli" {
+		t.Errorf("Copilot CLI hook: want cli, got %q", got)
+	}
+}
+
+// A tool call that names a file but carries no content either way is a READ.
+// Recording it ran captureAuthorship, which credited every uncommitted line in
+// the file — including the human's — to Copilot (reproduced with the CLI's
+// view tool on v1.8.4, and VS Code's read_file once filePath was understood).
+func TestExtractCopilotRanges_ReadsAreNotEdits(t *testing.T) {
+	reads := []struct {
+		tool  string
+		input map[string]any
+	}{
+		{"read_file", map[string]any{"filePath": "/tmp/a.ts", "startLine": 1, "endLine": 200}},
+		{"list_dir", map[string]any{"path": "/tmp"}},
+		{"view", map[string]any{"path": "/tmp/a.ts"}},
+		{"str_replace_editor", map[string]any{"command": "view", "path": "/tmp/a.ts"}},
+	}
+	for _, r := range reads {
+		raw, _ := json.Marshal(r.input)
+		if file, _, _, _, _ := extractCopilotRanges(copilotHookPayload{ToolName: r.tool, ToolInput: raw}); file != "" {
+			t.Errorf("%s: a read must not be recorded as an edit, got file %q", r.tool, file)
+		}
 	}
 }

@@ -166,12 +166,14 @@ func (s *dbSink) Record(ev Event) error {
 	}
 	netUnchangedEditLines(&e)
 	sessions.resolve(s.db, &e, ev.Branch)
-	if _, err := s.db.InsertEdit(e); err != nil {
-		log.Printf("watcher %q: insert edit failed file=%q: %v", ev.Tool, ev.FilePath, err)
-		return err
+	if !mergeCopilotCrossSourceDuplicate(s.db, &e) {
+		if _, err := s.db.InsertEdit(e); err != nil {
+			log.Printf("watcher %q: insert edit failed file=%q: %v", ev.Tool, ev.FilePath, err)
+			return err
+		}
+		log.Printf("watcher %q: edit gen_type=%q repo=%q file=%q lines=%d",
+			tool, gt, ev.RepoPath, ev.FilePath, len(e.Lines))
 	}
-	log.Printf("watcher %q: edit gen_type=%q repo=%q file=%q lines=%d",
-		tool, gt, ev.RepoPath, ev.FilePath, len(e.Lines))
 	// When a chat-session marker lands, retroactively re-stamp the apply edit
 	// that the editor plugin already recorded as a completion a beat earlier
 	// (the chat response streams in slightly after the apply hits the file).
