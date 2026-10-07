@@ -534,7 +534,13 @@ func cmdRecord() *cobra.Command {
 			// recording an edit. The matching PostToolUse `record` then diffs the
 			// agent's write against this exact baseline.
 			if pre, _ := cmd.Flags().GetBool("pre"); pre {
-				if err := tools.CaptureBaselineFromStdin(os.Stdin); err != nil {
+				var err error
+				if args[0] == "opencode" {
+					err = tools.CaptureOpenCodeFromStdin(os.Stdin)
+				} else {
+					err = tools.CaptureBaselineFromStdin(os.Stdin)
+				}
+				if err != nil {
 					fmt.Fprintf(os.Stderr, "blamely record %s --pre: %v\n", args[0], err)
 				}
 				return nil
@@ -554,8 +560,10 @@ func cmdRecord() *cobra.Command {
 				recErr = tools.RecordGeminiFromStdin(os.Stdin)
 			case "devin":
 				recErr = tools.RecordDevinFromStdin(os.Stdin)
+			case "opencode":
+				recErr = tools.RecordOpenCodeFromStdin(os.Stdin)
 			default:
-				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini, devin)", args[0])
+				recErr = fmt.Errorf("unknown tool %q (supported: claude, cursor, codex, copilot, gemini, devin, opencode)", args[0])
 			}
 			if recErr != nil {
 				fmt.Fprintf(os.Stderr, "blamely record %s: %v\n", args[0], recErr)

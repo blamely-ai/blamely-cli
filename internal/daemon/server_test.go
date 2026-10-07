@@ -86,6 +86,19 @@ func TestValidateAndStore_AcceptsMinimalPayload(t *testing.T) {
 	}
 }
 
+func TestValidateAndStore_AcceptsOpenCode(t *testing.T) {
+	db := openTestDB(t)
+	p := minimalPayload()
+	p.Tool, p.GenType, p.Model = "opencode", "chat", "openai/test"
+	if err := validateAndStore(db, p); err != nil {
+		t.Fatal(err)
+	}
+	edits, err := db.EditsForFileSince(p.RepoPath, p.FilePath, 0)
+	if err != nil || len(edits) != 1 || edits[0].Tool != store.ToolOpenCode || edits[0].Model.String != "openai/test" {
+		t.Fatalf("OpenCode identity lost: %v %v", edits, err)
+	}
+}
+
 func TestValidateAndStore_RejectsMissingRequiredFields(t *testing.T) {
 	db := openTestDB(t)
 	cases := map[string]EditPayload{

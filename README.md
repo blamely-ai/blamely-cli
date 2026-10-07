@@ -19,6 +19,7 @@ dasdas
 | [GitHub Copilot](https://github.com/features/copilot) | ✓ | chat, completion |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✓ | cli |
 | [Devin](https://docs.devin.ai) | ✓ | cli, chat |
+| [OpenCode (V1 / V2)](https://opencode.ai) | ✓ | chat, agent |
 
 Devin is tracked across all three of its surfaces, by three different means:
 

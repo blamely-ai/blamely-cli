@@ -191,7 +191,7 @@ func RenderBar(w io.Writer, note *gitnotes.Note, width int) {
 
 	// Per-tool breakdown when at least one AI tool has non-zero lines.
 	var aiToolLines []string
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin", "opencode"} {
 		t, ok := note.ByTool[name]
 		if !ok || t.Lines == 0 {
 			continue

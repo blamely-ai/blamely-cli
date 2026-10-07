@@ -131,7 +131,7 @@ body{
 .acc{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:11.5px;color:var(--dim)}
 .acc b{color:var(--acc2)}
 /* tools */
-.t-claude{--tc:#d97757}.t-cursor{--tc:#cdd3da}.t-codex{--tc:#19c37d}.t-copilot{--tc:#a371f7}.t-gemini{--tc:#5aa2f5}.t-devin{--tc:#4b8dd6}
+.t-claude{--tc:#d97757}.t-cursor{--tc:#cdd3da}.t-codex{--tc:#19c37d}.t-copilot{--tc:#a371f7}.t-gemini{--tc:#5aa2f5}.t-devin{--tc:#4b8dd6}.t-opencode{--tc:#b7b7b7}
 .tlist{display:flex;flex-direction:column;gap:15px}
 .trow{display:flex;gap:13px;align-items:flex-start}
 .tav{width:36px;height:36px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;

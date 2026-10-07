@@ -135,6 +135,7 @@ func addMissingToolHooks(dryRun bool, result *RepairResult) {
 		{"GitHub Copilot", det.Copilot.Present, InstallCopilotHook, &s.CopilotHookAdded},
 		{"Gemini CLI", det.Gemini.Present, InstallGeminiHook, &s.GeminiHookAdded},
 		{"Devin CLI", det.Devin.Present, InstallDevinHook, &s.DevinHookAdded},
+		{"OpenCode", det.OpenCode.Present, InstallOpenCodeHook, &s.OpenCodeHookAdded},
 	} {
 		if !h.present {
 			continue

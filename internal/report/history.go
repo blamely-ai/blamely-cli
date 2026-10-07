@@ -187,7 +187,7 @@ func printHistory(w *os.File, s *histStats, commitCount int, repos []string, opt
 	}
 	const barWidth = 20
 	fmt.Fprintf(w, "%s\n", bold("By tool:"))
-	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin", "human"} {
+	for _, name := range []string{"claude", "cursor", "codex", "copilot", "gemini", "devin", "opencode", "human"} {
 		ts := s.ByTool[name]
 		lines := 0
 		if ts != nil {

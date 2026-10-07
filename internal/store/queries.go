@@ -12,11 +12,12 @@ import (
 type Tool string
 
 const (
-	ToolClaude  Tool = "claude"
-	ToolCursor  Tool = "cursor"
-	ToolCodex   Tool = "codex"
-	ToolCopilot Tool = "copilot"
-	ToolGemini  Tool = "gemini"
+	ToolClaude   Tool = "claude"
+	ToolCursor   Tool = "cursor"
+	ToolCodex    Tool = "codex"
+	ToolCopilot  Tool = "copilot"
+	ToolGemini   Tool = "gemini"
+	ToolOpenCode Tool = "opencode"
 	// ToolDevin is Devin CLI — Cognition's local terminal agent, recorded via
 	// its Claude-Code-compatible PostToolUse hook. Note this covers the LOCAL
 	// CLI only: Devin Cloud sessions edit files in a remote sandbox that never
