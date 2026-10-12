@@ -2,6 +2,12 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **AI edits are credited again when your checkout lives behind a mounted or aliased path (Windows).** On some corporate Windows machines the user profile sits on a mounted volume, so git names the repository by the volume's real path (`C:\SnapVolumesTemp\...\Users\<you>\...`) while VS Code, Copilot and the editor plugin name files by the path you opened (`C:\Users\<you>\...`). Blamely could not relate the two, stored every edit under its absolute path, and nothing matched what was committed — so all AI work in such a repository was counted as yours. Files are now named the way git itself names them, whichever spelling the tool used. Claude Code was unaffected because it already reports the resolved path.
+
 ## [1.8.5] - 2026-10-07
 
 ### Added

@@ -3,6 +3,7 @@ package tools
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/blamely/blamely/internal/gitutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -183,7 +184,7 @@ func cursorRelTarget(repoRoot, p string) string {
 	if p == "" {
 		return ""
 	}
-	if rel, err := filepath.Rel(repoRoot, p); err == nil && !strings.HasPrefix(rel, "..") {
+	if rel, ok := gitutil.Rel(repoRoot, p); ok {
 		return filepath.ToSlash(rel)
 	}
 	return cleanTarget(p)

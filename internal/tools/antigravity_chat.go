@@ -329,10 +329,8 @@ func (w *antigravityTranscriptWatcher) handleLine(path, line string, st *transcr
 	}
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 	when := time.Now()
 	if t, err := time.Parse(time.RFC3339, step.CreatedAt); err == nil {
@@ -432,10 +430,8 @@ func (w *antigravityTranscriptWatcher) recordAntigravityWrite(path string, tc tr
 	}
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 	st.createdFromContent[abs] = true // tell the CODE_ACTION to skip the disk read
 
@@ -493,16 +489,12 @@ func (w *antigravityTranscriptWatcher) recordAntigravityDeletion(path, abs, cwd 
 	if root == "" {
 		return
 	}
-	dir := filepath.Dir(abs)
-	if rd, err := filepath.EvalSymlinks(dir); err == nil {
-		dir = rd
-	}
 	rootResolved := root
 	if rr, err := filepath.EvalSymlinks(root); err == nil {
 		rootResolved = rr
 	}
-	rel, err := filepath.Rel(rootResolved, filepath.Join(dir, filepath.Base(abs)))
-	if err != nil || strings.HasPrefix(rel, "..") {
+	rel, ok := gitutil.Rel(root, abs)
+	if !ok {
 		return
 	}
 	removed := headFileRemovedHashes(root, rel)

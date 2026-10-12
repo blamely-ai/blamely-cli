@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/blamely/blamely/internal/gitnotes"
+	"github.com/blamely/blamely/internal/gitutil"
 	"github.com/blamely/blamely/internal/procattr"
 )
 
@@ -125,21 +126,17 @@ func RenderBlame(file, rev string) error {
 // already repo-relative) to a path relative to the repo root, as required by
 // `git blame`.
 func repoRelativePath(repo, file string) (string, error) {
-	if filepath.IsAbs(file) {
-		rel, err := filepath.Rel(repo, file)
+	abs := file
+	if !filepath.IsAbs(file) {
+		cwd, err := os.Getwd()
 		if err != nil {
-			return "", fmt.Errorf("resolve %s relative to repo: %w", file, err)
+			return "", err
 		}
-		return filepath.ToSlash(rel), nil
+		abs = filepath.Join(cwd, file)
 	}
-	cwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	abs := filepath.Join(cwd, file)
-	rel, err := filepath.Rel(repo, abs)
-	if err != nil {
-		return "", fmt.Errorf("resolve %s relative to repo: %w", file, err)
+	rel, ok := gitutil.Rel(repo, abs)
+	if !ok {
+		return "", fmt.Errorf("resolve %s relative to repo: not inside %s", file, repo)
 	}
 	return filepath.ToSlash(rel), nil
 }

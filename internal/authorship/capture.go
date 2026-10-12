@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/blamely/blamely/internal/gitutil"
 )
@@ -53,8 +52,11 @@ func ContextAt(loc gitutil.Location, absPath string) (Context, bool) {
 	if resolved, err := filepath.EvalSymlinks(top); err == nil {
 		top = resolved
 	}
-	rel, err := filepath.Rel(top, absPath)
-	if err != nil || strings.HasPrefix(rel, "..") {
+	// loc.Rel names the file as git does even when top and absPath spell the
+	// work tree through different aliases (a mounted Windows profile), where
+	// filepath.Rel alone could only answer `..` and the file went untracked.
+	rel, ok := loc.Rel(absPath)
+	if !ok {
 		return Context{}, false
 	}
 	branch := gitutil.BranchName(top)

@@ -317,10 +317,8 @@ func emitCursorTabSuggestion(block []string, roots []string, seen map[string]boo
 		wt, _ = gitToplevel(filepath.Dir(resolved))
 	}
 	rel := resolved
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolved); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, resolved); ok {
+		rel = r
 	}
 
 	// De-dupe: the same suggestion is re-logged as the user keeps typing. Key on
@@ -653,10 +651,8 @@ func emitCursorLogEvent(abs string, sink daemon.Sink) {
 	repo, _ := gitutil.RepoID(abs)
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 	lr, err := LineRangeForWholeFile(abs)
 	if err != nil || len(lr) == 0 {

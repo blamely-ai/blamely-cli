@@ -194,10 +194,8 @@ func RecordClaudeFromStdin(r io.Reader) error {
 	}
 	wt, _ := gitutil.Toplevel(resolvedFile)
 	rel := resolvedFile
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolvedFile); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, resolvedFile); ok {
+		rel = r
 	}
 
 	// Write overwrites the whole file with no "before" content of its own —
@@ -429,16 +427,10 @@ func recordToolDeletionPath(absPath, cwd, tool, genType, model, sessionID, trans
 	if root == "" {
 		return nil
 	}
-	dir := filepath.Dir(absPath)
-	if rd, err := filepath.EvalSymlinks(dir); err == nil {
-		dir = rd
-	}
-	rootResolved := root
-	if rr, err := filepath.EvalSymlinks(root); err == nil {
-		rootResolved = rr
-	}
-	rel, err := filepath.Rel(rootResolved, filepath.Join(dir, filepath.Base(absPath)))
-	if err != nil || strings.HasPrefix(rel, "..") {
+	// The file is already gone; gitutil.Rel names it through the surviving
+	// parent directory, whatever alias the path spells the work tree by.
+	rel, ok := gitutil.Rel(root, absPath)
+	if !ok {
 		return nil
 	}
 	return recordHeadDeletion(root, rel, tool, genType, model, sessionID, transcriptPath, source)

@@ -44,6 +44,8 @@ func TestLocate_MatchesSeparateCalls(t *testing.T) {
 			if top, ok := Toplevel(p); ok {
 				want.Toplevel = top
 				want.HeadSHA = HeadSHA(top)
+				_, want.PrefixDir = locateDir(p)
+				want.Prefix, want.PrefixKnown = showPrefix(want.PrefixDir)
 			}
 			if got := Locate(p); got != want {
 				t.Errorf("Locate(%s)\n got  %+v\n want %+v", p, got, want)

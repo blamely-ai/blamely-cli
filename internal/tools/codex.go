@@ -407,10 +407,8 @@ func processCodexLine(raw []byte, st *codexState) {
 			repo, _ := gitutil.RepoID(abs)
 			wt, _ := gitutil.Toplevel(abs)
 			rel := abs
-			if wt != "" {
-				if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-					rel = r
-				}
+			if r, ok := gitutil.Rel(wt, abs); ok {
+				rel = r
 			}
 			st.pending = append(st.pending, daemon.Event{
 				When:         when,
@@ -781,18 +779,14 @@ func emitCodexShellDeletion(inv codexShellInvocation, when time.Time, st *codexS
 		if root == "" {
 			continue
 		}
-		// The file is already gone, so resolve its repo-relative name via the
-		// surviving parent dir, in the root's symlink-space.
-		dir := filepath.Dir(abs)
-		if rd, err := filepath.EvalSymlinks(dir); err == nil {
-			dir = rd
-		}
 		rootResolved := root
 		if rr, err := filepath.EvalSymlinks(root); err == nil {
 			rootResolved = rr
 		}
-		rel, err := filepath.Rel(rootResolved, filepath.Join(dir, filepath.Base(abs)))
-		if err != nil || strings.HasPrefix(rel, "..") {
+		// The file is already gone, so its repo-relative name comes via the
+		// surviving parent dir (gitutil.Rel asks git when the spellings differ).
+		rel, ok := gitutil.Rel(root, abs)
+		if !ok {
 			continue
 		}
 		removed := headFileRemovedHashes(root, rel)
@@ -853,10 +847,8 @@ func emitCodexPatchApplyEvents(payload json.RawMessage, when time.Time, st *code
 			wt, _ = gitToplevel(filepath.Dir(abs))
 		}
 		rel := abs
-		if wt != "" {
-			if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-				rel = r
-			}
+		if r, ok := gitutil.Rel(wt, abs); ok {
+			rel = r
 		}
 
 		var lines []daemon.LineRange

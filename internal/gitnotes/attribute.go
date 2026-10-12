@@ -468,7 +468,7 @@ func backfillFromChatSessions(db *store.DB, note *Note, repoRoot, repoID string,
 		// paths still match by basename inside MatchesFileOp.
 		targets := make([]string, 0, len(raw))
 		for _, d := range raw {
-			if rel, err := filepath.Rel(repoRoot, d); err == nil && !strings.HasPrefix(rel, "..") {
+			if rel, ok := gitutil.Rel(repoRoot, d); ok {
 				targets = append(targets, filepath.ToSlash(rel))
 			} else {
 				targets = append(targets, d)

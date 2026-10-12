@@ -118,11 +118,12 @@ func recordCopilotFileEdit(p copilotHookPayload, filePath string, ranges []LineR
 		repoPath, _ = gitutil.RepoID(resolveSymlinks(p.Cwd))
 	}
 	wt := loc.Toplevel
+	// loc.Rel reuses the prefix Locate already fetched, so the file is named
+	// as git names it with no extra process even when the hook's path and
+	// git's top level spell the work tree differently (a mounted profile).
 	rel := resolved
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolved); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := loc.Rel(resolved); ok {
+		rel = r
 	}
 
 	// Whole-file overwrite (Write): it carries no "before" content, so diff the

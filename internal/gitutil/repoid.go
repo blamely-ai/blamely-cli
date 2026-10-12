@@ -93,6 +93,15 @@ type Location struct {
 	RepoID   string
 	Toplevel string
 	HeadSHA  string
+	// Prefix is `git rev-parse --show-prefix` for PrefixDir — the directory the
+	// path was resolved from (the path itself when it is a directory, else its
+	// parent): its repo-relative path with a trailing slash, "" at the top
+	// level. PrefixKnown is false when git could not be asked. Location.Rel
+	// uses it to name a file the way git does even when Toplevel and the
+	// path spell the work tree through different aliases (see Rel).
+	Prefix      string
+	PrefixDir   string
+	PrefixKnown bool
 }
 
 // Locate resolves RepoID, Toplevel and HeadSHA for p with ONE git process
@@ -102,22 +111,20 @@ type Location struct {
 // file literally named HEAD — it falls back to the three separate calls, so
 // the result is always the same as calling them one by one.
 func Locate(p string) Location {
-	if r, err := filepath.EvalSymlinks(p); err == nil {
-		p = r
-	}
-	dir := p
-	if fi, err := pathStat(p); err != nil || !fi.IsDir() {
-		dir = filepath.Dir(p) // see RepoID
-	}
+	p, dir := locateDir(p)
+	// --show-prefix sits before HEAD so its output at the top level (an empty
+	// line) is never the trailing line TrimSpace would swallow.
 	out, err := procattr.Hide(exec.Command("git", "-C", dir, "rev-parse",
-		"--path-format=absolute", "--git-common-dir", "--show-toplevel", "HEAD")).Output()
+		"--path-format=absolute", "--git-common-dir", "--show-toplevel", "--show-prefix", "HEAD")).Output()
 	if err == nil {
-		if lines := strings.Split(strings.TrimSpace(string(out)), "\n"); len(lines) == 3 {
+		if lines := strings.Split(strings.TrimSpace(string(out)), "\n"); len(lines) == 4 {
 			id, ok := repoIDFromCommonDir(strings.TrimSpace(lines[0]))
 			top := strings.TrimSpace(lines[1])
-			head := strings.TrimSpace(lines[2])
+			prefix := strings.TrimSpace(lines[2])
+			head := strings.TrimSpace(lines[3])
 			if ok && top != "" && head != "" {
-				return Location{RepoID: id, Toplevel: toplevelFromOutput(top), HeadSHA: head}
+				return Location{RepoID: id, Toplevel: toplevelFromOutput(top), HeadSHA: head,
+					Prefix: prefix, PrefixDir: dir, PrefixKnown: true}
 			}
 		}
 	}
@@ -126,8 +133,25 @@ func Locate(p string) Location {
 	if top, ok := Toplevel(p); ok {
 		loc.Toplevel = top
 		loc.HeadSHA = HeadSHA(top)
+		if prefix, ok := showPrefix(dir); ok {
+			loc.Prefix, loc.PrefixDir, loc.PrefixKnown = prefix, dir, true
+		}
 	}
 	return loc
+}
+
+// locateDir is the path Locate resolves and the directory it asks git about:
+// symlinks resolved, and the parent for a file or a not-yet-written path (see
+// RepoID).
+func locateDir(p string) (resolved, dir string) {
+	if r, err := filepath.EvalSymlinks(p); err == nil {
+		p = r
+	}
+	dir = p
+	if fi, err := pathStat(p); err != nil || !fi.IsDir() {
+		dir = filepath.Dir(p)
+	}
+	return p, dir
 }
 
 // GitDir returns the checkout-local git directory. Unlike CommonDir, this is
