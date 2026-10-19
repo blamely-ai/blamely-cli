@@ -118,7 +118,7 @@ func multiFileTargets(toolName string, input json.RawMessage) []string {
 			}
 		}
 		return out
-	case strings.Contains(n, "patch"):
+	case isPatchCall(n, input):
 		body, _ := patchEnvelope(input)
 		var out []string
 		for _, line := range strings.Split(body, "\n") {

@@ -376,6 +376,19 @@ type copilotFileEdit struct {
 	removed   []DeletedLineHash
 }
 
+// isPatchCall reports whether a tool call carries an apply_patch body. VS Code's
+// agent host (Copilot Agent mode since VS Code 1.142) hands command hooks
+// Claude-style tool names, so its apply_patch arrives as tool_name "Edit" with
+// the bare patch string as tool_input — the name alone no longer says it is a
+// patch. (Not looksLikePatch: that also matches "shell", the terminal tool.)
+func isPatchCall(toolName string, input json.RawMessage) bool {
+	if strings.Contains(strings.ToLower(toolName), "patch") {
+		return true
+	}
+	body, _ := patchEnvelope(input)
+	return strings.HasPrefix(strings.TrimSpace(body), "*** Begin Patch")
+}
+
 // extractCopilotMultiFileEdits handles the VS Code agent tools whose one call
 // can edit several files — multi_replace_string_in_file and apply_patch — and
 // returns one edit per file. ok is false for every other tool, which then goes
@@ -399,11 +412,10 @@ func extractCopilotMultiFileEdits(p copilotHookPayload) (edits []copilotFileEdit
 		}
 		return edits, true
 
-	case strings.Contains(strings.ToLower(p.ToolName), "patch"):
-		// Payload: {input: "*** Begin Patch …", explanation}. The paths live in
-		// the patch body; a patch with none falls back to the single-file path.
-		// (Not looksLikePatch: that also matches "shell", which is the terminal
-		// tool handled below.)
+	case isPatchCall(p.ToolName, p.ToolInput):
+		// Payload: {input: "*** Begin Patch …", explanation}, or the bare patch
+		// string. The paths live in the patch body; a patch with none falls back
+		// to the single-file path.
 		body, _ := patchEnvelope(p.ToolInput)
 		files := parseApplyPatchPerLine(body)
 		if len(files) == 0 {
