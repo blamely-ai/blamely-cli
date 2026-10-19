@@ -2,6 +2,7 @@ package tools
 
 import (
 	"encoding/json"
+	"os"
 	"path/filepath"
 	"testing"
 )
@@ -286,6 +287,62 @@ func TestExtractCopilotMultiFileEdits_ApplyPatch(t *testing.T) {
 	}
 	if edits[1].path != b || len(edits[1].ranges) != 2 || edits[1].suggested != 2 {
 		t.Errorf("edit 1: %+v", edits[1])
+	}
+}
+
+// VS Code's agent host (Copilot Agent mode, VS Code 1.142+) sends apply_patch to
+// command hooks as tool_name "Edit" with the bare patch string as tool_input.
+// Keyed on the name alone it reached the single-file path, found no file_path in
+// a string, and every agent edit committed as Human.
+func TestExtractCopilotMultiFileEdits_AgentHostEditPatch(t *testing.T) {
+	// The patch's paths come back resolved (macOS /var → /private/var, an 8.3
+	// short name on Windows), so the expected ones must be too.
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	a := filepath.Join(dir, "src", "a.ts")
+	readme := filepath.Join(dir, "README.md")
+	if err := os.MkdirAll(filepath.Dir(a), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(a, []byte("export const g = 7;\n\nexport function square(v: number): number {\n  return v * v;\n}\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(readme, []byte("test\nsum adds two numbers.\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	patch := "*** Begin Patch\n*** Update File: " + a + "\n@@\n export const g = 7;\n+\n+export function square(v: number): number {\n+  return v * v;\n+}\n*** Update File: " + readme + "\n@@\n test\n+sum adds two numbers.\n*** End Patch\n"
+	payload, _ := json.Marshal(map[string]any{
+		"hook_event_name": "PostToolUse",
+		"session_id":      "15ab12ae",
+		"cwd":             dir,
+		"tool_name":       "Edit",
+		"tool_input":      patch,
+	})
+	var p copilotHookPayload
+	if err := json.Unmarshal(payload, &p); err != nil {
+		t.Fatal(err)
+	}
+	edits, ok := extractCopilotMultiFileEdits(p)
+	if !ok || len(edits) != 2 {
+		t.Fatalf("want 2 edits, got ok=%v %d", ok, len(edits))
+	}
+	// Three non-blank added lines; the blank one carries no attribution.
+	if edits[0].path != a || edits[0].suggested != 3 {
+		t.Errorf("edit 0: %+v", edits[0])
+	}
+	if edits[1].path != readme || edits[1].suggested != 1 {
+		t.Errorf("edit 1: %+v", edits[1])
+	}
+}
+
+// A Claude-style Edit (an object with file_path/old_string/new_string) is not a
+// patch and must keep going through the single-file path.
+func TestExtractCopilotMultiFileEdits_ObjectEditFallsThrough(t *testing.T) {
+	raw := json.RawMessage(`{"file_path":"/r/a.ts","old_string":"x","new_string":"y"}`)
+	if _, ok := extractCopilotMultiFileEdits(copilotHookPayload{ToolName: "Edit", ToolInput: raw}); ok {
+		t.Error("object Edit must fall through to the single-file path")
 	}
 }
 

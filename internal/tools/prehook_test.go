@@ -43,6 +43,12 @@ func TestMultiFileTargets(t *testing.T) {
 	if multiFileTargets("create_file", raw) != nil {
 		t.Errorf("single-file tools have no multi-file targets")
 	}
+	// VS Code's agent host: tool_name "Edit", tool_input the bare patch string.
+	raw, _ = json.Marshal(patch)
+	got = multiFileTargets("Edit", raw)
+	if strings.Join(got, ",") != "/r/a.go,/r/old.go" {
+		t.Errorf("agent-host Edit patch targets: got %v", got)
+	}
 }
 
 // committedRepoWithEdit returns a repo whose committed a.ts the human has since
@@ -77,6 +83,26 @@ func TestCaptureBaselineFromStdin_MultiReplaceSnapshotsEachFile(t *testing.T) {
 		"tool_input": map[string]any{"replacements": []map[string]string{
 			{"filePath": abs, "oldString": "committed", "newString": "changed"},
 		}},
+	})
+	if err := CaptureBaselineFromStdin(strings.NewReader(string(payload))); err != nil {
+		t.Fatal(err)
+	}
+	got, ok := storedBaseline(t, abs)
+	if !ok || !strings.Contains(got, "human, uncommitted") {
+		t.Fatalf("want a baseline holding the human's line, got ok=%v %q", ok, got)
+	}
+}
+
+// The agent host's pre-hook names an apply_patch "Edit" and passes the bare
+// patch: without a baseline the record diffs against HEAD and claims the
+// human's uncommitted line for Copilot.
+func TestCaptureBaselineFromStdin_AgentHostEditPatchSnapshotsEachFile(t *testing.T) {
+	root, abs := committedRepoWithEdit(t)
+	payload, _ := json.Marshal(map[string]any{
+		"hook_event_name": "PreToolUse",
+		"tool_name":       "Edit",
+		"cwd":             root,
+		"tool_input":      "*** Begin Patch\n*** Update File: " + abs + "\n@@\n committed\n+agent line\n*** End Patch\n",
 	})
 	if err := CaptureBaselineFromStdin(strings.NewReader(string(payload))); err != nil {
 		t.Fatal(err)
