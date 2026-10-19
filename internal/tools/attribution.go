@@ -3,6 +3,7 @@ package tools
 import (
 	"encoding/json"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -146,12 +147,23 @@ func multiFileTargets(toolName string, input json.RawMessage) []string {
 // user's own lines off a shifted mapping and mark them AI. That failure is why
 // PreToolUse was switched off for Claude (see install.claudeHookEvents); the guard
 // removes the hazard rather than the hook.
+//
+// A tracked file whose content has moved on since its log was last written
+// (wl.BlobSHA) changed without anyone recording it — typing the editor plugin
+// missed, or wrote under a path the CLI does not read. Those lines are recorded
+// as Human here, before the agent writes; otherwise the agent's RecordEdit diffs
+// from the stale state and claims them, the inversion of "an unobserved line is
+// Human". RecordEditIn diffs from the stored baseline, so the line mapping stays
+// intact.
 func captureBaselineIfUntracked(absPath string) {
 	ctx, ok := authorship.ResolveContext(absPath)
 	if !ok {
 		return
 	}
 	if wl, err := authorship.LoadWorkingLog(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath); err == nil && wl != nil {
+		if data, err := os.ReadFile(absPath); err == nil && wl.BlobSHA != "" && sha256Hex(data) != wl.BlobSHA {
+			_, _ = authorship.RecordEditIn(ctx, absPath, authorship.HumanAuthor())
+		}
 		return
 	}
 	_ = authorship.CaptureBaselineIn(ctx, absPath)
