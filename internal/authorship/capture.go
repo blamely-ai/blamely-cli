@@ -121,18 +121,7 @@ func PutBaselinesIfUntracked(repoRoot string, relPaths []string) {
 	if !Enabled() || repoRoot == "" || len(relPaths) == 0 {
 		return
 	}
-	top := repoRoot
-	if resolved, err := filepath.EvalSymlinks(top); err == nil {
-		top = resolved
-	}
-	branch := gitutil.BranchName(top)
-	if branch == "" {
-		branch = "DETACHED"
-	}
-	base := gitutil.HeadSHA(top)
-	if base == "" {
-		base = "INITIAL"
-	}
+	top, branch, base := batchKey(repoRoot)
 	for _, rel := range relPaths {
 		rel = filepath.ToSlash(rel)
 		if wl, err := loadWorkingLogFile(WorkingLogPath(top, branch, base, rel)); err == nil && wl != nil {
@@ -144,6 +133,48 @@ func PutBaselinesIfUntracked(repoRoot string, relPaths []string) {
 		}
 		_ = PutBaseline(top, branch, base, rel, string(data))
 	}
+}
+
+// ChangedSinceRecorded returns the repo-relative paths whose content differs from
+// what their working log last recorded (BlobSHA), plus every path with no log.
+// A file whose log already describes its current content was written by an edit
+// that was recorded; a shell command that ran after it did not write it, and
+// crediting the whole file to that command would claim every line in it —
+// including the human's. Resolved once per batch, like PutBaselinesIfUntracked.
+func ChangedSinceRecorded(repoRoot string, relPaths []string) []string {
+	if !Enabled() || repoRoot == "" || len(relPaths) == 0 {
+		return relPaths
+	}
+	top, branch, base := batchKey(repoRoot)
+	out := make([]string, 0, len(relPaths))
+	for _, rel := range relPaths {
+		wl, err := loadWorkingLogFile(WorkingLogPath(top, branch, base, filepath.ToSlash(rel)))
+		if err == nil && wl != nil && wl.BlobSHA != "" {
+			if data, err := os.ReadFile(filepath.Join(top, filepath.FromSlash(rel))); err == nil && sha256Hex(string(data)) == wl.BlobSHA {
+				continue
+			}
+		}
+		out = append(out, rel)
+	}
+	return out
+}
+
+// batchKey resolves the working-log key (top level, branch, base SHA) for a
+// batch of files under repoRoot with the same defaults ResolveContext uses.
+func batchKey(repoRoot string) (top, branch, base string) {
+	top = repoRoot
+	if resolved, err := filepath.EvalSymlinks(top); err == nil {
+		top = resolved
+	}
+	branch = gitutil.BranchName(top)
+	if branch == "" {
+		branch = "DETACHED"
+	}
+	base = gitutil.HeadSHA(top)
+	if base == "" {
+		base = "INITIAL"
+	}
+	return top, branch, base
 }
 
 // CaptureBaseline records the file's CURRENT content as the pre-edit baseline —
