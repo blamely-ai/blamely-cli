@@ -2,6 +2,13 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **Copilot Agent mode in VS Code is credited again.** Since VS Code 1.142, Copilot's agent edits reach Blamely in a new shape that it did not recognise, so they were counted as your own work unless Copilot happened to run a terminal command afterwards. They are now credited to Copilot.
+- **Lines you wrote just before an AI edit stay yours.** If you changed a file and an AI assistant edited it before Blamely had recorded your change, your lines could be credited to the assistant. They are now credited to you.
+
 ## [1.8.5] - 2026-10-07
 
 ### Added
