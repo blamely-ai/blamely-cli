@@ -266,38 +266,12 @@ func UncommittedAddedLines(repoPath, relPath string) map[int]bool {
 	if err != nil {
 		return set
 	}
-	sc := bufio.NewScanner(bytes.NewReader(out))
-	sc.Buffer(make([]byte, 0, 64*1024), 8*1024*1024)
-	for sc.Scan() {
-		line := sc.Text()
-		if strings.HasPrefix(line, "@@") {
-			addNewSideHunk(line, set)
+	for _, lines := range changedNewSideLines(out) {
+		for ln := range lines {
+			set[ln] = true
 		}
 	}
 	return set
-}
-
-// addNewSideHunk parses a unified-diff hunk header `@@ -a,b +c,d @@` and marks the
-// new-side range c..c+d-1 in set.
-func addNewSideHunk(line string, set map[int]bool) {
-	plus := strings.Index(line, "+")
-	if plus < 0 {
-		return
-	}
-	seg := line[plus+1:]
-	if sp := strings.IndexByte(seg, ' '); sp >= 0 {
-		seg = seg[:sp]
-	}
-	start, count := 0, 1
-	if comma := strings.IndexByte(seg, ','); comma >= 0 {
-		start, _ = strconv.Atoi(seg[:comma])
-		count, _ = strconv.Atoi(seg[comma+1:])
-	} else {
-		start, _ = strconv.Atoi(seg)
-	}
-	for i := 0; i < count; i++ {
-		set[start+i] = true
-	}
 }
 
 // UncommittedAddedLinesAll is the batched form of UncommittedAddedLines: ONE
@@ -307,18 +281,49 @@ func addNewSideHunk(line string, set map[int]bool) {
 // Windows). `core.quotepath=false` keeps non-ASCII paths literal so they match the
 // working-log File keys. A file absent from the result simply has no current changes.
 func UncommittedAddedLinesAll(repoPath string) map[string]map[int]bool {
-	byFile := map[string]map[int]bool{}
 	out, err := procattr.Hide(exec.Command("git", "-C", repoPath, "-c", "core.quotepath=false",
 		"diff", "HEAD", "--unified=0", "--no-color")).Output()
 	if err != nil {
-		return byFile
+		return map[string]map[int]bool{}
+	}
+	return changedNewSideLines(out)
+}
+
+// changedNewSideLines parses `git diff --unified=0` output into post-path → the
+// post-image line numbers that really changed. It reads the +/- lines rather than
+// the hunk header's range: a line that only gained its trailing newline (the old
+// last line, once a line is appended after it) appears as a -/+ pair and is not a
+// change — the same rule the commit note applies (eolOnlyChange), so the gutter
+// and the note agree on which lines are new.
+func changedNewSideLines(out []byte) map[string]map[int]bool {
+	byFile := map[string]map[int]bool{}
+	var cur map[int]bool
+	var dels []string
+	type add struct {
+		line    int
+		content string
+	}
+	var adds []add
+	next := 0 // post-image line number of the next + line
+	flush := func() {
+		for i, a := range adds {
+			if i < len(dels) && eolOnlyChange(dels[i], a.content) {
+				continue
+			}
+			if cur != nil {
+				cur[a.line] = true
+			}
+		}
+		dels, adds = dels[:0], adds[:0]
 	}
 	sc := bufio.NewScanner(bytes.NewReader(out))
 	sc.Buffer(make([]byte, 0, 64*1024), 16*1024*1024)
-	var cur map[int]bool
 	for sc.Scan() {
 		line := sc.Text()
 		switch {
+		case strings.HasPrefix(line, "diff --git "):
+			flush()
+			cur, next = nil, 0
 		case strings.HasPrefix(line, "+++ "):
 			// New-side file header: `+++ b/<path>` (or `+++ /dev/null` for a deletion).
 			p := strings.TrimPrefix(line, "+++ ")
@@ -327,11 +332,29 @@ func UncommittedAddedLinesAll(repoPath string) map[string]map[int]bool {
 				continue
 			}
 			cur = map[int]bool{}
-			byFile[strings.TrimPrefix(p, "b/")] = cur
-		case strings.HasPrefix(line, "@@") && cur != nil:
-			addNewSideHunk(line, cur)
+			byFile[trimDiffHeaderPathTab(strings.TrimPrefix(p, "b/"))] = cur
+		case strings.HasPrefix(line, "--- "):
+		case strings.HasPrefix(line, "@@"):
+			flush()
+			if _, addStart, ok := parseHunkHeaderBothSides(line); ok {
+				next = addStart
+			} else {
+				next = 0
+			}
+		case strings.HasPrefix(line, "+"):
+			if next > 0 {
+				adds = append(adds, add{line: next, content: line[1:]})
+				next++
+			}
+		case strings.HasPrefix(line, "-"):
+			dels = append(dels, line[1:])
+		case strings.HasPrefix(line, " "):
+			if next > 0 {
+				next++
+			}
 		}
 	}
+	flush()
 	return byFile
 }
 
