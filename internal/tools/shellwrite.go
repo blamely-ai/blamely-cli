@@ -82,7 +82,10 @@ func recordShellWritesIn(root, command string, o shellWriteOpts) error {
 	// extra git invocation here is a process per call — exactly the cost we avoid
 	// by not registering a second hook event.
 	changed := changedSourceFiles(root)
-	written := withinMtimeWindow(root, changed, o.mtimeWindow())
+	// A file whose working log already describes its current content was
+	// written by a recorded edit moments ago (an agent's edit tool, then a
+	// `git diff` to check it), not by this command.
+	written := authorship.ChangedSinceRecorded(root, withinMtimeWindow(root, changed, o.mtimeWindow()))
 	for _, payload := range shellWritePayloadsFrom(root, written, o) {
 		// Mirror into the Attribution working log BEFORE the daemon POST, exactly
 		// like every edit-tool path does. The commit-time flip reads the working
