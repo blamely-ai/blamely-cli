@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"math"
+	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -38,6 +39,8 @@ func Attribute(prior *WorkingLog, baseline, newContent string, author Author, no
 	// movedFrom[i] = index into oldLines that new line i was MOVED from (an
 	// unmatched old line of identical content relocated), or -1.
 	movedFrom := detectMoves(oldLines, newLines, matchedOld)
+	// Runs of lines a formatter split or joined (see detectReflows).
+	reflows := detectReflows(oldLines, newLines, matchedOld, movedFrom)
 
 	perLine := make([]Author, len(newLines))
 	for i := range newLines {
@@ -51,11 +54,37 @@ func Attribute(prior *WorkingLog, baseline, newContent string, author Author, no
 			perLine[i] = author
 		}
 	}
+	reflowed := make([]bool, len(newLines))
+	for _, r := range reflows {
+		// A reflowed run keeps its author only when the old lines had ONE author;
+		// a split/join across authors can't say whose each new line is, so it
+		// stays with the editor, as before.
+		shared := priorAuthorOr(prior, r.old[0]+1)
+		uniform := true
+		for _, oi := range r.old[1:] {
+			if priorAuthorOr(prior, oi+1) != shared {
+				uniform = false
+				break
+			}
+		}
+		if !uniform {
+			continue
+		}
+		for _, ni := range r.new {
+			perLine[ni] = shared
+			reflowed[ni] = true
+		}
+	}
 
 	// overrode[i] records the author a CHANGED line replaced, when its type differs
 	// from the new author (a human rewriting AI code, or vice-versa) — an audit
 	// marker, not a change to who owns the line now.
 	overrode := detectOverrode(prior, matchedOld, movedFrom, len(oldLines), author)
+	for i := range overrode {
+		if reflowed[i] {
+			overrode[i] = nil // a reflow replaced nothing
+		}
+	}
 
 	if nowMS == 0 {
 		nowMS = time.Now().UnixMilli()
@@ -95,6 +124,11 @@ func DeletedBaselineLines(baseline, newContent string) []string {
 	for _, mf := range movedFrom {
 		if mf >= 0 {
 			keptOld[mf] = true
+		}
+	}
+	for _, r := range detectReflows(oldLines, newLines, matchedOld, movedFrom) {
+		for _, oi := range r.old {
+			keptOld[oi] = true
 		}
 	}
 	var deleted []string
@@ -142,6 +176,79 @@ func detectMoves(oldLines, newLines []string, matchedOld []int) []int {
 		}
 	}
 	return moved
+}
+
+// reflowRun is a run of OLD lines a formatter rewrote as a run of NEW lines.
+type reflowRun struct {
+	old, new []int
+}
+
+// detectReflows finds the gaps of the LCS alignment that a formatter only
+// reshaped: the old lines left in a gap (not matched, not moved away) and the new
+// lines in it (not matched, not moved in) read the same once joined and compared
+// with reflowKey. Prettier and `eslint --fix` split a long call or object literal
+// over several lines, join short ones, and add or drop separators doing it — no
+// one authored anything, so the new lines keep the old lines' author (Attribute).
+// A gap that also holds a genuine change doesn't compare equal and is left alone.
+// Walks the gaps exactly like detectOverrode, so it is deterministic and identical
+// across the Go, TS, and Kotlin ports.
+func detectReflows(oldLines, newLines []string, matchedOld, movedFrom []int) []reflowRun {
+	consumedOld := make([]bool, len(oldLines))
+	for _, mf := range movedFrom {
+		if mf >= 0 {
+			consumedOld[mf] = true
+		}
+	}
+	var runs []reflowRun
+	m := len(matchedOld)
+	oldCursor := 0
+	i := 0
+	for i < m {
+		if matchedOld[i] >= 0 {
+			oldCursor = matchedOld[i] + 1
+			i++
+			continue
+		}
+		gapNewEnd := i
+		for gapNewEnd < m && matchedOld[gapNewEnd] < 0 {
+			gapNewEnd++
+		}
+		gapOldEnd := len(oldLines)
+		if gapNewEnd < m {
+			gapOldEnd = matchedOld[gapNewEnd]
+		}
+		var r reflowRun
+		for ni := i; ni < gapNewEnd; ni++ {
+			if movedFrom[ni] < 0 {
+				r.new = append(r.new, ni)
+			}
+		}
+		for oi := oldCursor; oi < gapOldEnd; oi++ {
+			if !consumedOld[oi] {
+				r.old = append(r.old, oi)
+			}
+		}
+		if len(r.new) > 0 && len(r.old) > 0 {
+			if k := reflowKey(oldLines, r.old); k != "" && k == reflowKey(newLines, r.new) {
+				runs = append(runs, r)
+			}
+		}
+		oldCursor = gapOldEnd
+		i = gapNewEnd
+	}
+	return runs
+}
+
+// reflowKey is the content of lines[idx...] joined, compared as a formatter sees
+// it: each line normalized (normalizeLineForMatch), then every `,` and `;` dropped,
+// since splitting or joining lines adds and removes separators between items.
+// Cross-language contract like normalizeLineForMatch.
+func reflowKey(lines []string, idx []int) string {
+	var b strings.Builder
+	for _, i := range idx {
+		b.WriteString(normalizeLineForMatch(lines[i]))
+	}
+	return strings.NewReplacer(",", "", ";", "").Replace(b.String())
 }
 
 // detectOverrode finds replace pairs and, for each changed NEW line whose replaced
@@ -409,22 +516,36 @@ func alignMiddleCheckpointed(oldN, newN []string, p, oldEnd, newEnd int, matched
 	return i, j
 }
 
-// normalizeLineForMatch reduces a line to its whitespace-insensitive form by
-// REMOVING all whitespace (git diff -w semantics). A line that changed only in
-// whitespace — indentation, trailing, or between tokens (operator spacing like
-// `x=1` ↔ `x = 1`) — therefore matches and keeps its prior author: reformatting is
-// not authorship. Trade-off: a whitespace edit INSIDE a string literal also reads
-// as reflow (prior author kept); that is rare and defensible. This MUST produce
-// identical output in the Go, TypeScript, and Kotlin ports (the golden vectors
-// enforce it) so the three agree on what counts as a reflow.
+// normalizeLineForMatch reduces a line to the form a code formatter can't change,
+// so a line that changed only in formatting matches and keeps its prior author:
+// reformatting is not authorship. In order:
+//   - REMOVE all whitespace (git diff -w semantics): indentation, trailing, and
+//     between tokens (operator spacing like `x=1` ↔ `x = 1`);
+//   - treat `"` and the backtick as `'`: Prettier/ESLint rewrite quote style;
+//   - `(x)=>` as `x=>`: Prettier's arrowParens adds or drops those parentheses;
+//   - drop trailing `;` and `,`: semicolons and trailing commas come and go.
+//
+// Trade-off: such an edit made by hand (or inside a string literal) also reads as
+// formatting and keeps the prior author; that is rare and defensible. This MUST
+// produce identical output in the Go, TypeScript, and Kotlin ports (the golden
+// vectors enforce it) so the three agree on what counts as a reflow.
 func normalizeLineForMatch(s string) string {
-	return strings.Map(func(r rune) rune {
+	s = strings.Map(func(r rune) rune {
 		if unicode.IsSpace(r) {
 			return -1
 		}
+		if r == '"' || r == '`' {
+			return '\''
+		}
 		return r
 	}, s)
+	s = arrowParamParens.ReplaceAllString(s, "$1=>")
+	return strings.TrimRight(s, ";,")
 }
+
+// arrowParamParens matches a lone parenthesized arrow parameter, `(x)=>`.
+// ASCII identifier classes only, so the three regex engines agree.
+var arrowParamParens = regexp.MustCompile(`\(([A-Za-z_$][A-Za-z0-9_$]*)\)=>`)
 
 func normalizeLinesForMatch(lines []string) []string {
 	out := make([]string, len(lines))
