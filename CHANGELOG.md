@@ -8,6 +8,7 @@ Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepach
 
 - **Copilot Agent mode in VS Code is credited again.** Since VS Code 1.142, Copilot's agent edits reach Blamely in a new shape that it did not recognise, so they were counted as your own work unless Copilot happened to run a terminal command afterwards. They are now credited to Copilot.
 - **Lines you wrote just before an AI edit stay yours.** If you changed a file and an AI assistant edited it before Blamely had recorded your change, your lines could be credited to the assistant. They are now credited to you.
+- **Formatting no longer turns AI code into yours.** When Prettier, ESLint or another formatter reformatted AI-written code (on save, for example), the reformatted lines were counted as your own work. Changing quotes, semicolons or trailing commas, or splitting a long line over several lines or joining short ones, no longer changes who wrote the code.
 - **The editor no longer marks a line you didn't touch.** In a file that ended without a final newline, adding a line at the end made the editor mark the previous last line as changed, showing it with whoever wrote it originally (often an AI assistant). Only the lines you actually changed are marked now, as in the commit report.
 
 ## [1.8.5] - 2026-10-07
