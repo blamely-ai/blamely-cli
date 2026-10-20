@@ -154,12 +154,19 @@ func TestAttribute_CRLFStable(t *testing.T) {
 // save — quotes, semicolons, arrow parens, a signature and an object literal split
 // over several lines, a one-line `if` expanded. Nobody authored anything, so every
 // line stays AI, under both the default and a singleQuote/no-semi config.
+// return-parens is two one-line functions Prettier split in one go (one alignment
+// gap), wrapping the second's broken-up return in `return (`…`);`.
 func TestAttribute_PrettierReformatKeepsAuthor(t *testing.T) {
-	before, err := os.ReadFile(filepath.Join("testdata", "prettier", "before.ts"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, name := range []string{"after-default.ts", "after-single-quote-no-semi.ts"} {
+	for _, pair := range [][2]string{
+		{"before.ts", "after-default.ts"},
+		{"before.ts", "after-single-quote-no-semi.ts"},
+		{"return-parens-before.ts", "return-parens-after.ts"},
+	} {
+		before, err := os.ReadFile(filepath.Join("testdata", "prettier", pair[0]))
+		if err != nil {
+			t.Fatal(err)
+		}
+		name := pair[1]
 		after, err := os.ReadFile(filepath.Join("testdata", "prettier", name))
 		if err != nil {
 			t.Fatal(err)

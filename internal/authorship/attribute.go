@@ -183,15 +183,17 @@ type reflowRun struct {
 	old, new []int
 }
 
-// detectReflows finds the gaps of the LCS alignment that a formatter only
-// reshaped: the old lines left in a gap (not matched, not moved away) and the new
-// lines in it (not matched, not moved in) read the same once joined and compared
-// with reflowKey. Prettier and `eslint --fix` split a long call or object literal
+// detectReflows finds the runs of the LCS alignment's gaps that a formatter only
+// reshaped: old lines left in a gap (not matched, not moved away) and new lines in
+// it (not matched, not moved in) that read the same once joined and compared with
+// reflowLineKey. Prettier and `eslint --fix` split a long call or object literal
 // over several lines, join short ones, and add or drop separators doing it — no
 // one authored anything, so the new lines keep the old lines' author (Attribute).
-// A gap that also holds a genuine change doesn't compare equal and is left alone.
-// Walks the gaps exactly like detectOverrode, so it is deterministic and identical
-// across the Go, TS, and Kotlin ports.
+// One gap often holds several such runs (every function of a file reformatted at
+// once), and a genuine change in one of them must not cost the others their
+// author, so reflowChunks cuts the gap at the line boundaries the two sides share;
+// what it can't pair is left alone. Walks the gaps exactly like detectOverrode, so
+// it is deterministic and identical across the Go, TS, and Kotlin ports.
 func detectReflows(oldLines, newLines []string, matchedOld, movedFrom []int) []reflowRun {
 	consumedOld := make([]bool, len(oldLines))
 	for _, mf := range movedFrom {
@@ -217,21 +219,19 @@ func detectReflows(oldLines, newLines []string, matchedOld, movedFrom []int) []r
 		if gapNewEnd < m {
 			gapOldEnd = matchedOld[gapNewEnd]
 		}
-		var r reflowRun
+		var gapOld, gapNew []int
 		for ni := i; ni < gapNewEnd; ni++ {
 			if movedFrom[ni] < 0 {
-				r.new = append(r.new, ni)
+				gapNew = append(gapNew, ni)
 			}
 		}
 		for oi := oldCursor; oi < gapOldEnd; oi++ {
 			if !consumedOld[oi] {
-				r.old = append(r.old, oi)
+				gapOld = append(gapOld, oi)
 			}
 		}
-		if len(r.new) > 0 && len(r.old) > 0 {
-			if k := reflowKey(oldLines, r.old); k != "" && k == reflowKey(newLines, r.new) {
-				runs = append(runs, r)
-			}
+		if len(gapNew) > 0 && len(gapOld) > 0 {
+			runs = append(runs, reflowChunks(oldLines, newLines, gapOld, gapNew)...)
 		}
 		oldCursor = gapOldEnd
 		i = gapNewEnd
@@ -239,17 +239,116 @@ func detectReflows(oldLines, newLines []string, matchedOld, movedFrom []int) []r
 	return runs
 }
 
-// reflowKey is the content of lines[idx...] joined, compared as a formatter sees
-// it: each line normalized (normalizeLineForMatch), then every `,` and `;` dropped,
-// since splitting or joining lines adds and removes separators between items.
-// Cross-language contract like normalizeLineForMatch.
-func reflowKey(lines []string, idx []int) string {
-	var b strings.Builder
-	for _, i := range idx {
-		b.WriteString(normalizeLineForMatch(lines[i]))
+// reflowChunks splits one gap (old lines gapOld, new lines gapNew) into the runs a
+// formatter only reshaped. Joined, the two sides' reflowLineKeys read the same up
+// to their longest common prefix and from their longest common suffix; a line
+// boundary both sides share inside the prefix (walking forward) or the suffix
+// (walking back from the end, over what the prefix left) closes a run. Whatever
+// is left between the two holds a genuine change and stays out. A whole gap that
+// reads the same yields its runs from the front alone. Lines whose key is empty
+// (blank lines) join the run next to them, never form one. Offsets are in each
+// port's own string units; a boundary only depends on the text up to it being
+// equal, so the three ports cut the same runs.
+func reflowChunks(oldLines, newLines []string, gapOld, gapNew []int) []reflowRun {
+	oldOff, oldText := reflowOffsets(oldLines, gapOld)
+	newOff, newText := reflowOffsets(newLines, gapNew)
+	var runs []reflowRun
+
+	prefix := 0
+	for prefix < len(oldText) && prefix < len(newText) && oldText[prefix] == newText[prefix] {
+		prefix++
 	}
-	return strings.NewReplacer(",", "", ";", "").Replace(b.String())
+	a, b := 0, 0 // where the open run starts
+	for i, j := 1, 1; i <= len(gapOld) && j <= len(gapNew); {
+		v, w := oldOff[i], newOff[j]
+		if v < w {
+			i++
+			continue
+		}
+		if w < v {
+			j++
+			continue
+		}
+		if v == 0 {
+			i, j = i+1, j+1
+			continue
+		}
+		if v > prefix {
+			break
+		}
+		for i < len(gapOld) && oldOff[i+1] == v {
+			i++
+		}
+		for j < len(gapNew) && newOff[j+1] == v {
+			j++
+		}
+		runs = append(runs, reflowRun{old: gapOld[a:i], new: gapNew[b:j]})
+		a, b = i, j
+		i, j = i+1, j+1
+	}
+
+	// From the back, over what the front left. dist(k) is how far line k starts
+	// from the end of its side.
+	oldEnd, newEnd := oldOff[len(gapOld)], newOff[len(gapNew)]
+	suffix := 0
+	for suffix < oldEnd-oldOff[a] && suffix < newEnd-newOff[b] &&
+		oldText[len(oldText)-1-suffix] == newText[len(newText)-1-suffix] {
+		suffix++
+	}
+	ea, eb := len(gapOld), len(gapNew) // where the open run ends
+	for i, j := len(gapOld)-1, len(gapNew)-1; i >= a && j >= b; {
+		v, w := oldEnd-oldOff[i], newEnd-newOff[j]
+		if v < w {
+			i--
+			continue
+		}
+		if w < v {
+			j--
+			continue
+		}
+		if v == 0 {
+			i, j = i-1, j-1
+			continue
+		}
+		if v > suffix {
+			break
+		}
+		for i > a && oldOff[i-1] == oldOff[i] {
+			i--
+		}
+		for j > b && newOff[j-1] == newOff[j] {
+			j--
+		}
+		runs = append(runs, reflowRun{old: gapOld[i:ea], new: gapNew[j:eb]})
+		ea, eb = i, j
+		i, j = i-1, j-1
+	}
+	return runs
 }
+
+// reflowOffsets joins the reflowLineKeys of lines[idx...]; off[k] is where line
+// idx[k] starts in the joined text (off[len(idx)] is its length).
+func reflowOffsets(lines []string, idx []int) ([]int, string) {
+	off := make([]int, len(idx)+1)
+	var b strings.Builder
+	for k, i := range idx {
+		b.WriteString(reflowLineKey(lines[i]))
+		off[k+1] = b.Len()
+	}
+	return off, b.String()
+}
+
+// reflowLineKey is a line as a formatter sees it, for comparing joined runs:
+// normalized (normalizeLineForMatch), then every `,` `;` `(` `)` dropped, since
+// splitting or joining lines adds and removes separators between items, and
+// Prettier wraps an expression it breaks over lines in parentheses
+// (`return (`…`);`, `=> (`…`)`) or drops ones it finds redundant.
+// Cross-language contract like normalizeLineForMatch.
+func reflowLineKey(line string) string {
+	return reflowSeparators.Replace(normalizeLineForMatch(line))
+}
+
+var reflowSeparators = strings.NewReplacer(",", "", ";", "", "(", "", ")", "")
 
 // detectOverrode finds replace pairs and, for each changed NEW line whose replaced
 // OLD line had a different-type author, records that prior author. It walks the LCS
