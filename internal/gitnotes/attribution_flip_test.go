@@ -88,3 +88,67 @@ func TestFlipNoteToWorkingLog(t *testing.T) {
 		t.Errorf("by_tool claude lines: want 1, got %d", note.ByTool["claude"].Lines)
 	}
 }
+
+// A formatter run outside the editor (`prettier --write`, lint-staged) rewrites a
+// file after the last recorded edit and nobody records it, so the log describes
+// content the commit doesn't have. The flip must carry the log onto the committed
+// blob instead of reading its line numbers off it: every line Prettier split stays
+// AI. Real Prettier 3 output from authorship/testdata/prettier.
+func TestFlipNoteToWorkingLog_UnrecordedReformat(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not available")
+	}
+	read := func(name string) string {
+		b, err := os.ReadFile(filepath.Join("..", "authorship", "testdata", "prettier", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return strings.ReplaceAll(string(b), "\r\n", "\n")
+	}
+	before, after := read("return-parens-before.ts"), read("return-parens-after.ts")
+
+	repo := t.TempDir()
+	git := func(args ...string) string {
+		cmd := exec.Command("git", append([]string{"-C", repo, "-c", "core.hooksPath=", "-c", "core.autocrlf=false"}, args...)...)
+		cmd.Env = append(os.Environ(),
+			"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("git %v: %v\n%s", args, err, out)
+		}
+		return strings.TrimSpace(string(out))
+	}
+	git("init", "-q")
+	git("checkout", "-q", "-b", "main")
+	os.WriteFile(filepath.Join(repo, "seed"), []byte("x\n"), 0o644)
+	git("add", ".")
+	git("commit", "-q", "-m", "c1")
+	parent := git("rev-parse", "HEAD")
+
+	const rel = "a.ts"
+	abs := filepath.Join(repo, rel)
+	os.WriteFile(abs, []byte(before), 0o644)
+	if _, err := authorship.Update(repo, "main", parent, rel, before, "",
+		authorship.Author{Type: authorship.AI, Tool: "copilot", GenType: "cli"}, 1); err != nil {
+		t.Fatal(err)
+	}
+	os.WriteFile(abs, []byte(after), 0o644) // prettier --write: not recorded
+	git("add", ".")
+	git("commit", "-q", "-m", "c2")
+
+	n := strings.Count(strings.TrimSuffix(after, "\n"), "\n") + 1
+	note := &Note{
+		Commit: git("rev-parse", "HEAD"),
+		Branch: "main",
+		Files: []FileEntry{{
+			Path: rel, Type: "ADDED", Added: n,
+			Lines: []RangeEntry{{Start: 1, End: n, Type: "add", AuthorType: "Human"}},
+		}},
+	}
+	flipNoteToWorkingLog(repo, note)
+
+	lines := note.Files[0].Lines
+	if len(lines) != 1 || lines[0].AuthorType != "AI" || lines[0].Start != 1 || lines[0].End != n {
+		t.Errorf("want one AI range 1-%d, got %+v", n, lines)
+	}
+}
