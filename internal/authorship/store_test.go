@@ -126,3 +126,39 @@ func equalTypes(a, b []AuthorType) bool {
 	}
 	return true
 }
+
+// CarryOnto reads a log for content it wasn't written for: a formatter rewrote the
+// file on disk and nobody recorded it. Same content (byte for byte, or but for git's
+// CRLF conversion) keeps the log as is; a reformat keeps each line's author; a
+// change nobody recorded goes to the human.
+func TestCarryOnto(t *testing.T) {
+	repo := t.TempDir()
+	const branch, base, rel = "main", "0000000", "src/a.ts"
+	written := joinLines(`const opts = { name: "demo", retries: 3 }`, "run(opts)")
+	wl, err := Update(repo, branch, base, rel, written, "", ai("copilot"), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	types := func(w *WorkingLog, n int) string {
+		var s []string
+		for _, a := range typesByLine(w, n) {
+			s = append(s, string(a))
+		}
+		return strings.Join(s, ",")
+	}
+
+	if got := CarryOnto(repo, branch, base, rel, wl, written); got != wl {
+		t.Error("same content: want the log itself")
+	}
+	if got := CarryOnto(repo, branch, base, rel, wl, strings.ReplaceAll(written, "\n", "\r\n")); got != wl {
+		t.Error("CRLF-only difference: want the log itself")
+	}
+	reformatted := joinLines("const opts = {", "  name: 'demo',", "  retries: 3,", "};", "run(opts);")
+	if got := types(CarryOnto(repo, branch, base, rel, wl, reformatted), 5); got != "ai,ai,ai,ai,ai" {
+		t.Errorf("reformatted: got %s, want all ai", got)
+	}
+	changed := joinLines("const opts = {", "  name: 'demo',", "  retries: 5,", "};", "run(opts);")
+	if got := types(CarryOnto(repo, branch, base, rel, wl, changed), 5); got != "human,human,human,human,ai" {
+		t.Errorf("changed: got %s, want the rewritten object human, run() ai", got)
+	}
+}
