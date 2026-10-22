@@ -398,10 +398,8 @@ func emitCopilotFileEdit(absPath string, added []daemon.LineRange, removed []dae
 	}
 	rel := abs
 	wt, _ := gitutil.Toplevel(abs)
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 	ev := daemon.Event{
 		When:         time.Now(),
@@ -556,7 +554,7 @@ func deletedFileLines(absPath string) []daemon.RemovedLineHash {
 	if err != nil || len(data) == 0 {
 		// Already removed on disk — read the version HEAD still has.
 		if wt, ok := gitutil.Toplevel(abs); ok {
-			if rel, rerr := filepath.Rel(wt, abs); rerr == nil && !strings.HasPrefix(rel, "..") {
+			if rel, ok := gitutil.Rel(wt, abs); ok {
 				if out, gerr := gitutil.Output(wt, "show", "HEAD:"+filepath.ToSlash(rel)); gerr == nil {
 					data = out
 				}
@@ -595,10 +593,8 @@ func parseApplyPatchPerLine(body string) []copilotPatchFile {
 		repo, _ := gitutil.RepoID(abs)
 		rel := abs
 		wt, _ := gitutil.Toplevel(abs)
-		if wt != "" {
-			if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-				rel = r
-			}
+		if r, ok := gitutil.Rel(wt, abs); ok {
+			rel = r
 		}
 		cur = &copilotPatchFile{abs: abs, repoPath: repo, worktreePath: wt, rel: rel}
 	}

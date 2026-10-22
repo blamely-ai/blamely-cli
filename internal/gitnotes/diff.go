@@ -250,13 +250,9 @@ func parseDiff(r io.Reader, excl *config.ExcludeList) (*CommitChange, error) {
 			d := hunkDels[i]
 			aContent := strings.TrimRight(a.content, "\r")
 			dContent := strings.TrimRight(d.content, "\r")
-			// Byte-identical line on both sides: it appears as -/+ ONLY because its
-			// trailing newline changed — the "\ No newline at end of file"
-			// transition that git emits when a line is appended after the old last
-			// line (so the previously-last line gains a newline). Nothing was
-			// authored or removed here, so count NEITHER side; otherwise the
-			// unchanged line is falsely reported as an addition.
-			if dContent == aContent {
+			// Nothing was authored or removed here, so count NEITHER side;
+			// otherwise the unchanged line is falsely reported as an addition.
+			if eolOnlyChange(d.content, a.content) {
 				continue
 			}
 			if curFile != "" {
@@ -392,6 +388,15 @@ func parseDiff(r io.Reader, excl *config.ExcludeList) (*CommitChange, error) {
 	}
 	flushHunk()
 	return out, sc.Err()
+}
+
+// eolOnlyChange reports whether a positionally paired -/+ line is the same line
+// whose trailing newline changed: byte-identical on both sides, it appears only
+// because of the "\ No newline at end of file" transition git emits when a line
+// is appended after the old last line (which then gains a newline). Shared by
+// the commit note (parseDiff) and the gutter (changedNewSideLines) so both agree.
+func eolOnlyChange(del, add string) bool {
+	return strings.TrimRight(del, "\r") == strings.TrimRight(add, "\r")
 }
 
 // postPathFromDiffHeader extracts POST from "diff --git a/PRE b/POST". POST

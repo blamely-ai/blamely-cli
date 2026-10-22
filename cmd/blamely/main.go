@@ -718,6 +718,16 @@ func cmdAuthorship() *cobra.Command {
 				overrides := gitnotes.ReconcileGutterOverrides(db, ctx.RepoRoot, ctx.BaseSHA, wl, changed)
 				wl.Lines = restrictLinesToChanged(wl.Lines, changed, overrides)
 			}
+			// The gutter paints the file as it is on disk; a formatter run outside the
+			// editor (`prettier --write`, `eslint --fix`) rewrote it without anyone
+			// recording that, and the log's line numbers would mark the wrong lines.
+			onDisk := func(rel string, wl *authorship.WorkingLog) *authorship.WorkingLog {
+				content, err := os.ReadFile(filepath.Join(ctx.RepoRoot, filepath.FromSlash(rel)))
+				if err != nil {
+					return wl
+				}
+				return authorship.CarryOnto(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, rel, wl, string(content))
+			}
 
 			// --all: the repo-wide gutter/sidebar source. The gutter only ever marks
 			// UNCOMMITTED changes, so the ONLY files that can contribute are those that
@@ -756,6 +766,7 @@ func cmdAuthorship() *cobra.Command {
 					if lerr != nil || wl == nil {
 						continue // no working log for this changed file → no AI gutter
 					}
+					wl = onDisk(file, wl)
 					changed := changedByFile[file]
 					if len(changed) == 0 { // untracked (new) file: every line is uncommitted
 						changed = allWorkingLogLines(wl)
@@ -776,6 +787,8 @@ func cmdAuthorship() *cobra.Command {
 			}
 			if wl == nil {
 				wl = &authorship.WorkingLog{Schema: authorship.WorkingLogSchema, File: ctx.RelPath, BaseSHA: ctx.BaseSHA}
+			} else {
+				wl = onDisk(ctx.RelPath, wl)
 			}
 			restrict(wl)
 			return json.NewEncoder(os.Stdout).Encode(wl)

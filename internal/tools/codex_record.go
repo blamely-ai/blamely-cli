@@ -94,10 +94,8 @@ func RecordCodexFromStdin(r io.Reader) error {
 	}
 	wt, _ := gitutil.Toplevel(resolved)
 	rel := resolved
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolved); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, resolved); ok {
+		rel = r
 	}
 
 	// Claude-compatible Write shape overwrites the whole file with no "before"

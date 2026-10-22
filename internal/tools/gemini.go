@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/blamely/blamely/internal/daemon"
@@ -76,10 +75,8 @@ func RecordGeminiFromStdin(r io.Reader) error {
 	}
 	wt, _ := gitutil.Toplevel(resolved)
 	rel := resolved
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolved); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, resolved); ok {
+		rel = r
 	}
 
 	// write_file overwrites the whole file with no "before" content of its

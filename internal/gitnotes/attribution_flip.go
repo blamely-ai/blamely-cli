@@ -60,17 +60,23 @@ func flipNoteToWorkingLog(repoPath string, note *Note) {
 	// the session's AI work as Human. Claim those logs before reading. No-op in the
 	// normal case where the branch never changed.
 	authorship.AdoptWorkingLogsAtBase(repoPath, note.Branch, parent)
-	flipAddsAtBase(repoPath, note.Branch, parent, note)
+	flipAddsAtBase(repoPath, note.Branch, parent, note, func(path string) (string, bool) {
+		return showFileAt(repoPath, note.Commit, path)
+	})
 }
 
 // flipAddsAtBase rewrites the note's added-line attribution from the working logs at
 // `base` (the commit's parent for a committed note, or HEAD for the uncommitted
-// working tree), then recomputes the added-line aggregates.
-func flipAddsAtBase(repoPath, branch, base string, note *Note) {
+// working tree), then recomputes the added-line aggregates. contentOf returns a
+// file's content as the note counts it (the committed blob, or the working tree),
+// onto which a log written for other content is carried (AuthorsForContent).
+func flipAddsAtBase(repoPath, branch, base string, note *Note, contentOf func(path string) (string, bool)) {
 	flipped := false
 	for fi := range note.Files {
 		fe := &note.Files[fi]
-		authors, ok := authorship.AuthorsForFile(repoPath, branch, base, fe.Path)
+		authors, ok := authorship.AuthorsForContent(repoPath, branch, base, fe.Path, func() (string, bool) {
+			return contentOf(fe.Path)
+		})
 		if !ok {
 			continue // not tracked → keep this file's prior attribution
 		}

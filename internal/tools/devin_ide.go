@@ -371,10 +371,8 @@ func (w *DevinIDEWatcher) recordDevinIDEEdit(dbPath string, e devinACPEdit, sink
 	}
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 
 	// Line ranges come from the agent's own text, never from re-reading disk:

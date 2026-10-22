@@ -1,6 +1,8 @@
 package authorship
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -144,6 +146,38 @@ func TestAttribute_CRLFStable(t *testing.T) {
 	for i := range want {
 		if got[i] != want[i] {
 			t.Errorf("line %d: want %q, got %q", i+1, want[i], got[i])
+		}
+	}
+}
+
+// Real Prettier 3 output (testdata/prettier): an AI-written file reformatted on
+// save — quotes, semicolons, arrow parens, a signature and an object literal split
+// over several lines, a one-line `if` expanded. Nobody authored anything, so every
+// line stays AI, under both the default and a singleQuote/no-semi config.
+// return-parens is two one-line functions Prettier split in one go (one alignment
+// gap), wrapping the second's broken-up return in `return (`…`);`.
+func TestAttribute_PrettierReformatKeepsAuthor(t *testing.T) {
+	for _, pair := range [][2]string{
+		{"before.ts", "after-default.ts"},
+		{"before.ts", "after-single-quote-no-semi.ts"},
+		{"return-parens-before.ts", "return-parens-after.ts"},
+	} {
+		before, err := os.ReadFile(filepath.Join("testdata", "prettier", pair[0]))
+		if err != nil {
+			t.Fatal(err)
+		}
+		name := pair[1]
+		after, err := os.ReadFile(filepath.Join("testdata", "prettier", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		prior := Attribute(nil, "", string(before), ai("copilot"), 1)
+		wl := Attribute(prior, string(before), string(after), HumanAuthor(), 2)
+		n := len(splitLines(string(after)))
+		for i, got := range typesByLine(wl, n) {
+			if got != AI {
+				t.Errorf("%s line %d (%q): got %s, want ai", name, i+1, splitLines(string(after))[i], got)
+			}
 		}
 	}
 }

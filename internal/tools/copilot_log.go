@@ -335,10 +335,8 @@ func emitCopilotLogEvent(line string, sink daemon.Sink) {
 	repo, _ := gitutil.RepoID(abs)
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if wt != "" {
-		if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, abs); ok {
+		rel = r
 	}
 	lr, err := LineRangeForWholeFile(abs)
 	if err != nil || len(lr) == 0 {

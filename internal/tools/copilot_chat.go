@@ -649,12 +649,8 @@ func (w *chatSessionWatcher) recordTextEditGroup(teg *textEditGroupPart, model, 
 	repo, _ := gitutil.RepoID(abs)
 	wt, _ := gitutil.Toplevel(abs)
 	rel := abs
-	if repo != "" {
-		if wt != "" {
-			if r, err := filepath.Rel(wt, abs); err == nil && !strings.HasPrefix(r, "..") {
-				rel = r
-			}
-		}
+	if r, ok := gitutil.Rel(wt, abs); repo != "" && ok {
+		rel = r
 	}
 
 	// Fetch the pre-chat snapshot stored by the VS Code plugin via PUT /snapshot.

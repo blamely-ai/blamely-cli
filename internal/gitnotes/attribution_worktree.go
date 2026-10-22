@@ -2,7 +2,9 @@ package gitnotes
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"time"
 
@@ -49,7 +51,10 @@ func AttributeWorkingTree(repoPath string) (*Note, error) {
 	branch := BranchName(repoPath)
 	base := gitutil.HeadSHA(repoPath)
 	note := buildWorkingTreeNote(change, branch)
-	flipAddsAtBase(repoPath, branch, base, note)
+	flipAddsAtBase(repoPath, branch, base, note, func(path string) (string, bool) {
+		content, err := os.ReadFile(filepath.Join(repoPath, filepath.FromSlash(path)))
+		return string(content), err == nil
+	})
 	flipDeletesAtBase(repoPath, branch, base, note, change)
 
 	// Same lossless content_sha cross-check the commit-time path runs, so `blamely

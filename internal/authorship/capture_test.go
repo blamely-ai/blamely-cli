@@ -116,3 +116,31 @@ func TestResolveContext_OutsideRepo(t *testing.T) {
 		t.Errorf("expected ok=false outside a git work tree")
 	}
 }
+
+// A shell command that runs right after a recorded edit (an agent checking its
+// work with `git diff`) must not be credited with the file that edit wrote:
+// only files changed since their log was written, or with no log, remain.
+func TestChangedSinceRecorded(t *testing.T) {
+	repo := gitRepo(t, "recorded.go", joinLines("package main"))
+	recorded := filepath.Join(repo, "recorded.go")
+	if err := os.WriteFile(recorded, []byte(joinLines("package main", "// by agent")), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := RecordEdit(recorded, ai("copilot")); err != nil {
+		t.Fatal(err)
+	}
+	if got := ChangedSinceRecorded(repo, []string{"recorded.go"}); len(got) != 0 {
+		t.Fatalf("file unchanged since its recorded edit: got %v, want none", got)
+	}
+
+	if err := os.WriteFile(recorded, []byte(joinLines("package main", "// by agent", "// by command")), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repo, "untracked.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got := ChangedSinceRecorded(repo, []string{"recorded.go", "untracked.go"})
+	if len(got) != 2 {
+		t.Errorf("changed after its record, and never recorded: got %v, want both", got)
+	}
+}

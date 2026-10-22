@@ -159,6 +159,93 @@
       "author": { "author": "human", "gen_type": "human" },
       "expect": ["human", "ai", "ai"],
       "expect_overrode": [null, null, null]
+    },
+    {
+      "name": "format-quotes-and-semicolon-keep-author",
+      "prior": [{ "start": 1, "end": 2, "author": "ai", "tool": "copilot" }],
+      "baseline": "const a = \"x\"\nconst b = `y`;",
+      "new": "const a = 'x';\nconst b = 'y'",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["ai", "ai"],
+      "expect_overrode": [null, null]
+    },
+    {
+      "name": "format-arrow-parens-and-trailing-comma-keep-author",
+      "prior": [{ "start": 1, "end": 1, "author": "ai", "tool": "copilot" }],
+      "baseline": "  items.map(x => x * 2),",
+      "new": "  items.map((x) => x * 2)",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["ai"],
+      "expect_overrode": [null]
+    },
+    {
+      "name": "format-split-line-keeps-author",
+      "prior": [{ "start": 1, "end": 1, "author": "human" }, { "start": 2, "end": 2, "author": "ai", "tool": "copilot" }, { "start": 3, "end": 3, "author": "human" }],
+      "baseline": "start()\nconst opts = { name: 'demo', retries: 3 }\nend()",
+      "new": "start()\nconst opts = {\n  name: \"demo\",\n  retries: 3,\n};\nend()",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["human", "ai", "ai", "ai", "ai", "human"],
+      "expect_overrode": [null, null, null, null, null, null]
+    },
+    {
+      "name": "format-joined-lines-keep-author",
+      "prior": [{ "start": 1, "end": 3, "author": "ai", "tool": "copilot" }],
+      "baseline": "if (!raw) {\n  return fallback\n}",
+      "new": "if (!raw) { return fallback; }",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["ai"],
+      "expect_overrode": [null]
+    },
+    {
+      "name": "format-join-across-authors-goes-to-editor",
+      "prior": [{ "start": 1, "end": 1, "author": "ai", "tool": "copilot" }, { "start": 2, "end": 2, "author": "human" }],
+      "baseline": "foo(a,\n  b)",
+      "new": "foo(a, b);",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["human"],
+      "expect_overrode": ["ai"]
+    },
+    {
+      "name": "format-with-real-change-is-not-reflow",
+      "prior": [{ "start": 1, "end": 1, "author": "ai", "tool": "copilot" }],
+      "baseline": "const opts = { a: 1, b: 2 }",
+      "new": "const opts = {\n  a: 1,\n  b: 3,\n}",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["human", "human", "human", "human"]
+    },
+    {
+      "name": "format-return-parens-keep-author",
+      "prior": [{ "start": 1, "end": 3, "author": "ai", "tool": "copilot" }],
+      "baseline": "function f(a, b) {\n  return a + \" \" + b\n}",
+      "new": "function f(a, b) {\n  return (\n    a +\n    ' ' +\n    b\n  );\n}",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["ai", "ai", "ai", "ai", "ai", "ai", "ai"],
+      "expect_overrode": [null, null, null, null, null, null, null]
+    },
+    {
+      "name": "format-gap-real-change-after-reflow-keeps-reflow",
+      "prior": [{ "start": 1, "end": 2, "author": "ai", "tool": "copilot" }],
+      "baseline": "const a = { x: 1, y: 2 }\nconst b = { z: 3 }",
+      "new": "const a = {\n  x: 1,\n  y: 2,\n};\nconst b = { z: 4 };",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["ai", "ai", "ai", "ai", "human"]
+    },
+    {
+      "name": "format-gap-real-change-before-reflow-keeps-reflow",
+      "prior": [{ "start": 1, "end": 2, "author": "ai", "tool": "copilot" }],
+      "baseline": "const b = { z: 3 }\nconst a = { x: 1, y: 2 }",
+      "new": "const b = { z: 4 };\nconst a = {\n  x: 1,\n  y: 2,\n};",
+      "author": { "author": "human", "gen_type": "human" },
+      "expect": ["human", "ai", "ai", "ai", "ai"]
+    },
+    {
+      "name": "format-gap-runs-keep-their-own-author",
+      "prior": [{ "start": 1, "end": 1, "author": "ai", "tool": "copilot" }, { "start": 2, "end": 2, "author": "human" }],
+      "baseline": "const a = { x: 1, y: 2 }\nconst b = { z: 3, w: 4 }",
+      "new": "const a = {\n  x: 1,\n  y: 2,\n};\nconst b = {\n  z: 3,\n  w: 4,\n};",
+      "author": { "author": "ai", "tool": "copilot", "gen_type": "cli" },
+      "expect": ["ai", "ai", "ai", "ai", "human", "human", "human", "human"],
+      "expect_overrode": [null, null, null, null, null, null, null, null]
     }
   ]
 }

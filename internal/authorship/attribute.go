@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"math"
+	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -38,6 +39,8 @@ func Attribute(prior *WorkingLog, baseline, newContent string, author Author, no
 	// movedFrom[i] = index into oldLines that new line i was MOVED from (an
 	// unmatched old line of identical content relocated), or -1.
 	movedFrom := detectMoves(oldLines, newLines, matchedOld)
+	// Runs of lines a formatter split or joined (see detectReflows).
+	reflows := detectReflows(oldLines, newLines, matchedOld, movedFrom)
 
 	perLine := make([]Author, len(newLines))
 	for i := range newLines {
@@ -51,11 +54,37 @@ func Attribute(prior *WorkingLog, baseline, newContent string, author Author, no
 			perLine[i] = author
 		}
 	}
+	reflowed := make([]bool, len(newLines))
+	for _, r := range reflows {
+		// A reflowed run keeps its author only when the old lines had ONE author;
+		// a split/join across authors can't say whose each new line is, so it
+		// stays with the editor, as before.
+		shared := priorAuthorOr(prior, r.old[0]+1)
+		uniform := true
+		for _, oi := range r.old[1:] {
+			if priorAuthorOr(prior, oi+1) != shared {
+				uniform = false
+				break
+			}
+		}
+		if !uniform {
+			continue
+		}
+		for _, ni := range r.new {
+			perLine[ni] = shared
+			reflowed[ni] = true
+		}
+	}
 
 	// overrode[i] records the author a CHANGED line replaced, when its type differs
 	// from the new author (a human rewriting AI code, or vice-versa) — an audit
 	// marker, not a change to who owns the line now.
 	overrode := detectOverrode(prior, matchedOld, movedFrom, len(oldLines), author)
+	for i := range overrode {
+		if reflowed[i] {
+			overrode[i] = nil // a reflow replaced nothing
+		}
+	}
 
 	if nowMS == 0 {
 		nowMS = time.Now().UnixMilli()
@@ -95,6 +124,11 @@ func DeletedBaselineLines(baseline, newContent string) []string {
 	for _, mf := range movedFrom {
 		if mf >= 0 {
 			keptOld[mf] = true
+		}
+	}
+	for _, r := range detectReflows(oldLines, newLines, matchedOld, movedFrom) {
+		for _, oi := range r.old {
+			keptOld[oi] = true
 		}
 	}
 	var deleted []string
@@ -143,6 +177,178 @@ func detectMoves(oldLines, newLines []string, matchedOld []int) []int {
 	}
 	return moved
 }
+
+// reflowRun is a run of OLD lines a formatter rewrote as a run of NEW lines.
+type reflowRun struct {
+	old, new []int
+}
+
+// detectReflows finds the runs of the LCS alignment's gaps that a formatter only
+// reshaped: old lines left in a gap (not matched, not moved away) and new lines in
+// it (not matched, not moved in) that read the same once joined and compared with
+// reflowLineKey. Prettier and `eslint --fix` split a long call or object literal
+// over several lines, join short ones, and add or drop separators doing it — no
+// one authored anything, so the new lines keep the old lines' author (Attribute).
+// One gap often holds several such runs (every function of a file reformatted at
+// once), and a genuine change in one of them must not cost the others their
+// author, so reflowChunks cuts the gap at the line boundaries the two sides share;
+// what it can't pair is left alone. Walks the gaps exactly like detectOverrode, so
+// it is deterministic and identical across the Go, TS, and Kotlin ports.
+func detectReflows(oldLines, newLines []string, matchedOld, movedFrom []int) []reflowRun {
+	consumedOld := make([]bool, len(oldLines))
+	for _, mf := range movedFrom {
+		if mf >= 0 {
+			consumedOld[mf] = true
+		}
+	}
+	var runs []reflowRun
+	m := len(matchedOld)
+	oldCursor := 0
+	i := 0
+	for i < m {
+		if matchedOld[i] >= 0 {
+			oldCursor = matchedOld[i] + 1
+			i++
+			continue
+		}
+		gapNewEnd := i
+		for gapNewEnd < m && matchedOld[gapNewEnd] < 0 {
+			gapNewEnd++
+		}
+		gapOldEnd := len(oldLines)
+		if gapNewEnd < m {
+			gapOldEnd = matchedOld[gapNewEnd]
+		}
+		var gapOld, gapNew []int
+		for ni := i; ni < gapNewEnd; ni++ {
+			if movedFrom[ni] < 0 {
+				gapNew = append(gapNew, ni)
+			}
+		}
+		for oi := oldCursor; oi < gapOldEnd; oi++ {
+			if !consumedOld[oi] {
+				gapOld = append(gapOld, oi)
+			}
+		}
+		if len(gapNew) > 0 && len(gapOld) > 0 {
+			runs = append(runs, reflowChunks(oldLines, newLines, gapOld, gapNew)...)
+		}
+		oldCursor = gapOldEnd
+		i = gapNewEnd
+	}
+	return runs
+}
+
+// reflowChunks splits one gap (old lines gapOld, new lines gapNew) into the runs a
+// formatter only reshaped. Joined, the two sides' reflowLineKeys read the same up
+// to their longest common prefix and from their longest common suffix; a line
+// boundary both sides share inside the prefix (walking forward) or the suffix
+// (walking back from the end, over what the prefix left) closes a run. Whatever
+// is left between the two holds a genuine change and stays out. A whole gap that
+// reads the same yields its runs from the front alone. Lines whose key is empty
+// (blank lines) join the run next to them, never form one. Offsets are in each
+// port's own string units; a boundary only depends on the text up to it being
+// equal, so the three ports cut the same runs.
+func reflowChunks(oldLines, newLines []string, gapOld, gapNew []int) []reflowRun {
+	oldOff, oldText := reflowOffsets(oldLines, gapOld)
+	newOff, newText := reflowOffsets(newLines, gapNew)
+	var runs []reflowRun
+
+	prefix := 0
+	for prefix < len(oldText) && prefix < len(newText) && oldText[prefix] == newText[prefix] {
+		prefix++
+	}
+	a, b := 0, 0 // where the open run starts
+	for i, j := 1, 1; i <= len(gapOld) && j <= len(gapNew); {
+		v, w := oldOff[i], newOff[j]
+		if v < w {
+			i++
+			continue
+		}
+		if w < v {
+			j++
+			continue
+		}
+		if v == 0 {
+			i, j = i+1, j+1
+			continue
+		}
+		if v > prefix {
+			break
+		}
+		for i < len(gapOld) && oldOff[i+1] == v {
+			i++
+		}
+		for j < len(gapNew) && newOff[j+1] == v {
+			j++
+		}
+		runs = append(runs, reflowRun{old: gapOld[a:i], new: gapNew[b:j]})
+		a, b = i, j
+		i, j = i+1, j+1
+	}
+
+	// From the back, over what the front left. dist(k) is how far line k starts
+	// from the end of its side.
+	oldEnd, newEnd := oldOff[len(gapOld)], newOff[len(gapNew)]
+	suffix := 0
+	for suffix < oldEnd-oldOff[a] && suffix < newEnd-newOff[b] &&
+		oldText[len(oldText)-1-suffix] == newText[len(newText)-1-suffix] {
+		suffix++
+	}
+	ea, eb := len(gapOld), len(gapNew) // where the open run ends
+	for i, j := len(gapOld)-1, len(gapNew)-1; i >= a && j >= b; {
+		v, w := oldEnd-oldOff[i], newEnd-newOff[j]
+		if v < w {
+			i--
+			continue
+		}
+		if w < v {
+			j--
+			continue
+		}
+		if v == 0 {
+			i, j = i-1, j-1
+			continue
+		}
+		if v > suffix {
+			break
+		}
+		for i > a && oldOff[i-1] == oldOff[i] {
+			i--
+		}
+		for j > b && newOff[j-1] == newOff[j] {
+			j--
+		}
+		runs = append(runs, reflowRun{old: gapOld[i:ea], new: gapNew[j:eb]})
+		ea, eb = i, j
+		i, j = i-1, j-1
+	}
+	return runs
+}
+
+// reflowOffsets joins the reflowLineKeys of lines[idx...]; off[k] is where line
+// idx[k] starts in the joined text (off[len(idx)] is its length).
+func reflowOffsets(lines []string, idx []int) ([]int, string) {
+	off := make([]int, len(idx)+1)
+	var b strings.Builder
+	for k, i := range idx {
+		b.WriteString(reflowLineKey(lines[i]))
+		off[k+1] = b.Len()
+	}
+	return off, b.String()
+}
+
+// reflowLineKey is a line as a formatter sees it, for comparing joined runs:
+// normalized (normalizeLineForMatch), then every `,` `;` `(` `)` dropped, since
+// splitting or joining lines adds and removes separators between items, and
+// Prettier wraps an expression it breaks over lines in parentheses
+// (`return (`…`);`, `=> (`…`)`) or drops ones it finds redundant.
+// Cross-language contract like normalizeLineForMatch.
+func reflowLineKey(line string) string {
+	return reflowSeparators.Replace(normalizeLineForMatch(line))
+}
+
+var reflowSeparators = strings.NewReplacer(",", "", ";", "", "(", "", ")", "")
 
 // detectOverrode finds replace pairs and, for each changed NEW line whose replaced
 // OLD line had a different-type author, records that prior author. It walks the LCS
@@ -409,22 +615,36 @@ func alignMiddleCheckpointed(oldN, newN []string, p, oldEnd, newEnd int, matched
 	return i, j
 }
 
-// normalizeLineForMatch reduces a line to its whitespace-insensitive form by
-// REMOVING all whitespace (git diff -w semantics). A line that changed only in
-// whitespace — indentation, trailing, or between tokens (operator spacing like
-// `x=1` ↔ `x = 1`) — therefore matches and keeps its prior author: reformatting is
-// not authorship. Trade-off: a whitespace edit INSIDE a string literal also reads
-// as reflow (prior author kept); that is rare and defensible. This MUST produce
-// identical output in the Go, TypeScript, and Kotlin ports (the golden vectors
-// enforce it) so the three agree on what counts as a reflow.
+// normalizeLineForMatch reduces a line to the form a code formatter can't change,
+// so a line that changed only in formatting matches and keeps its prior author:
+// reformatting is not authorship. In order:
+//   - REMOVE all whitespace (git diff -w semantics): indentation, trailing, and
+//     between tokens (operator spacing like `x=1` ↔ `x = 1`);
+//   - treat `"` and the backtick as `'`: Prettier/ESLint rewrite quote style;
+//   - `(x)=>` as `x=>`: Prettier's arrowParens adds or drops those parentheses;
+//   - drop trailing `;` and `,`: semicolons and trailing commas come and go.
+//
+// Trade-off: such an edit made by hand (or inside a string literal) also reads as
+// formatting and keeps the prior author; that is rare and defensible. This MUST
+// produce identical output in the Go, TypeScript, and Kotlin ports (the golden
+// vectors enforce it) so the three agree on what counts as a reflow.
 func normalizeLineForMatch(s string) string {
-	return strings.Map(func(r rune) rune {
+	s = strings.Map(func(r rune) rune {
 		if unicode.IsSpace(r) {
 			return -1
 		}
+		if r == '"' || r == '`' {
+			return '\''
+		}
 		return r
 	}, s)
+	s = arrowParamParens.ReplaceAllString(s, "$1=>")
+	return strings.TrimRight(s, ";,")
 }
+
+// arrowParamParens matches a lone parenthesized arrow parameter, `(x)=>`.
+// ASCII identifier classes only, so the three regex engines agree.
+var arrowParamParens = regexp.MustCompile(`\(([A-Za-z_$][A-Za-z0-9_$]*)\)=>`)
 
 func normalizeLinesForMatch(lines []string) []string {
 	out := make([]string, len(lines))

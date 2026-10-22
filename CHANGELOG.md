@@ -2,6 +2,16 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **AI edits are credited again when your checkout lives behind a mounted or aliased path (Windows).** On some corporate Windows machines the user profile sits on a mounted volume, so git names the repository by the volume's real path (`C:\SnapVolumesTemp\...\Users\<you>\...`) while VS Code, Copilot and the editor plugin name files by the path you opened (`C:\Users\<you>\...`). Blamely could not relate the two, stored every edit under its absolute path, and nothing matched what was committed — so all AI work in such a repository was counted as yours. Files are now named the way git itself names them, whichever spelling the tool used. Claude Code was unaffected because it already reports the resolved path.
+- **Copilot Agent mode in VS Code is credited again.** Since VS Code 1.142, Copilot's agent edits reach Blamely in a new shape that it did not recognise, so they were counted as your own work unless Copilot happened to run a terminal command afterwards. They are now credited to Copilot.
+- **Lines you wrote just before an AI edit stay yours.** If you changed a file and an AI assistant edited it before Blamely had recorded your change, your lines could be credited to the assistant. They are now credited to you.
+- **Formatting no longer turns AI code into yours.** When Prettier, ESLint or another formatter reformatted AI-written code (on save, for example), the reformatted lines were counted as your own work. Changing quotes, semicolons, trailing commas or parentheses, or splitting a long line over several lines or joining short ones, no longer changes who wrote the code. A real change in one place no longer turns the code reformatted around it into yours either. This also holds when the formatter runs outside the editor — `prettier --write` in a terminal, or lint-staged as you commit — for both the commit report and the editor's gutter.
+- **The editor no longer marks a line you didn't touch.** In a file that ended without a final newline, adding a line at the end made the editor mark the previous last line as changed, showing it with whoever wrote it originally (often an AI assistant). Only the lines you actually changed are marked now, as in the commit report.
+
 ## [1.8.5] - 2026-10-07
 
 ### Added

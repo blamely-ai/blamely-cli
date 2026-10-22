@@ -114,10 +114,8 @@ func postDevinEdit(p devinHookPayload, cwd, filePath string, ranges []LineRange,
 	}
 	wt, _ := gitutil.Toplevel(resolved)
 	rel := resolved
-	if wt != "" {
-		if r, err := filepath.Rel(wt, resolved); err == nil && !strings.HasPrefix(r, "..") {
-			rel = r
-		}
+	if r, ok := gitutil.Rel(wt, resolved); ok {
+		rel = r
 	}
 
 	// `write` replaces the whole file and carries no "before" content of its

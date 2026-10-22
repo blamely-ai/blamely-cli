@@ -347,13 +347,59 @@ func AuthorsForFile(repoRoot, branch, baseSHA, relPath string) (map[int]Author, 
 	if err != nil || wl == nil {
 		return nil, false
 	}
+	return authorsByLine(wl), true
+}
+
+// AuthorsForContent is AuthorsForFile for the lines of `content` — what was
+// committed, or what is on disk now — which can differ from the content the log
+// describes: a formatter run outside the editor (`prettier --write`, lint-staged at
+// commit, `eslint --fix`) rewrites the file and nobody records it. The log's line
+// numbers then point at the wrong lines, so the log is first carried onto `content`
+// through its baseline with Attribute: reformatted lines keep their author, and
+// changes nobody recorded go to the human, as they do when the editor records them.
+// content is only asked for when a log exists. Without a stored baseline it falls
+// back to the log's own line numbers.
+func AuthorsForContent(repoRoot, branch, baseSHA, relPath string, content func() (string, bool)) (map[int]Author, bool) {
+	wl, err := LoadWorkingLog(repoRoot, branch, baseSHA, relPath)
+	if err != nil || wl == nil {
+		return nil, false
+	}
+	if now, ok := content(); ok {
+		wl = CarryOnto(repoRoot, branch, baseSHA, relPath, wl, now)
+	}
+	return authorsByLine(wl), true
+}
+
+// CarryOnto returns wl as it reads for `content` (see AuthorsForContent): wl itself
+// when it already describes content, or there is no stored baseline to carry it
+// through, else the log Attribute derives for content, crediting changes nobody
+// recorded to the human. Nothing is written; the gutter (`blamely authorship`)
+// uses it to show the file as it is now.
+func CarryOnto(repoRoot, branch, baseSHA, relPath string, wl *WorkingLog, content string) *WorkingLog {
+	if sha256Hex(content) == wl.BlobSHA {
+		return wl
+	}
+	baseline, ok := loadBaseline(BaselinePath(repoRoot, branch, baseSHA, relPath))
+	if !ok || sameIgnoringCRLF(baseline, content) {
+		// Unchanged since the log was written; only git's line-ending conversion
+		// differs between the working tree and the committed blob.
+		return wl
+	}
+	return Attribute(wl, baseline, content, HumanAuthor(), wl.UpdatedMS)
+}
+
+func sameIgnoringCRLF(a, b string) bool {
+	return strings.ReplaceAll(a, "\r\n", "\n") == strings.ReplaceAll(b, "\r\n", "\n")
+}
+
+func authorsByLine(wl *WorkingLog) map[int]Author {
 	m := make(map[int]Author, len(wl.Lines))
 	for _, r := range wl.Lines {
 		for ln := r.Start; ln <= r.End; ln++ {
 			m[ln] = r.Author
 		}
 	}
-	return m, true
+	return m
 }
 
 // ListWorkingLogs returns every file's working log under (repoRoot, branch, baseSHA)
