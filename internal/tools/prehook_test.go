@@ -11,7 +11,7 @@ import (
 )
 
 func TestIsReadOnlyToolCall(t *testing.T) {
-	for _, name := range []string{"read_file", "list_dir", "view", "Read", "read_many_files", "list_directory"} {
+	for _, name := range []string{"read_file", "list_dir", "view", "Read", "read_many_files", "list_directory", "rename_chat"} {
 		if !isReadOnlyToolCall(name, "") {
 			t.Errorf("%s should be read-only", name)
 		}

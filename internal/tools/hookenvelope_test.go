@@ -283,6 +283,31 @@ func TestRecordCopilot_ReadToolRecordsNothing(t *testing.T) {
 	}
 }
 
+// VS Code's agent host names every new chat with rename_chat, through both the
+// runtime's own hook (camelCase) and VS Code's hook service (snake_case). It
+// writes no file, so the human's dirty line must stay Human and no drift may be
+// reported. Before it was listed, every Copilot Chat user saw a doctor warning.
+func TestRecordCopilot_RenameChatRecordsNothing(t *testing.T) {
+	isolateHome(t)
+	repo, abs := gitRepoWithFile(t, "a.ts", "a\n")
+	if err := os.WriteFile(abs, []byte("a\nhuman\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	args := map[string]any{"title": "Shorten longMessage", "automatic": true}
+	runCopilotPre(t, copilotAgentPre(t, repo, "rename_chat", args))
+	runCopilotPost(t, copilotAgentPost(t, repo, "rename_chat", args))
+	runCopilotPost(t, mustJSON(t, map[string]any{
+		"session_id": "s", "cwd": repo, "hook_event_name": "PostToolUse", "timestamp": "2026-11-11T15:50:41Z",
+		"tool_name": "rename_chat", "tool_input": args, "tool_result": "ok",
+	}))
+	if a := authorsByLine(t, abs)[2]; a.Type == authorship.AI {
+		t.Errorf("line 2 = %+v, want Human", a)
+	}
+	if len(hookdrift.Read()) != 0 {
+		t.Errorf("rename_chat must not be reported as drift: %v", hookdrift.Read())
+	}
+}
+
 // The batched PreToolUse snapshots every file the batch will edit.
 func TestCaptureBaselineFromStdin_AgentRuntimeBatch(t *testing.T) {
 	root, abs := committedRepoWithEdit(t)

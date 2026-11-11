@@ -99,6 +99,10 @@ var readOnlyToolNames = map[string]bool{
 	"web_fetch": true, "webfetch": true, "fetch": true, "web_search": true, "websearch": true,
 	"ask_user": true, "report_intent": true, "think": true,
 	"update_todo": true, "todo_write": true, "todowrite": true,
+	// VS Code's agent host calls this at the start of every chat to set its
+	// title. Unlisted, it went down the disk path and showed in `blamely doctor`
+	// as an unrecognised payload on every machine running Copilot Chat.
+	"rename_chat": true,
 }
 
 // isReadOnlyToolCall reports whether a tool call only reads. str_replace_editor is
