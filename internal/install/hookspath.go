@@ -56,10 +56,63 @@ func InstallGitHook(binaryPath string) (priorHooksPath string, hadPrior bool, er
 	return priorHooksPath, hadPrior, nil
 }
 
+// stashedPriorHooksPath picks the core.hooksPath value that uninstall should
+// restore. current is what core.hooksPath holds as install runs. stashed is what
+// an earlier install already saved in the state file.
+//
+// On a reinstall, including `blamely update`, which reruns install, current is
+// already Blamely's own dir. So the earlier stash is the user's real value, and it
+// has to survive. Overwriting it lost the user's own global hooks dir on the
+// second install. Blamely's own dir is never a prior: restoring it points git at
+// a directory that uninstall deletes next, and git then runs no hooks at all, not
+// even a repo's own .git/hooks or Husky's.
+func stashedPriorHooksPath(current string, hasCurrent bool, stashed string, hadStashed bool) (string, bool) {
+	if !hasCurrent {
+		return "", false
+	}
+	if !isBlamelyHooksDir(current) {
+		return current, true
+	}
+	if hadStashed && !isBlamelyHooksDir(stashed) {
+		return stashed, true
+	}
+	return "", false
+}
+
+// isBlamelyHooksDir reports whether a core.hooksPath value names Blamely's own
+// hooks dir, however it is spelled: forward or back slashes, a trailing
+// separator, a leading ~ (git expands it), or, on Windows, a different case.
+func isBlamelyHooksDir(value string) bool {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return false
+	}
+	own, err := config.GitHooksDir()
+	if err != nil {
+		return false
+	}
+	if value == "~" || strings.HasPrefix(value, "~/") || strings.HasPrefix(value, `~\`) {
+		home, err := config.Home()
+		if err != nil {
+			return false
+		}
+		value = filepath.Join(home, value[1:])
+	}
+	a := filepath.Clean(filepath.FromSlash(value))
+	b := filepath.Clean(filepath.FromSlash(own))
+	if runtime.GOOS == "windows" {
+		return strings.EqualFold(a, b)
+	}
+	return a == b
+}
+
 // UninstallGitHook restores the previous core.hooksPath (or unsets it if there
-// was none), then removes our hooks dir.
+// was none), then removes our hooks dir. A stored prior that is Blamely's own dir
+// is unset instead of restored. Installs before this check could stash it (see
+// stashedPriorHooksPath), and restoring it would leave git pointed at the
+// directory removed below.
 func UninstallGitHook(prior string, hadPrior bool) error {
-	if hadPrior {
+	if hadPrior && !isBlamelyHooksDir(prior) {
 		if err := setGlobalConfig("core.hooksPath", prior); err != nil {
 			return err
 		}

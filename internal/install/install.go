@@ -216,6 +216,7 @@ func Run(installPlugins bool) error {
 	if err != nil {
 		return fmt.Errorf("git hook: %w", err)
 	}
+	prior, hadPrior = stashedPriorHooksPath(prior, hadPrior, s.PriorCoreHooksPath, s.HadCoreHooksPath)
 	s.PriorCoreHooksPath = prior
 	s.HadCoreHooksPath = hadPrior
 	s.GitHookInstalled = true
