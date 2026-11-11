@@ -26,17 +26,20 @@ const (
 
 // claudePreHookMatcher is the narrower set of tools the PreToolUse hook fires
 // for: the editor tools, whose write targets a named file. Their pre-hook
-// snapshots that one file (no git process), so the PostToolUse record credits the
-// agent with only what it changed. Without it the first agent edit to a file
-// diffs against the commit and claims every uncommitted line the editor plugin
-// did not record — the user's own work included, adjacent or not.
+// snapshots that one file, so the PostToolUse record credits the agent with only
+// what it changed. Without it the first agent edit to a file diffs against the
+// commit and claims every uncommitted line the editor plugin did not record — the
+// user's own work included, adjacent or not.
 //
-// Bash is deliberately left out, and the reason is cost: an agent runs far more
-// shell commands than edits, most of them read-only, and a shell pre-hook has to
-// run `git status` to find what to snapshot (~3x an editor pre-hook). Shell
-// writes keep their baselines from the post-hook instead
-// (tools.captureBaselinesForUntouchedFiles). NotebookEdit names its target in a
-// field the pre-hook does not read, so hooking it would only cost a process.
+// Cost is why the matcher is this narrow. An editor pre-hook is one blamely
+// process plus a few short git lookups (top level, HEAD, branch, git dir) and no
+// `git status`: about half the PostToolUse hook that already runs on the same
+// call. Bash is deliberately left out: agents run roughly ten times more shell
+// commands than edits, most of them read-only, and a shell pre-hook needs a
+// `git status` whose cost grows with the repository. Shell writes keep their
+// baselines from the post-hook instead (tools.captureBaselinesForUntouchedFiles).
+// NotebookEdit names its target in a field the pre-hook does not read, so hooking
+// it would only cost a process.
 const claudePreHookMatcher = "Write|Edit|MultiEdit"
 
 // claudeHookEvents is every event name we register the blamely command under.
