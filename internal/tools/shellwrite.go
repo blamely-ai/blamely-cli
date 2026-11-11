@@ -106,11 +106,12 @@ func recordShellWritesIn(root, command string, o shellWriteOpts) error {
 // write one of them diffs against its real prior content instead of against the
 // commit.
 //
-// This is the reason blamely does not need a PreToolUse hook to stay honest. A
-// pre-hook would be a second process on every single tool call; the same
+// This is why Claude's PreToolUse hook does not cover Bash. A shell pre-hook
+// would be a second process plus a `git status` on every shell command; the same
 // protection falls out of the post-hook we already run, because an agent runs
 // far more read-only commands than writes and each of those establishes the
-// baselines before anything is written.
+// baselines before anything is written. (Editor tools name their target, so
+// their pre-hook is cheap and does run.)
 //
 // Files inside the command's own mtime window are excluded — those are the ones
 // it may have just written, and capturing their POST-write content as the

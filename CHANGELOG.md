@@ -2,6 +2,12 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **Claude Code no longer takes lines you had not committed yet.** When Claude edited a file that already had changes Blamely had not recorded, made in another editor, by `git stash pop`, or while the editor plugin was not running, Claude's first edit to that file could credit those lines to Claude too, even lines far from the ones it changed. Blamely now notes the file's content just before Claude's editing tools (Write, Edit, MultiEdit) change it, so only what Claude actually wrote counts. Run `blamely install` (or `blamely update`) to pick this up. Terminal commands Claude runs are unchanged and add no extra step.
+
 ## [1.8.6] - 2026-10-25
 
 ### Fixed
