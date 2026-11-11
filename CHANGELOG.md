@@ -2,6 +2,17 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **GitHub Copilot Chat in JetBrains IDEs is credited again.** Recent versions of Copilot for JetBrains (1.18 and later) run their chat and agent on the same engine as the Copilot CLI, which reports its edits to Blamely in a different form. Blamely did not recognise it, so code Copilot wrote with its editing tool was counted as your own work, even before you committed. These edits are now credited to Copilot. The same applies to the Copilot CLI, and to Copilot sessions in VS Code that run on that engine (the Copilot SDK, or "Copilot CLI" sessions in the Chat view).
+- **A Copilot terminal command no longer claims the whole file.** When Copilot changed a file by running a command (PowerShell, for example), every line you had not committed yet could be credited to Copilot, even if it changed only one name. Now only the lines the command actually changed count.
+
+### Changed
+
+- **Blamely no longer depends on how an AI tool names its tools.** When an AI tool reports an edit in a form Blamely does not recognise (a new tool, or a renamed one after an update), Blamely now checks which files actually changed on disk and credits those changes to the tool, instead of counting them as yours. `blamely doctor` tells you when this happens, showing only the tool name and the field names it received, never your code, so an unexpected change in an AI tool can be spotted and fixed quickly.
+
 ## [1.8.6] - 2026-10-25
 
 ### Fixed

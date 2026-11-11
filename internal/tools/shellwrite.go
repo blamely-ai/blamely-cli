@@ -193,8 +193,11 @@ func shellWritePayloadsFrom(root string, files []string, o shellWriteOpts) []dae
 var shellToolNames = map[string]bool{
 	// Claude Code
 	"bash": true,
-	// Copilot
+	// Copilot (VS Code; the agent runtime behind the Copilot CLI and Copilot for
+	// JetBrains names its terminal tool after the shell it runs)
 	"run_in_terminal": true,
+	"powershell":      true,
+	"pwsh":            true,
 	// Gemini
 	"run_shell_command": true,
 	// Cursor
