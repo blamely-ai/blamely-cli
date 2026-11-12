@@ -50,6 +50,13 @@ func newSyncFixture(t *testing.T, withRule bool) *syncFixture {
 	}
 	f := &syncFixture{t: t, remote: filepath.Join(t.TempDir(), "remote.git")}
 	runIn(t, "", "init", "-q", "--bare", f.remote)
+	// No automatic gc. A push of many notes commits arrives as many packs, and
+	// receive-pack then starts a DETACHED `git gc --auto` that can still be
+	// writing objects/pack when the test returns, so TempDir's cleanup fails
+	// with "directory not empty" (seen on ubuntu CI in
+	// TestSyncNotes_StuckHistoryWithFanout).
+	runIn(t, f.remote, "config", "gc.auto", "0")
+	runIn(t, f.remote, "config", "receive.autogc", "false")
 	if withRule {
 		f.enableRule()
 	}
@@ -71,6 +78,7 @@ func (f *syncFixture) clone() string {
 	dir := filepath.Join(f.t.TempDir(), "clone")
 	runIn(f.t, "", "clone", "-q", f.remote, dir)
 	runIn(f.t, dir, "config", "core.hooksPath", "")
+	runIn(f.t, dir, "config", "gc.auto", "0") // see newSyncFixture
 	runIn(f.t, dir, "fetch", "-q", "origin", "+refs/notes/*:refs/notes/*")
 	return dir
 }
