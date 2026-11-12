@@ -24,30 +24,44 @@ const (
 	blamelyHookMarker = "record claude"
 )
 
+// claudePreHookMatcher is the narrower set of tools the PreToolUse hook fires
+// for: the editor tools, whose write targets a named file. Their pre-hook
+// snapshots that one file, so the PostToolUse record credits the agent with only
+// what it changed. Without it the first agent edit to a file diffs against the
+// commit and claims every uncommitted line the editor plugin did not record — the
+// user's own work included, adjacent or not.
+//
+// Cost is why the matcher is this narrow. An editor pre-hook is one blamely
+// process plus a few short git lookups (top level, HEAD, branch, git dir) and no
+// `git status`: about half the PostToolUse hook that already runs on the same
+// call. Bash is deliberately left out: agents run roughly ten times more shell
+// commands than edits, most of them read-only, and a shell pre-hook needs a
+// `git status` whose cost grows with the repository. Shell writes keep their
+// baselines from the post-hook instead (tools.captureBaselinesForUntouchedFiles).
+// NotebookEdit names its target in a field the pre-hook does not read, so hooking
+// it would only cost a process.
+const claudePreHookMatcher = "Write|Edit|MultiEdit"
+
 // claudeHookEvents is every event name we register the blamely command under.
 // Adding to this list automatically gets the install path; uninstall scans
 // the full `hooks` map regardless and will still find our markers.
 //
-// PreToolUse is deliberately NOT registered, and the reason is cost, not
-// correctness: a hook is an external command, so hooking a second event spawns
-// another blamely process on EVERY tool call — latency the user pays constantly,
-// and one more short-lived binary launch for endpoint protection to inspect.
-//
-// The pre-edit baseline that event would capture is instead taken on the
-// PostToolUse path we already run, for the files the command did NOT write
-// (tools.captureBaselinesForUntouchedFiles). Read-only calls — the majority of
-// what an agent runs — establish those baselines before any write happens.
-//
-// The historic reason for excluding it was different and is now fixed: the
-// registration never passed --pre, so the pre-hook ran the FULL recording path
-// against the pre-edit content and credited the agent with lines that were
-// already there. Tools whose PreToolUse IS registered (codex, copilot, gemini)
-// now get the flag from recordHookCommandForEvent.
-var claudeHookEvents = []string{"PostToolUse"}
+// PreToolUse carries --pre (recordHookCommandForEvent), so it only snapshots the
+// target's pre-edit content and never records an edit; it is matched to
+// claudePreHookMatcher, not the PostToolUse matcher.
+var claudeHookEvents = []string{"PostToolUse", "PreToolUse"}
+
+// claudeHookMatcherFor is the matcher blamely's group uses for event.
+func claudeHookMatcherFor(event string) string {
+	if isPreEditHookEvent(event) {
+		return claudePreHookMatcher
+	}
+	return claudeHookMatcher
+}
 
 // InstallClaudeHook ensures exactly ONE blamely record-hook is the FIRST hook
-// of every event we care about under ~/.claude/settings.json (PostToolUse
-// today). It strips any existing blamely hooks (deduping repeats and removing a
+// of every event we care about under ~/.claude/settings.json (PostToolUse and
+// PreToolUse). It strips any existing blamely hooks (deduping repeats and removing a
 // stale binary path / older matcher) and prepends a single fresh one, so
 // re-running `blamely install` never stacks duplicates and always pins blamely
 // first. Idempotent — it only writes when the file actually changes. Preserves
@@ -104,8 +118,8 @@ func installClaudeHookAt(settingsPath, binaryPath string) (added bool, err error
 	hooks := getMap(root, "hooks", true)
 
 	// Strip our hook from EVERY event first, not just the ones we are about to
-	// register. An event we used to register and no longer do (PreToolUse was
-	// registered by one build) would otherwise keep firing forever, because a
+	// register. An event we used to register and no longer do would otherwise
+	// keep firing forever, because a
 	// reinstall never visits it. Stripping the whole map makes install converge on
 	// claudeHookEvents whichever build wrote the file.
 	for event := range hooks {
@@ -119,7 +133,7 @@ func installClaudeHookAt(settingsPath, binaryPath string) (added bool, err error
 	}
 	for _, event := range claudeHookEvents {
 		command := recordHookCommandForEvent(binaryPath, "claude", event)
-		entries := prependIntoMatcherGroup(getSlice(hooks, event), claudeHookMatcher, command)
+		entries := prependIntoMatcherGroup(getSlice(hooks, event), claudeHookMatcherFor(event), command)
 		hooks[event] = entries
 	}
 	root["hooks"] = hooks

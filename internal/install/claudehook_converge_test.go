@@ -47,7 +47,7 @@ func TestInstallClaudeHook_DropsEventsNoLongerRegistered(t *testing.T) {
 	dir := t.TempDir()
 	settings := filepath.Join(dir, "settings.json")
 
-	// A settings.json as an older build left it: blamely on PreToolUse too.
+	// A settings.json as an older build left it: stale paths and matchers.
 	seed := `{
   "theme": "dark",
   "hooks": {
@@ -96,7 +96,7 @@ func TestInstallClaudeHook_DropsEventsNoLongerRegistered(t *testing.T) {
 	}
 }
 
-// A third party's hook on an event we don't register must survive the strip.
+// A third party's hook must survive the strip, in its own matcher group.
 func TestInstallClaudeHook_KeepsForeignHooks(t *testing.T) {
 	dir := t.TempDir()
 	settings := filepath.Join(dir, "settings.json")
@@ -116,5 +116,60 @@ func TestInstallClaudeHook_KeepsForeignHooks(t *testing.T) {
 	data, _ := os.ReadFile(settings)
 	if !strings.Contains(string(data), "/opt/other-tool/hook") {
 		t.Error("a foreign hook on an unregistered event was removed")
+	}
+}
+
+// PreToolUse is registered for the editor tools only, with --pre, so the first
+// agent edit to a file diffs against its real prior content instead of the
+// commit. Bash stays off it: a shell pre-hook costs a git process per command.
+func TestInstallClaudeHook_PreToolUseOnEditorToolsOnly(t *testing.T) {
+	dir := t.TempDir()
+	settings := filepath.Join(dir, "settings.json")
+	if _, err := installClaudeHookAt(settings, "/new/blamely"); err != nil {
+		t.Fatalf("installClaudeHookAt: %v", err)
+	}
+	hooks := readHooks(t, settings)
+
+	group := func(event string) (matcher, command string) {
+		groups, _ := hooks[event].([]any)
+		if len(groups) != 1 {
+			t.Fatalf("%s: %d groups, want 1", event, len(groups))
+		}
+		gm, _ := groups[0].(map[string]any)
+		inner, _ := gm["hooks"].([]any)
+		if len(inner) != 1 {
+			t.Fatalf("%s: %d hooks, want 1", event, len(inner))
+		}
+		hm, _ := inner[0].(map[string]any)
+		m, _ := gm["matcher"].(string)
+		c, _ := hm["command"].(string)
+		return m, c
+	}
+
+	preMatcher, preCmd := group("PreToolUse")
+	if preCmd != "/new/blamely record claude --pre" {
+		t.Errorf("PreToolUse command = %q, want --pre", preCmd)
+	}
+	tools := map[string]bool{}
+	for _, n := range strings.Split(preMatcher, "|") {
+		tools[n] = true
+	}
+	for _, want := range []string{"Write", "Edit", "MultiEdit"} {
+		if !tools[want] {
+			t.Errorf("PreToolUse matcher %q misses %s", preMatcher, want)
+		}
+	}
+	if tools["Bash"] {
+		t.Errorf("PreToolUse matcher %q includes Bash", preMatcher)
+	}
+
+	postMatcher, postCmd := group("PostToolUse")
+	if postMatcher != claudeHookMatcher || postCmd != "/new/blamely record claude" {
+		t.Errorf("PostToolUse = %q / %q", postMatcher, postCmd)
+	}
+
+	// Reinstalling converges: no second group, no duplicate hook.
+	if added, err := installClaudeHookAt(settings, "/new/blamely"); err != nil || added {
+		t.Fatalf("reinstall: added=%v err=%v, want unchanged", added, err)
 	}
 }

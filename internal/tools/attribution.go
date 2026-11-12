@@ -167,9 +167,9 @@ func multiFileTargets(toolName string, input json.RawMessage) []string {
 // The guard matters: for a file that DOES have a working log, the stored baseline
 // is what its current line attributions describe. Overwriting it with today's
 // content strands those line numbers, and a subsequent commit can then read the
-// user's own lines off a shifted mapping and mark them AI. That failure is why
-// PreToolUse was switched off for Claude (see install.claudeHookEvents); the guard
-// removes the hazard rather than the hook.
+// user's own lines off a shifted mapping and mark them AI. That failure once got
+// PreToolUse switched off for Claude; the guard removes the hazard rather than
+// the hook.
 //
 // A tracked file whose content has moved on since its log was last written
 // (wl.BlobSHA) changed without anyone recording it — typing the editor plugin
