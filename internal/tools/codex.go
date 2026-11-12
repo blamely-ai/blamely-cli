@@ -151,7 +151,7 @@ func tailCodexSession(ctx context.Context, path string, sink daemon.Sink, db *st
 	}
 	reader := bufio.NewReaderSize(f, 1<<16)
 
-	state := &codexState{sink: sink}
+	state := &codexState{sink: sink, transcriptPath: path}
 
 	offset := startOffset
 	savedOffset := startOffset
@@ -218,6 +218,14 @@ type codexState struct {
 	cwd     string // session working dir; fallback when a shell call omits workdir
 	pending []daemon.Event
 	sink    daemon.Sink
+
+	// transcriptPath and sessionID name this session on the rows a code-mode
+	// exec write records (see codex_execwrite.go).
+	transcriptPath string
+	sessionID      string
+	// execCalls are code-mode exec calls seen in the log whose output has not
+	// arrived yet, by call_id.
+	execCalls map[string]codexExecCall
 }
 
 // gen returns the session's gen_type, defaulting to "cli" until a session_meta
@@ -450,6 +458,7 @@ func processCodexWrappedLine(env *codexWrappedLine, st *codexState) {
 	switch env.Type {
 	case "session_meta":
 		var p struct {
+			ID         string `json:"id"`
 			Originator string `json:"originator"`
 			Source     string `json:"source"`
 			Cwd        string `json:"cwd"`
@@ -458,6 +467,9 @@ func processCodexWrappedLine(env *codexWrappedLine, st *codexState) {
 			st.genType = codexGenType(p.Originator, p.Source)
 			if p.Cwd != "" {
 				st.cwd = p.Cwd
+			}
+			if p.ID != "" {
+				st.sessionID = p.ID
 			}
 		}
 	case "turn_context":
@@ -491,6 +503,8 @@ func processCodexWrappedLine(env *codexWrappedLine, st *codexState) {
 		// apply_patch — those removals are otherwise invisible to this tailer
 		// and fall to Human at commit time. Fingerprint each deleted file here.
 		emitCodexShellDeletions(env.Payload, when, st)
+		// Files a code-mode exec script writes: Codex runs no hooks for it.
+		trackCodexExecWrites(env.Payload, when, st)
 	}
 }
 
@@ -507,6 +521,10 @@ var codexShellNameList = []string{
 	"local_shell",
 	"container.exec",
 	"shell",
+	// The name Codex gives its hooks for a code-mode exec call (it uses Claude's
+	// hook tool names). Observed on Windows with the VS Code extension, Codex
+	// 0.167: {"tool_name":"Bash","tool_input":{"command":"..."}}.
+	"bash",
 }
 
 // codexShellNames is codexShellNameList as a lookup set.
