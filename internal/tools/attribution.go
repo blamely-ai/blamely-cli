@@ -252,6 +252,21 @@ func captureAuthorship(repoPath, rel, tool, genType, model string) {
 	_, _ = authorship.RecordEdit(filepath.Join(repoPath, rel), captureAuthor(tool, genType, model))
 }
 
+// captureShellWrite is captureAuthorship for a shell command's write, and also
+// returns the 1-based numbers of the lines the write changed. ok is false when
+// nothing was captured (Attribution disabled, or the working log could not be
+// written); the caller then keeps reporting the whole file, as before.
+func captureShellWrite(repoPath, rel, tool, genType, model string) (added []int, ok bool) {
+	if !authorship.Enabled() || repoPath == "" || rel == "" {
+		return nil, false
+	}
+	_, added, err := authorship.RecordEditAdded(filepath.Join(repoPath, rel), captureAuthor(tool, genType, model))
+	if err != nil {
+		return nil, false
+	}
+	return added, true
+}
+
 // captureAuthorshipAt is captureAuthorship for a hook that already located the
 // file (gitutil.Locate), sparing the git calls RecordEdit would repeat. It takes
 // the shortcut only when the repo IS the work tree (RepoID == Toplevel, i.e. not a

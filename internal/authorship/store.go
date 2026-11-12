@@ -175,7 +175,16 @@ func Update(repoRoot, branch, baseSHA, relPath, newContent, fallbackBaseline str
 // (no stored baseline), under the same lock that reads the stored one — so a
 // caller whose fallback costs a git process pays it on a file's first edit only.
 func update(repoRoot, branch, baseSHA, relPath, newContent string, fallbackBaseline func() string, author Author, nowMS int64) (*WorkingLog, error) {
+	wl, _, err := updateAdded(repoRoot, branch, baseSHA, relPath, newContent, fallbackBaseline, author, nowMS, false)
+	return wl, err
+}
+
+// updateAdded is update that can also report which lines of newContent the edit
+// wrote (AddedLineNumbers against the same baseline update attributed against).
+// The diff is computed only when wantAdded is set, so ordinary edits pay nothing.
+func updateAdded(repoRoot, branch, baseSHA, relPath, newContent string, fallbackBaseline func() string, author Author, nowMS int64, wantAdded bool) (*WorkingLog, []int, error) {
 	rel := cleanRel(relPath)
+	var added []int
 	wlPath := WorkingLogPath(repoRoot, branch, baseSHA, relPath)
 	basePath := BaselinePath(repoRoot, branch, baseSHA, relPath)
 
@@ -192,6 +201,9 @@ func update(repoRoot, branch, baseSHA, relPath, newContent string, fallbackBasel
 
 		wl := Attribute(prior, baseline, newContent, author, nowMS)
 		wl.File, wl.BaseSHA = rel, baseSHA
+		if wantAdded {
+			added = AddedLineNumbers(baseline, newContent)
+		}
 
 		data, err := json.MarshalIndent(wl, "", "  ")
 		if err != nil {
@@ -209,7 +221,7 @@ func update(repoRoot, branch, baseSHA, relPath, newContent string, fallbackBasel
 		result = wl
 		return nil
 	})
-	return result, err
+	return result, added, err
 }
 
 // RenameWorkingLog carries the source log and its baseline to a new path after
