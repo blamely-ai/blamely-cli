@@ -104,6 +104,37 @@ func Attribute(prior *WorkingLog, baseline, newContent string, author Author, no
 	}
 }
 
+// AddedLineNumbers returns the 1-based numbers of the lines in newContent that this
+// edit WROTE: neither LCS-matched to a baseline line, nor moved from one, nor part
+// of a run a formatter only reshaped. It is the added-side twin of
+// DeletedBaselineLines and uses the same alignment, so it names exactly the lines
+// Attribute credits to the editing author because they changed. Used to report
+// what a whole-file observation (a shell command's write) actually changed,
+// rather than every line of the file.
+func AddedLineNumbers(baseline, newContent string) []int {
+	oldLines := splitLines(baseline)
+	newLines := splitLines(newContent)
+	matchedOld := alignLines(oldLines, newLines)
+	movedFrom := detectMoves(oldLines, newLines, matchedOld)
+
+	kept := make([]bool, len(newLines))
+	for i := range newLines {
+		kept[i] = matchedOld[i] >= 0 || movedFrom[i] >= 0
+	}
+	for _, r := range detectReflows(oldLines, newLines, matchedOld, movedFrom) {
+		for _, ni := range r.new {
+			kept[ni] = true
+		}
+	}
+	var added []int
+	for i := range newLines {
+		if !kept[i] {
+			added = append(added, i+1)
+		}
+	}
+	return added
+}
+
 // DeletedBaselineLines returns the contents of baseline lines that this edit REMOVED
 // — present in baseline but neither LCS-matched nor moved into newContent. Used to
 // attribute deletions to the editing author (the working log itself only describes

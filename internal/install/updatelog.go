@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/blamely/blamely/internal/config"
+	"github.com/blamely/blamely/internal/hookdrift"
 )
 
 // maxUpdateLogReason caps how much of an error goes on the line. Some failures
@@ -34,6 +35,10 @@ func logUpdateOutcome(res UpdateResult, err error) {
 	case res.Updated:
 		line = fmt.Sprintf("update ok: %s -> %s (channel %s)",
 			versionOrUnknown(res.From), versionOrUnknown(res.To), updateChannelOf(res))
+		// The new version may well read the hook payloads the old one could not,
+		// so start counting afresh: a shape still unread after the update shows
+		// up again on the next call.
+		_ = hookdrift.Reset()
 	case err != nil && res.Reason != "":
 		// Reason is the short, human phrase ("checksum mismatch", "staged binary
 		// failed to run"); the error is the detail behind it.

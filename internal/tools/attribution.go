@@ -26,51 +26,62 @@ func CaptureBaselineFromStdin(r io.Reader) error {
 	if err != nil {
 		return nil // best-effort: a pre-hook must never block the tool
 	}
-	var p struct {
-		Cwd       string          `json:"cwd"`
-		ToolName  string          `json:"tool_name"`
-		ToolInput json.RawMessage `json:"tool_input"`
-	}
-	if json.Unmarshal(raw, &p) != nil {
+	env, err := parseHookEnvelope(raw)
+	if err != nil {
 		return nil
 	}
+	// A batched pre-hook (the Copilot agent runtime's toolCalls) covers several
+	// calls; the repo-wide snapshot is taken at most once for all of them.
+	repoSnapshotTaken := false
+	for _, c := range env.toolCalls() {
+		captureBaselineForCall(env.Cwd, c.Name, c.Input, &repoSnapshotTaken)
+	}
+	return nil
+}
+
+// captureBaselineForCall snapshots what one tool call is about to write.
+func captureBaselineForCall(cwd, toolName string, input json.RawMessage, repoSnapshotTaken *bool) {
 	var in struct {
 		FilePathSnake string `json:"file_path"`
 		FilePathCamel string `json:"filePath"`
 		Path          string `json:"path"`
 		Command       string `json:"command"`
 	}
-	_ = json.Unmarshal(p.ToolInput, &in)
-	if isReadOnlyToolCall(p.ToolName, in.Command) {
+	_ = json.Unmarshal(input, &in)
+	if isReadOnlyToolCall(toolName, in.Command) {
 		// Nothing will be written. A baseline taken now is stale by the time
 		// the agent does write — the write's own pre-hook takes a fresh one —
 		// and resolving it costs git processes on every read the agent makes.
-		return nil
+		return
 	}
-	if paths := multiFileTargets(p.ToolName, p.ToolInput); len(paths) > 0 {
+	if paths := multiFileTargets(toolName, input); len(paths) > 0 {
 		for _, fp := range paths {
-			if !filepath.IsAbs(fp) && p.Cwd != "" {
-				fp = filepath.Join(p.Cwd, fp)
+			if !filepath.IsAbs(fp) && cwd != "" {
+				fp = filepath.Join(cwd, fp)
 			}
 			captureBaselineIfUntracked(fp)
 		}
-		return nil
+		return
 	}
 	fp := firstNonEmpty(in.FilePathSnake, in.FilePathCamel, in.Path)
 	if fp == "" {
-		// A shell command names no target file — it may write anything — so snapshot
-		// the repo's untracked-by-Attribution files instead. apply_patch still falls
-		// back to HEAD at record time (paths live in the patch body): documented gap.
-		if isShellToolName(p.ToolName) {
-			captureShellBaselines(p.Cwd)
+		// The call names no target file we can read — a shell command, which may
+		// write anything, or a tool (or argument spelling) this version has never
+		// seen. Its post-hook attributes it by observing the disk, so snapshot
+		// every dirty file the working log does not yet describe; otherwise that
+		// first observation diffs against HEAD and claims the human's uncommitted
+		// lines too. apply_patch still falls back to HEAD at record time (paths
+		// live in the patch body): documented gap.
+		if !*repoSnapshotTaken {
+			*repoSnapshotTaken = true
+			captureShellBaselines(cwd)
 		}
-		return nil
+		return
 	}
-	if !filepath.IsAbs(fp) && p.Cwd != "" {
-		fp = filepath.Join(p.Cwd, fp)
+	if !filepath.IsAbs(fp) && cwd != "" {
+		fp = filepath.Join(cwd, fp)
 	}
 	captureBaselineIfUntracked(fp)
-	return nil
 }
 
 // readOnlyToolNames are agent tools that name a file or directory but never
@@ -80,6 +91,18 @@ func CaptureBaselineFromStdin(r io.Reader) error {
 var readOnlyToolNames = map[string]bool{
 	"read_file": true, "list_dir": true, "view": true, "read": true, "ls": true,
 	"read_many_files": true, "list_directory": true,
+	// Search, fetch and bookkeeping tools (Copilot agent runtime, Claude, Gemini).
+	// Listing them matters more now that an unknown tool is attributed by
+	// observing the disk: a read misfiled as a possible write costs a `git
+	// status` and could credit a file the human saved in that same instant.
+	"grep": true, "glob": true, "search": true, "find": true,
+	"web_fetch": true, "webfetch": true, "fetch": true, "web_search": true, "websearch": true,
+	"ask_user": true, "report_intent": true, "think": true,
+	"update_todo": true, "todo_write": true, "todowrite": true,
+	// VS Code's agent host calls this at the start of every chat to set its
+	// title. Unlisted, it went down the disk path and showed in `blamely doctor`
+	// as an unrecognised payload on every machine running Copilot Chat.
+	"rename_chat": true,
 }
 
 // isReadOnlyToolCall reports whether a tool call only reads. str_replace_editor is
@@ -227,6 +250,21 @@ func captureAuthorship(repoPath, rel, tool, genType, model string) {
 		return
 	}
 	_, _ = authorship.RecordEdit(filepath.Join(repoPath, rel), captureAuthor(tool, genType, model))
+}
+
+// captureShellWrite is captureAuthorship for a shell command's write, and also
+// returns the 1-based numbers of the lines the write changed. ok is false when
+// nothing was captured (Attribution disabled, or the working log could not be
+// written); the caller then keeps reporting the whole file, as before.
+func captureShellWrite(repoPath, rel, tool, genType, model string) (added []int, ok bool) {
+	if !authorship.Enabled() || repoPath == "" || rel == "" {
+		return nil, false
+	}
+	_, added, err := authorship.RecordEditAdded(filepath.Join(repoPath, rel), captureAuthor(tool, genType, model))
+	if err != nil {
+		return nil, false
+	}
+	return added, true
 }
 
 // captureAuthorshipAt is captureAuthorship for a hook that already located the

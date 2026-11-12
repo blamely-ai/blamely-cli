@@ -7,11 +7,13 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/blamely/blamely/internal/config"
 	"github.com/blamely/blamely/internal/daemon"
+	"github.com/blamely/blamely/internal/hookdrift"
 	"github.com/blamely/blamely/internal/procattr"
 	"github.com/blamely/blamely/internal/updatehint"
 )
@@ -41,6 +43,7 @@ func Doctor(w io.Writer) error {
 	d.path()
 	d.db()
 	d.hooks()
+	d.hookDrift()
 	d.openCodePlugin()
 	d.editors()
 	d.summary()
@@ -111,6 +114,43 @@ func (d *doctor) bad(label, detail, fix string) {
 	fmt.Fprintf(d.w, "  ✗ %-32s %s\n", label, detail)
 	if fix != "" {
 		d.problems = append(d.problems, "  • "+label+": "+fix)
+	}
+}
+
+// hookDriftWindow bounds how old an unreadable hook payload may be and still be
+// reported: an entry that stopped recurring was most likely fixed by an update.
+const hookDriftWindow = 14 * 24 * time.Hour
+
+// hookDrift reports AI tools whose hook payloads Blamely recently could not read
+// precisely (see package hookdrift). Those edits were still attributed — by
+// observing the disk — but a tool changing its payload shape is exactly the
+// silent regression that used to turn AI work into Human, so it is said out loud.
+// Only the tool-call name and the payload's top-level keys are shown.
+func (d *doctor) hookDrift() {
+	entries := hookdrift.Read()
+	if len(entries) == 0 {
+		return
+	}
+	tools := make([]string, 0, len(entries))
+	for tool := range entries {
+		tools = append(tools, tool)
+	}
+	sort.Strings(tools)
+	cutoff := time.Now().Add(-hookDriftWindow)
+	for _, tool := range tools {
+		e := entries[tool]
+		if e.LastSeen.Before(cutoff) {
+			continue
+		}
+		name := e.LastToolName
+		if name == "" {
+			name = "(none)"
+		}
+		d.warn(tool+" hook payload",
+			fmt.Sprintf("%d call(s) in an unrecognised shape since %s (last: tool %s, keys %s)",
+				e.Count, e.FirstSeen.Local().Format("2006-01-02"), name, strings.Join(e.LastKeys, ",")),
+			"these edits were still credited by watching the disk, but less precisely — run `blamely update`; "+
+				"if already up to date, send the line above (tool name and keys only, no code) to Blamely support")
 	}
 }
 
