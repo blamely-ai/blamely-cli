@@ -6,7 +6,14 @@ Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepach
 
 ### Fixed
 
+- **GitHub Copilot Chat in JetBrains IDEs is credited again.** Recent versions of Copilot for JetBrains (1.18 and later) run their chat and agent on the same engine as the Copilot CLI, which reports its edits to Blamely in a different form. Blamely did not recognise it, so code Copilot wrote with its editing tool was counted as your own work, even before you committed. These edits are now credited to Copilot. The same applies to the Copilot CLI, and to Copilot sessions in VS Code that run on that engine (the Copilot SDK, or "Copilot CLI" sessions in the Chat view).
+- **A Copilot terminal command no longer claims the whole file.** When Copilot changed a file by running a command (PowerShell, for example), every line you had not committed yet could be credited to Copilot, even if it changed only one name. Now only the lines the command actually changed count.
+- **Lines you typed stay yours when an AI assistant changes the same file with a command.** When Claude Code, Copilot, Codex or Gemini changed a file by running a terminal command, the lines you had written in that file and not yet committed could be credited to the assistant when you committed, and the assistant's acceptance rate showed the whole file as suggested. Now only the lines the command changed count, both in the commit and in the acceptance rate.
 - **Claude Code no longer takes lines you had not committed yet.** When Claude edited a file that already had changes Blamely had not recorded, made in another editor, by `git stash pop`, or while the editor plugin was not running, Claude's first edit to that file could credit those lines to Claude too, even lines far from the ones it changed. Blamely now notes the file's content just before Claude's editing tools (Write, Edit, MultiEdit) change it, so only what Claude actually wrote counts. Run `blamely install` (or `blamely update`) to pick this up. Terminal commands Claude runs are unchanged and add no extra step.
+
+### Changed
+
+- **Blamely no longer depends on how an AI tool names its tools.** When an AI tool reports an edit in a form Blamely does not recognise (a new tool, or a renamed one after an update), Blamely now checks which files actually changed on disk and credits those changes to the tool, instead of counting them as yours. `blamely doctor` tells you when this happens, showing only the tool name and the field names it received, never your code, so an unexpected change in an AI tool can be spotted and fixed quickly.
 
 ## [1.8.6] - 2026-10-25
 

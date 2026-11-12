@@ -92,13 +92,42 @@ func recordShellWritesIn(root, command string, o shellWriteOpts) error {
 		// log, so a shell-written file stays invisible to it however many DB rows
 		// it has. root (not payload.RepoPath) because captureAuthorship joins a
 		// filesystem path, while RepoPath carries the canonical repo ID.
-		captureAuthorship(root, payload.FilePath, o.Tool, o.GenType, payload.Model)
+		//
+		// The command was only observed by its result on disk, so the payload
+		// starts out naming every line of the file. Narrow it to the lines the
+		// capture found changed. Otherwise the commit-time reconcile, which
+		// credits a Human line whose content an AI edit recorded, hands the agent
+		// every uncommitted line the human wrote in that file, and the suggested
+		// count claims the whole file.
+		if added, ok := captureShellWrite(root, payload.FilePath, o.Tool, o.GenType, payload.Model); ok {
+			keepPayloadLines(&payload, added)
+			if len(payload.Lines) == 0 {
+				continue // nothing this command wrote survives in the file
+			}
+		}
 		if err := postToDaemon(payload); err != nil {
 			return err
 		}
 	}
 	captureBaselinesForUntouchedFiles(root, changed, written)
 	return nil
+}
+
+// keepPayloadLines drops every range of a whole-file shell payload except the
+// lines named in added (1-based), and recounts SuggestedLines to match.
+func keepPayloadLines(p *daemon.EditPayload, added []int) {
+	want := make(map[int]bool, len(added))
+	for _, n := range added {
+		want[n] = true
+	}
+	kept := p.Lines[:0]
+	for _, r := range p.Lines {
+		if want[r.Start] {
+			kept = append(kept, r)
+		}
+	}
+	p.Lines = kept
+	p.SuggestedLines = int64(len(kept))
 }
 
 // captureBaselinesForUntouchedFiles snapshots the pre-edit baseline of every
@@ -194,8 +223,11 @@ func shellWritePayloadsFrom(root string, files []string, o shellWriteOpts) []dae
 var shellToolNames = map[string]bool{
 	// Claude Code
 	"bash": true,
-	// Copilot
+	// Copilot (VS Code; the agent runtime behind the Copilot CLI and Copilot for
+	// JetBrains names its terminal tool after the shell it runs)
 	"run_in_terminal": true,
+	"powershell":      true,
+	"pwsh":            true,
 	// Gemini
 	"run_shell_command": true,
 	// Cursor

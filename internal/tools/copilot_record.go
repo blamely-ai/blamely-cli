@@ -10,50 +10,72 @@ import (
 
 	"github.com/blamely/blamely/internal/daemon"
 	"github.com/blamely/blamely/internal/gitutil"
+	"github.com/blamely/blamely/internal/hookdrift"
 )
 
-// copilotHookPayload is a tolerant view of the JSON the GitHub Copilot CLI
-// hook pipes into `blamely record copilot`. The Copilot framework uses the
-// same Anthropic-style PostToolUse shape as Claude / Cursor (tool_name +
-// tool_input with file_path), so we share the editInput/writeInput/multiEdit
-// structs from claude.go.
+// copilotHookPayload is one Copilot tool call, as read from the hook payload by
+// parseHookEnvelope. The envelope spelling differs between Copilot surfaces and
+// versions (tool_name/tool_input from VS Code's agent host, toolName/toolArgs
+// from the Copilot agent runtime that the Copilot CLI and Copilot for JetBrains
+// run on); by the time a payload becomes this struct that no longer matters.
 //
-// Fields we don't recognise are ignored. When the payload doesn't carry a
-// file path we still emit a low-confidence session-active marker so the
-// fold-in heuristic in attribute.go can credit Copilot at all rather than
-// leaving the lines as human.
+// Fields we don't recognise are ignored. A tool call that names no file we can
+// read is still attributed: whatever it changed on disk is credited by the
+// shell-write path (see recordCopilotCall).
 type copilotHookPayload struct {
-	SessionID      string          `json:"session_id"`
-	ConversationID string          `json:"conversation_id"`
-	TranscriptPath string          `json:"transcript_path"`
-	Cwd            string          `json:"cwd"`
-	ToolName       string          `json:"tool_name"`
-	ToolInput      json.RawMessage `json:"tool_input"`
-	Model          string          `json:"model"`
+	SessionID      string
+	TranscriptPath string
+	Cwd            string
+	ToolName       string
+	ToolInput      json.RawMessage
+	Model          string
 }
 
 // RecordCopilotFromStdin handles the PostToolUse hook payload Copilot pipes
 // to `blamely record copilot`. It mirrors RecordClaudeFromStdin but:
-//   - records tool="copilot"
-//   - uses "completion" as the default gen_type (Copilot is mostly inline/tab),
-//     downgrades to "chat" when the payload's tool_name suggests a chat panel
-//   - falls back to a session-active marker (no file/lines) for payload shapes
-//     we don't recognise, so the attribute fold-in can still credit Copilot
+//   - records tool="copilot" (gen_type from copilotHookGenType)
+//   - reads the envelope with parseHookEnvelope, so every Copilot surface and
+//     version is accepted, and a batched payload records each of its calls
+//   - records a call whose arguments name a file precisely (line-level); any
+//     other call that may write is attributed by observing the disk, so a tool
+//     or argument name this version has never seen still credits Copilot
 func RecordCopilotFromStdin(r io.Reader) error {
 	raw, err := readHookPayload(r)
 	if err != nil {
 		return err
 	}
-	var p copilotHookPayload
-	if err := json.Unmarshal(raw, &p); err != nil {
+	env, err := parseHookEnvelope(raw)
+	if err != nil {
 		// Malformed JSON: never fail the host tool. Log and emit a marker.
 		log.Printf("blamely record copilot: parse hook payload: %v", err)
+		hookdrift.Note("copilot", "", nil)
 		return emitCopilotMarker("")
 	}
-	if p.SessionID == "" && p.ConversationID != "" {
-		p.SessionID = p.ConversationID
+	calls := env.toolCalls()
+	if len(calls) == 0 {
+		hookdrift.Note("copilot", "", env.Keys)
+		return emitCopilotMarker(env.SessionID)
 	}
+	var firstErr error
+	for _, c := range calls {
+		p := copilotHookPayload{
+			SessionID:      env.SessionID,
+			TranscriptPath: env.TranscriptPath,
+			Cwd:            env.Cwd,
+			ToolName:       c.Name,
+			ToolInput:      c.Input,
+			Model:          env.Model,
+		}
+		if err := recordCopilotCall(p, env.Keys); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
 
+// recordCopilotCall attributes one Copilot tool call. keys is the payload's
+// top-level key set, reported (names only) when the call's shape is unknown.
+func recordCopilotCall(p copilotHookPayload, keys []string) error {
 	// VS Code agent tools that can touch SEVERAL files in one call
 	// (multi_replace_string_in_file, apply_patch) record one edit per file.
 	if edits, ok := extractCopilotMultiFileEdits(p); ok {
@@ -69,40 +91,61 @@ func RecordCopilotFromStdin(r io.Reader) error {
 	}
 
 	filePath, ranges, suggested, removed, newFullContent := extractCopilotRanges(p)
-	if filePath == "" {
-		// Copilot removes files either with a dedicated delete tool (a bare
-		// path) or via its terminal tool (`rm`). Neither produces an edit
-		// range, so credit the removal here — otherwise an AI-deleted file
-		// falls through to Human at commit time.
-		gen := copilotHookGenType(p)
-		switch p.ToolName {
-		case "delete_file", "remove_file", "delete", "Delete":
-			if path := deletePathFromInput(p.ToolInput); path != "" {
-				return recordToolDeletionPath(path, p.Cwd, "copilot", gen, p.Model, p.SessionID, p.TranscriptPath, "copilot_delete")
-			}
-		case "run_in_terminal", "Bash", "shell", "Shell":
-			// The terminal tool both WRITES and deletes: a script, a heredoc or a
-			// formatter run through it produces no edit range at all, so without the
-			// write half everything Copilot authors through the terminal commits as
-			// Human. recordShellWritesInRoots covers both (deletions first).
-			// Resolved explicitly (rather than via recordShellWrites) so a cwd in no
-			// repo at all still falls through to the session marker below.
-			if roots := gitutil.DiscoverRepos(p.Cwd); len(roots) > 0 {
-				return recordShellWritesInRoots(roots, shellCommandFromInput(p.ToolInput), shellWriteOpts{
-					Tool:           "copilot",
-					GenType:        gen,
-					Model:          p.Model,
-					SessionID:      p.SessionID,
-					TranscriptPath: p.TranscriptPath,
-					WriteSource:    "copilot_shell_fswrite",
-					DeleteSource:   "copilot_shell_delete",
-				})
-			}
+	if filePath != "" {
+		return recordCopilotFileEdit(p, filePath, ranges, suggested, removed, newFullContent)
+	}
+
+	// Copilot removes files either with a dedicated delete tool (a bare path) or
+	// via its terminal tool (`rm`, `Remove-Item`). Neither produces an edit
+	// range, so credit the removal here — otherwise an AI-deleted file falls
+	// through to Human at commit time.
+	gen := copilotHookGenType(p)
+	switch p.ToolName {
+	case "delete_file", "remove_file", "delete", "Delete":
+		if path := deletePathFromInput(p.ToolInput); path != "" {
+			return recordToolDeletionPath(path, p.Cwd, "copilot", gen, p.Model, p.SessionID, p.TranscriptPath, "copilot_delete")
 		}
-		// Payload didn't carry a file path: keep the session-marker fallback.
+	}
+
+	command := shellCommandFromInput(p.ToolInput)
+	if isReadOnlyToolCall(p.ToolName, command) {
+		// A read wrote nothing; nothing to attribute.
 		return emitCopilotMarker(p.SessionID)
 	}
-	return recordCopilotFileEdit(p, filePath, ranges, suggested, removed, newFullContent)
+	shell := isShellToolName(p.ToolName)
+	if !shell {
+		// A call that may write but whose arguments we could not read: a tool
+		// this version of Blamely has never seen, or a known tool whose argument
+		// names changed. Note it for `blamely doctor`, then attribute it anyway.
+		hookdrift.Note("copilot", p.ToolName, keys)
+	}
+
+	// Observe the disk instead of trusting the payload: ask git which files just
+	// changed and credit those to this call. This is the same path a terminal
+	// command takes — we cannot parse arbitrary shell either — and it is what
+	// keeps attribution independent of how a Copilot version names its tools and
+	// their arguments. The PreToolUse hook snapshotted the pre-call content of
+	// every dirty file (CaptureBaselineFromStdin), so only what this call changed
+	// is credited, not the human's earlier uncommitted work.
+	// Resolved explicitly (rather than via recordShellWrites) so a cwd in no repo
+	// at all still falls through to the session marker below.
+	if roots := gitutil.DiscoverRepos(p.Cwd); len(roots) > 0 {
+		writeSource, deleteSource := "copilot_fswrite", "copilot_fs_delete"
+		if shell {
+			writeSource, deleteSource = "copilot_shell_fswrite", "copilot_shell_delete"
+		}
+		return recordShellWritesInRoots(roots, command, shellWriteOpts{
+			Tool:           "copilot",
+			GenType:        gen,
+			Model:          p.Model,
+			SessionID:      p.SessionID,
+			TranscriptPath: p.TranscriptPath,
+			WriteSource:    writeSource,
+			DeleteSource:   deleteSource,
+		})
+	}
+	// No repo to observe: keep the session-marker fallback.
+	return emitCopilotMarker(p.SessionID)
 }
 
 // recordCopilotFileEdit resolves filePath's repo and posts one Copilot edit for
@@ -271,7 +314,9 @@ func extractCopilotRanges(p copilotHookPayload) (string, []LineRange, int64, []D
 	case "Edit":
 		var in editInput
 		if err := json.Unmarshal(p.ToolInput, &in); err != nil || in.FilePath == "" {
-			return "", nil, 0, nil, nil
+			// A Claude tool NAME over Copilot's own argument names ({path,
+			// old_str, new_str}): read it like any unknown tool.
+			return extractGenericCopilotRanges(p.ToolInput)
 		}
 		removed := RemovedLineHashes(in.OldString, in.NewString)
 		if strings.TrimSpace(in.NewString) == "" && in.OldString != "" {
@@ -281,8 +326,17 @@ func extractCopilotRanges(p copilotHookPayload) (string, []LineRange, int64, []D
 		return in.FilePath, ranges, suggested, removed, nil
 
 	case "Write":
-		var in writeInput
-		if err := json.Unmarshal(p.ToolInput, &in); err != nil || in.FilePath == "" {
+		var in struct {
+			FilePath      string `json:"file_path"`
+			FilePathCamel string `json:"filePath"`
+			Path          string `json:"path"`
+			Content       string `json:"content"`
+		}
+		if err := json.Unmarshal(p.ToolInput, &in); err != nil {
+			return "", nil, 0, nil, nil
+		}
+		in.FilePath = firstNonEmpty(in.FilePath, in.FilePathCamel, in.Path)
+		if in.FilePath == "" {
 			return "", nil, 0, nil, nil
 		}
 		// Whole-file overwrite: per-line shas for the new content; removed lines
@@ -292,7 +346,7 @@ func extractCopilotRanges(p copilotHookPayload) (string, []LineRange, int64, []D
 	case "MultiEdit":
 		var in multiEditInput
 		if err := json.Unmarshal(p.ToolInput, &in); err != nil || in.FilePath == "" {
-			return "", nil, 0, nil, nil
+			return extractGenericCopilotRanges(p.ToolInput)
 		}
 		var suggested int64
 		var out []LineRange
@@ -312,42 +366,53 @@ func extractCopilotRanges(p copilotHookPayload) (string, []LineRange, int64, []D
 	default:
 		// Generic fallback: try multiple field-name conventions. Copilot uses
 		// "path" or (VS Code) "filePath"; Claude/older hooks use "file_path".
-		// Content body may be in "new_string", "newString", "new_str", "content",
-		// or "code"; an old body (for removed-line detection) in "old_string",
-		// "oldString" or "old_str".
-		var generic struct {
-			FilePath      string `json:"file_path"`
-			FilePathCamel string `json:"filePath"`
-			Path          string `json:"path"`
-			NewString     string `json:"new_string"`
-			NewStringCam  string `json:"newString"`
-			NewStr        string `json:"new_str"`
-			Content       string `json:"content"`
-			Code          string `json:"code"`
-			OldString     string `json:"old_string"`
-			OldStringCam  string `json:"oldString"`
-			OldStr        string `json:"old_str"`
-		}
-		if err := json.Unmarshal(p.ToolInput, &generic); err != nil {
-			return "", nil, 0, nil, nil
-		}
-		fp := firstNonEmpty(generic.FilePath, generic.FilePathCamel, generic.Path)
-		if fp == "" {
-			return "", nil, 0, nil, nil
-		}
-		body := firstNonEmpty(generic.NewString, generic.NewStringCam, generic.NewStr, generic.Content, generic.Code)
-		old := firstNonEmpty(generic.OldString, generic.OldStringCam, generic.OldStr)
-		if body == "" && old == "" {
-			// A path with no content either way is a READ (read_file, list_dir,
-			// the CLI's view), not an edit. Recording it would also run
-			// captureAuthorship, which credits every uncommitted line in the
-			// file — the human's included — to Copilot.
-			return "", nil, 0, nil, nil
-		}
-		removed := RemovedLineHashes(old, body)
-		ranges, suggested := copilotAddedRanges(old, body)
-		return fp, ranges, suggested, removed, nil
+		return extractGenericCopilotRanges(p.ToolInput)
 	}
+}
+
+// extractGenericCopilotRanges reads a tool call by field names alone, whatever
+// the tool is called: the path in "file_path", "filePath" or "path", the new
+// body in "new_string", "newString", "new_str", "content" or "code", the old
+// body in "old_string", "oldString" or "old_str". This is how a Copilot tool
+// this version has never seen — or a known tool name over unfamiliar argument
+// names — still gets line-level attribution.
+func extractGenericCopilotRanges(input json.RawMessage) (string, []LineRange, int64, []DeletedLineHash, *string) {
+	var generic struct {
+		FilePath      string `json:"file_path"`
+		FilePathCamel string `json:"filePath"`
+		Path          string `json:"path"`
+		NewString     string `json:"new_string"`
+		NewStringCam  string `json:"newString"`
+		NewStr        string `json:"new_str"`
+		Content       string `json:"content"`
+		Code          string `json:"code"`
+		OldString     string `json:"old_string"`
+		OldStringCam  string `json:"oldString"`
+		OldStr        string `json:"old_str"`
+	}
+	if err := json.Unmarshal(input, &generic); err != nil {
+		return "", nil, 0, nil, nil
+	}
+	fp := firstNonEmpty(generic.FilePath, generic.FilePathCamel, generic.Path)
+	if fp == "" {
+		return "", nil, 0, nil, nil
+	}
+	body := firstNonEmpty(generic.NewString, generic.NewStringCam, generic.NewStr, generic.Content, generic.Code)
+	old := firstNonEmpty(generic.OldString, generic.OldStringCam, generic.OldStr)
+	if body == "" && old == "" {
+		// A path with no content either way is a READ (read_file, list_dir,
+		// the CLI's view), not an edit. Recording it would also run
+		// captureAuthorship, which credits every uncommitted line in the
+		// file — the human's included — to Copilot.
+		return "", nil, 0, nil, nil
+	}
+	removed := RemovedLineHashes(old, body)
+	if strings.TrimSpace(body) == "" && old != "" {
+		// Pure deletion: credit the removed lines, add none (mirrors Edit).
+		return fp, nil, int64(countLines(old)), removed, nil
+	}
+	ranges, suggested := copilotAddedRanges(old, body)
+	return fp, ranges, suggested, removed, nil
 }
 
 // copilotReplacement is one VS Code string replacement: the whole input of

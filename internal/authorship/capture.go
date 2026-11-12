@@ -105,6 +105,26 @@ func RecordEditIn(ctx Context, absPath string, author Author) (*WorkingLog, erro
 	return update(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath, string(data), fallback, author, 0)
 }
 
+// RecordEditAdded is RecordEdit that also returns the 1-based numbers of the lines
+// the edit wrote (see AddedLineNumbers). A caller that only observed the file's
+// final content, such as a shell command's write, uses them to report the
+// changed lines instead of the whole file.
+func RecordEditAdded(absPath string, author Author) (*WorkingLog, []int, error) {
+	ctx, ok := ResolveContext(absPath)
+	if !ok {
+		return nil, nil, fmt.Errorf("authorship: %q is not inside a git work tree", absPath)
+	}
+	if SeedHook != nil {
+		SeedHook(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath)
+	}
+	data, err := os.ReadFile(absPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	fallback := func() string { return headContent(ctx.RepoRoot, ctx.BaseSHA, ctx.RelPath) }
+	return updateAdded(ctx.RepoRoot, ctx.Branch, ctx.BaseSHA, ctx.RelPath, string(data), fallback, author, 0, true)
+}
+
 // PutBaselinesIfUntracked snapshots the current content of each repo-relative path
 // under repoRoot as its pre-edit baseline, skipping any file Attribution already
 // tracks (whose stored baseline is what its line attributions describe).

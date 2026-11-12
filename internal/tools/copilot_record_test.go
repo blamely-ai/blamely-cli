@@ -320,10 +320,11 @@ func TestExtractCopilotMultiFileEdits_AgentHostEditPatch(t *testing.T) {
 		"tool_name":       "Edit",
 		"tool_input":      patch,
 	})
-	var p copilotHookPayload
-	if err := json.Unmarshal(payload, &p); err != nil {
+	env, err := parseHookEnvelope(payload)
+	if err != nil {
 		t.Fatal(err)
 	}
+	p := copilotHookPayload{SessionID: env.SessionID, Cwd: env.Cwd, ToolName: env.ToolName, ToolInput: env.ToolInput}
 	edits, ok := extractCopilotMultiFileEdits(p)
 	if !ok || len(edits) != 2 {
 		t.Fatalf("want 2 edits, got ok=%v %d", ok, len(edits))
