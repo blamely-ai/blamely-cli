@@ -2,7 +2,7 @@
 
 Notable changes to the **Blamely CLI** follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project uses [semantic versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.8.7] - 2026-11-17
 
 ### Fixed
 
